@@ -1,11 +1,12 @@
 
-function LightAmbient(intensity)
+class LightAmbient
 {
-	this.intensity = intensity;
-}
+	constructor(intensity)
+	{
+		this.intensity = intensity;
+	}
 
-{
-	LightAmbient.prototype.intensityForCollisionNormalAndCamera = function(collision, normal, camera)
+	intensityForCollisionNormalAndCamera(collision, normal, camera)
 	{
 		return this.intensity;
 	}

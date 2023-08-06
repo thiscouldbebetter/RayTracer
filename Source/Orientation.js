@@ -1,17 +1,18 @@
 
-function Orientation(forward, down)
+class Orientation
 {
-	this.forward = new Coords();
-	this.right = new Coords();
-	this.down = new Coords();
+	constructor(forward, down)
+	{
+		this.forward = new Coords();
+		this.right = new Coords();
+		this.down = new Coords();
 
-	this.overwriteWithForwardDown(forward, down);
-}
+		this.overwriteWithForwardDown(forward, down);
+	}
 
-{
 	// instance methods
 
-	Orientation.prototype.clone = function()
+	clone()
 	{
 		return new Orientation
 		(
@@ -20,7 +21,7 @@ function Orientation(forward, down)
 		);
 	}
 
-	Orientation.prototype.overwriteWithForwardDown = function(forward, down)
+	overwriteWithForwardDown(forward, down)
 	{
 		this.forward.overwriteWith(forward).normalize();
 		this.right.overwriteWith(down).crossProduct(this.forward).normalize();
@@ -29,7 +30,19 @@ function Orientation(forward, down)
 
 	// instances
 
-	function Orientation_Instances()
+	static Instances()
+	{
+		if (Orientation._instances == null)
+		{
+			Orientation._instances = new Orientation_Instances();
+		}
+		return Orientation._instances;
+	}
+}
+
+class Orientation_Instances
+{
+	constructor()
 	{
 		this.Camera = new Orientation
 		(
@@ -49,6 +62,4 @@ function Orientation(forward, down)
 			new Coords(1, 0, 0)
 		);
 	}
-
-	Orientation.Instances = new Orientation_Instances();
 }

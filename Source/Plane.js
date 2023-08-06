@@ -1,17 +1,20 @@
 
-function Plane(positionsOnPlane)
+class Plane
 {
-	this.positionsOnPlane = positionsOnPlane;
-	this.normal = new Coords(0, 0, 0);
-	this.recalculateDerivedValues();
-}
+	constructor(positionsOnPlane)
+	{
+		this.positionsOnPlane = positionsOnPlane;
+		this.normal = new Coords(0, 0, 0);
+		this.recalculateDerivedValues();
+	}
 
-{
-	Plane.prototype.recalculateDerivedValues = function()
+	recalculateDerivedValues()
 	{
 		var pos0 = this.positionsOnPlane[0];
-		var displacementFromPos0To1 = this.positionsOnPlane[1].clone().subtract(pos0);
-		var displacementFromPos0To2 = this.positionsOnPlane[2].clone().subtract(pos0);
+		var displacementFromPos0To1 =
+			this.positionsOnPlane[1].clone().subtract(pos0);
+		var displacementFromPos0To2 =
+			this.positionsOnPlane[2].clone().subtract(pos0);
 		this.normal.overwriteWith
 		(
 			displacementFromPos0To1

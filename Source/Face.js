@@ -1,23 +1,26 @@
 
-function Face(materialName, vertexIndices, textureUVsForVertices, normalsForVertices)
+class Face
 {
-	this.materialName = materialName;
-	this.vertexIndices = vertexIndices;
-	this.textureUVsForVertices = textureUVsForVertices;
-	this.normalsForVertices = normalsForVertices;
-}
+	constructor
+	(
+		materialName, vertexIndices, textureUVsForVertices, normalsForVertices
+	)
+	{
+		this.materialName = materialName;
+		this.vertexIndices = vertexIndices;
+		this.textureUVsForVertices = textureUVsForVertices;
+		this.normalsForVertices = normalsForVertices;
 
-{
-	// static variables
+		this.DisplacementFromVertexNextToPos = new Coords();
+		this.TexelColor = Color.blank();
+		this.VertexValueInterpolated = new Coords();
+		this.VertexValueWeighted = new Coords();
+	}
 
-	Face.DisplacementFromVertexNextToPos = new Coords();
-	Face.VertexValueInterpolated = new Coords();
-	Face.VertexValueWeighted = new Coords();
-
-	Face.prototype.buildTriangles = function(mesh)
+	buildTriangles(mesh)
 	{
 		// instance variables
-	
+
 		if (this.vertexIndices.length == 3)
 		{
 			this.triangles = [ this ];
@@ -37,7 +40,7 @@ function Face(materialName, vertexIndices, textureUVsForVertices, normalsForVert
 		}
 	}
 
-	Face.prototype.buildTriangle = function(vertexIndexIndex0, vertexIndexIndex1, vertexIndexIndex2)
+	buildTriangle(vertexIndexIndex0, vertexIndexIndex1, vertexIndexIndex2)
 	{
 		var vertexIndex0 = this.vertexIndices[vertexIndexIndex0];
 		var vertexIndex1 = this.vertexIndices[vertexIndexIndex1];
@@ -76,17 +79,17 @@ function Face(materialName, vertexIndices, textureUVsForVertices, normalsForVert
 		return returnValue;
 	}
 
-	Face.prototype.interpolateVertexValuesWeighted = function(vertexValues, weights)
+	interpolateVertexValuesWeighted(vertexValues, weights)
 	{
-		var valueInterpolated = Face.VertexValueInterpolated.overwriteWith
+		var valueInterpolated = this.VertexValueInterpolated.overwriteWith
 		(
 			vertexValues[0]
 		).multiplyScalar
 		(
 			weights[0]
-		)
+		);
 
-		var vertexValueWeighted = Face.VertexValueWeighted;
+		var vertexValueWeighted = this.VertexValueWeighted;
 
 		for (var i = 1; i < vertexValues.length; i++)
 		{
@@ -99,18 +102,20 @@ function Face(materialName, vertexIndices, textureUVsForVertices, normalsForVert
 			);
 
 			valueInterpolated.add(vertexValueWeighted);
-		}		
-	
+		}
+
 		return valueInterpolated;
 	}
 
-	Face.prototype.material = function(scene)
+	material(scene)
 	{
 		return scene.materials[this.materialName];
 	}
 
-	Face.prototype.normalForVertexWeights = function(vertexWeights)
+	normalForVertexWeights(vertexWeights)
 	{
+		var returnValue;
+
 		if (this.normalsForVertices == null)
 		{
 			returnValue = this.plane.normal;
@@ -127,7 +132,7 @@ function Face(materialName, vertexIndices, textureUVsForVertices, normalsForVert
 		return returnValue;	
 	}
 
-	Face.prototype.recalculateDerivedValues = function(mesh)
+	recalculateDerivedValues(mesh)
 	{
 		if (this.normalsForVertices != null)
 		{
@@ -193,27 +198,27 @@ function Face(materialName, vertexIndices, textureUVsForVertices, normalsForVert
 		for (var i = 0; i < this.edges.length; i++)
 		{
 			this.edges[i].recalculateDerivedValues(mesh, this);
-		}	
+		}
 
 		return this;
 	}
 
-	Face.prototype.texelColorForVertexWeights = function(texture, vertexWeights)
+	texelColorForVertexWeights(texture, vertexWeights)
 	{
 		var texelUV = this.interpolateVertexValuesWeighted
 		(
 			this.textureUVsForVertices,
 			vertexWeights
-		);	
+		);
 
-		var texelColor = Display.TexelColor;
+		var texelColor = this.TexelColor;
 
 		texture.colorSetFromUV(texelColor, texelUV);
 
 		return texelColor;
 	}
 
-	Face.prototype.vertexWeightsAtSurfacePosAddToList = function(mesh, surfacePos, weights)
+	vertexWeightsAtSurfacePosAddToList(mesh, surfacePos, weights)
 	{
 		var vertices = this.vertices(mesh);
 		
@@ -224,15 +229,16 @@ function Face(materialName, vertexIndices, textureUVsForVertices, normalsForVert
 			edges[0].displacement
 		).magnitude() / 2;
 
-		var displacementFromVertexNextToPos = Face.DisplacementFromVertexNextToPos;
+		var displacementFromVertexNextToPos =
+			this.DisplacementFromVertexNextToPos;
 
 		for (var i = 0; i < vertices.length; i++)
-		{	
+		{
 			var iNext = NumberHelper.wrapValueToRange(i + 1, vertices.length);
 
 			var vertex = vertices[i];
 			var vertexNext = vertices[iNext];
-				
+
 			displacementFromVertexNextToPos.overwriteWith
 			(
 				surfacePos
@@ -247,7 +253,7 @@ function Face(materialName, vertexIndices, textureUVsForVertices, normalsForVert
 			(
 				displacementFromVertexNextToPos
 			).magnitude() / 2;
-								
+
 			var weightOfVertex = 
 				areaOfTriangleFormedByEdgeNextAndPos
 				/ areaOfFace;
@@ -258,14 +264,14 @@ function Face(materialName, vertexIndices, textureUVsForVertices, normalsForVert
 		return weights;
 	}
 
-	Face.prototype.vertex = function(mesh, vertexIndexIndex)
+	vertex(mesh, vertexIndexIndex)
 	{
 		var vertexIndex = this.vertexIndices[vertexIndexIndex];
 		var vertex = mesh.vertices[vertexIndex];
 		return vertex;
 	}
 
-	Face.prototype.vertices = function(mesh)
+	vertices(mesh)
 	{
 		var returnValues = [];
 
@@ -281,7 +287,7 @@ function Face(materialName, vertexIndices, textureUVsForVertices, normalsForVert
 
 	// cloneable
 
-	Face.prototype.clone = function()
+	clone()
 	{
 		// todo - Deep clone.
 		return new Face
@@ -295,7 +301,7 @@ function Face(materialName, vertexIndices, textureUVsForVertices, normalsForVert
 
 	// strings
 
-	Face.prototype.toString = function(mesh)
+	toString(mesh)
 	{
 		var returnValue = this.vertices(mesh).join("->");
 		return returnValue;

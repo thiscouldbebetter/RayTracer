@@ -1,16 +1,17 @@
 
-function Texture(name, image)
+class Texture
 {
-	this.name = name;
-	this.image = image;
-	
-	var canvas = document.createElement("canvas");
-	this.graphics = canvas.getContext("2d");
-	this.graphics.drawImage(this.image.systemImage(), 0, 0);
-}
+	constructor(name, image)
+	{
+		this.name = name;
+		this.image = image;
 
-{
-	Texture.prototype.colorSetFromUV = function(texelColor, texelUV)
+		var canvas = document.createElement("canvas");
+		this.graphics = canvas.getContext("2d", { willReadFrequently: true} );
+		this.graphics.drawImage(this.image.systemImage(), 0, 0);
+	}
+
+	colorSetFromUV(texelColor, texelUV)
 	{
 		var imageSizeInPixels = this.image.sizeInPixels;
 
@@ -20,7 +21,7 @@ function Texture(name, image)
 			texelUV.y * imageSizeInPixels.y,
 			1, 1
 		).data;
-	
+
 		texelColor.components
 		(
 			texelColorComponents[0] / Color.ComponentMax, 

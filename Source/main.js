@@ -19,7 +19,7 @@ function main()
 	var materialRTBang = new Material
 	(
 		"RTBang", 
-		Color.Instances.White, 
+		Color.Instances().White, 
 		1, // diffuse
 		1, // specular
 		.2, // shininess
@@ -40,7 +40,7 @@ function main()
 			new TransformTranslate(new Coords(0, 0, -90)),
 
 		])
-	);		
+	);
 
 	var meshGround = new Mesh
 	(
@@ -54,7 +54,7 @@ function main()
 		],
 		// faces
 		[
-			new Face(Material.Instances.Green.name, [3, 2, 1, 0], null, null)
+			new Face(Material.Instances().Green.name, [3, 2, 1, 0], null, null)
 		]
 	);
 
@@ -70,7 +70,7 @@ function main()
 	var materialEyeball = new Material
 	(
 		"Eyeball", 
-		Color.Instances.White, 
+		Color.Instances().White, 
 		1, // diffuse
 		1, // specular
 		.2, // shininess
@@ -86,7 +86,7 @@ function main()
 	[
 		materialEyeball, 
 		materialRTBang, 
-		Material.Instances.Green,
+		Material.Instances().Green,
 	]; 
 
 	var sphereEyeball = new Sphere
@@ -108,7 +108,7 @@ function main()
 	(
 		"Scene0",
 		materials,
-		Color.Instances.BlueDark, // backgroundColor
+		Color.Instances().BlueDark, // backgroundColor
 		new Lighting
 		(
 			// lights

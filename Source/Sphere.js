@@ -1,18 +1,21 @@
 
-function Sphere(name, materialName, radius, centerPos, orientation)
+class Sphere
 {
-	this.name = name;
-	this.materialName = materialName;
-	this.radius = radius;
-	this.centerPos = centerPos;
-	this.orientation = orientation;
-}
+	constructor(name, materialName, radius, centerPos, orientation)
+	{
+		this.name = name;
+		this.materialName = materialName;
+		this.radius = radius;
+		this.centerPos = centerPos;
+		this.orientation = orientation;
 
-{
+		this.TexelUV = new Coords();
+	}
+
 	// collidable
 
-	Sphere.prototype.addCollisionsWithRayToList = function(ray, listToAddTo)
-	{	
+	addCollisionsWithRayToList(ray, listToAddTo)
+	{
 		var collision = new Collision().rayAndSphere
 		(
 			ray,
@@ -28,12 +31,12 @@ function Sphere(name, materialName, radius, centerPos, orientation)
 		return listToAddTo;
 	}
 
-	Sphere.prototype.material = function(scene)
+	material(scene)
 	{
 		return scene.materials[this.materialName];
 	}
 
-	Sphere.prototype.surfaceMaterialColorAndNormalForCollision = function
+	surfaceMaterialColorAndNormalForCollision
 	(
 		scene, 
 		collisionClosest,
@@ -76,7 +79,7 @@ function Sphere(name, materialName, radius, centerPos, orientation)
 				surfaceNormalInLocalCoords
 			);
 
-			var texelUV = Display.TexelUV;
+			var texelUV = this.TexelUV;
 			texelUV.overwriteWithXYZ
 			(
 				surfaceNormalInLocalCoordsAsPolar.azimuth,
@@ -89,7 +92,7 @@ function Sphere(name, materialName, radius, centerPos, orientation)
 				texelUV
 			);
 		}
-			
+
 		return surfaceColor;
 	}
 }

@@ -1,11 +1,10 @@
 
-function Constants()
-{}
+class Constants
 {
-	Constants.DegreesPerCircle = 360;
-	Constants.RadiansPerCircle = 2 * Math.PI;
-	Constants.RadiansPerRightAngle = Math.PI / 2;
-	Constants.RadiansPerDegree = 
+	static DegreesPerCircle = 360;
+	static RadiansPerCircle = 2 * Math.PI;
+	static RadiansPerRightAngle = Math.PI / 2;
+	static RadiansPerDegree = 
 		Constants.RadiansPerCircle
 		/ Constants.DegreesPerCircle;
 }

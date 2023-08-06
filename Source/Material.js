@@ -1,31 +1,33 @@
 
-function Material(name, color, ambient, diffuse, specular, shininess, texture)
+class Material
 {
-	this.name = name;
-	this.color = color;
-	this.ambient = ambient;
-	this.diffuse = diffuse;
-	this.specular = specular;
-	this.shininess = shininess;
-	this.texture = texture;
-}
-
-{	
-	// instances
-
-	function Material_Instances()
+	constructor(name, color, ambient, diffuse, specular, shininess, texture)
 	{
-		this.Green = new Material("Green", Color.Instances.Green, 1, 1, .2, 0);
-		this.White = new Material("White", Color.Instances.White, 1, 1, .2, 0);
+		this.name = name;
+		this.color = color;
+		this.ambient = ambient;
+		this.diffuse = diffuse;
+		this.specular = specular;
+		this.shininess = shininess;
+		this.texture = texture;
 	}
 
-	Material.Instances = new Material_Instances();
-	
+	// instances
+
+	static Instances()
+	{
+		if (Material._instances == null)
+		{
+			Material._instances = new Material_Instances();
+		}
+		return Material._instances;
+	}
+
 	// methods
 
 	// cloneable
 
-	Material.prototype.clone = function()
+	clone()
 	{
 		return new Material
 		(
@@ -39,7 +41,7 @@ function Material(name, color, ambient, diffuse, specular, shininess, texture)
 		);
 	}
 
-	Material.prototype.overwriteWith = function(other)
+	overwriteWith(other)
 	{
 		this.name = other.name;
 		this.color.overwriteWith(other.color);
@@ -48,5 +50,15 @@ function Material(name, color, ambient, diffuse, specular, shininess, texture)
 		this.specular = other.specular;
 		this.shininess = other.shininess;
 		this.texture = other.texture;
+	}
+}
+
+class Material_Instances
+{
+	constructor()
+	{
+		var colors = Color.Instances();
+		this.Green = new Material("Green", colors.Green, 1, 1, .2, 0);
+		this.White = new Material("White", colors.White, 1, 1, .2, 0);
 	}
 }

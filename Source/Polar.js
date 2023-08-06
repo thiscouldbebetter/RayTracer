@@ -1,13 +1,14 @@
 
-function Polar(azimuth, elevation, radius)
+class Polar
 {
-	this.azimuth = azimuth;
-	this.elevation = elevation;
-	this.radius = radius;
-}
+	constructor(azimuth, elevation, radius)
+	{
+		this.azimuth = azimuth;
+		this.elevation = elevation;
+		this.radius = radius;
+	}
 
-{
-	Polar.prototype.fromCoords = function(coordsToConvert)
+	fromCoords(coordsToConvert)
 	{
 		this.radius = coordsToConvert.magnitude();
 
@@ -26,11 +27,11 @@ function Polar(azimuth, elevation, radius)
 		(
 			coordsToConvert.z / this.radius
 		) / Constants.RadiansPerRightAngle;
-	
+
 		return this;
 	}
 
-	Polar.prototype.toCoords = function(coordsToOverwrite)
+	toCoords(coordsToOverwrite)
 	{
 		var azimuthInRadians = this.azimuth * Constants.RadiansPerCircle;
 		var elevationInRadians = this.elevation * Constants.RadiansPerRightAngle;

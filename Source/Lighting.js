@@ -1,11 +1,12 @@
 
-function Lighting(lights)
+class Lighting
 {
-	this.lights = lights;
-}
+	constructor(lights)
+	{
+		this.lights = lights;
+	}
 
-{
-	Lighting.Temp = new Coords();
-	Lighting.Temp2 = new Coords();
-	Lighting.Temp3 = new Coords();
+	static Temp = new Coords();
+	static Temp2 = new Coords();
+	static Temp3 = new Coords();
 }

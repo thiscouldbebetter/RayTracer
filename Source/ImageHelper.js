@@ -1,10 +1,9 @@
 
-function ImageHelper()
-{}
+class ImageHelper
 {
 	// static methods
 
-	ImageHelper.buildImageFromStrings = function
+	static buildImageFromStrings
 	(
 		name, 
 		scaleMultiplier, 
@@ -23,7 +22,7 @@ function ImageHelper()
 		var graphics = canvas.getContext("2d");
 
 		var pixelPos = new Coords(0, 0);
-		var colorForPixel = Color.Instances.Transparent;
+		var colorForPixel = Color.Instances().Transparent;
 
 		for (var y = 0; y < sizeInPixels.y; y++)
 		{
@@ -35,17 +34,17 @@ function ImageHelper()
 				var charForPixel = stringForPixelRow[x];
 				pixelPos.x = x * scaleMultiplier;
 
-				colorForPixel = Color.Instances._All[charForPixel];
+				colorForPixel = Color.byCodeChar(charForPixel);
 
 				graphics.fillStyle = colorForPixel.systemColor();
 				graphics.fillRect
 				(
 					pixelPos.x, pixelPos.y, 
 					scaleMultiplier, scaleMultiplier
-				);				
+				);
 			}
 		}
-		
+
 		var imageData = graphics.getImageData
 		(
 			0, 0, sizeInPixels.x, sizeInPixels.y

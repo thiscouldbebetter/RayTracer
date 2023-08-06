@@ -1,16 +1,17 @@
 
-function Image(name, sizeInPixels, imageData)
+class Image
 {
-	this.name = name;
-	this.sizeInPixels = sizeInPixels;
-	this.imageData = imageData;
-}
+	constructor(name, sizeInPixels, imageData)
+	{
+		this.name = name;
+		this.sizeInPixels = sizeInPixels;
+		this.imageData = imageData;
+	}
 
-{
-	Image.prototype.systemImage = function()
+	systemImage()
 	{
 		if (this._systemImage == null)
-		{		
+		{
 			var canvas = document.createElement("canvas");
 			canvas.width = this.sizeInPixels.x;
 			canvas.height = this.sizeInPixels.y;
@@ -32,9 +33,9 @@ function Image(name, sizeInPixels, imageData)
 
 			this._systemImage = systemImage;
 
-		}		
+		}
 
 		return this._systemImage;
-		
+
 	}
 }

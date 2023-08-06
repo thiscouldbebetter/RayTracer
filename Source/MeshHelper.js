@@ -1,11 +1,7 @@
 
-function MeshHelper()
+class MeshHelper
 {
-	// static class
-}
-
-{
-	MeshHelper.buildCubeUnit = function(name, material)
+	static buildCubeUnit(name, material)
 	{
 		var materialName = material.name;
 
@@ -40,7 +36,7 @@ function MeshHelper()
 		return returnValue;
 	}
 
-	MeshHelper.transformMeshVertexPositions = function(mesh, transform)
+	static transformMeshVertexPositions(mesh, transform)
 	{
 		for (var v = 0; v < mesh.vertices.length; v++)
 		{

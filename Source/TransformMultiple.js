@@ -1,11 +1,12 @@
 
-function TransformMultiple(children)
+class TransformMultiple
 {
-	this.children = children;
-}
+	constructor(children)
+	{
+		this.children = children;
+	}
 
-{
-	TransformMultiple.prototype.transformCoords = function(coordsToTransform)
+	transformCoords(coordsToTransform)
 	{
 		for (var i = 0; i < this.children.length; i++)
 		{

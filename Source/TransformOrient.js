@@ -1,11 +1,12 @@
 
-function TransformOrient(orientation)
+class TransformOrient
 {
-	this.orientation = orientation;
-}
+	constructor(orientation)
+	{
+		this.orientation = orientation;
+	}
 
-{
-	TransformOrient.prototype.transformCoords = function(coordsToTransform)
+	transformCoords(coordsToTransform)
 	{
 		coordsToTransform.overwriteWithXYZ
 		(

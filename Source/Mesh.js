@@ -1,25 +1,28 @@
 
-function Mesh
-(
-	name, 
-	vertices, 
-	faces
-)
+class Mesh
 {
-	this.name = name;
-	this.vertices = vertices;
-	this.faces = faces;
-	this.recalculateDerivedValues();
-}
+	constructor
+	(
+		name, 
+		vertices, 
+		faces
+	)
+	{
+		this.name = name;
+		this.vertices = vertices;
+		this.faces = faces;
+		this.recalculateDerivedValues();
 
-{
+		this.VertexWeightsAtSurfacePos = [];
+	}
+
 	// constants
 
-	Mesh.VerticesInATriangle = 3;
+	static VerticesInATriangle = 3;
 
 	// methods
 
-	Mesh.prototype.clone = function()
+	clone()
 	{
 		var returnValue = new Mesh
 		(
@@ -31,12 +34,12 @@ function Mesh
 		return returnValue;
 	}
 
-	Mesh.prototype.overwriteWith = function(other)
+	overwriteWith(other)
 	{
 		Cloneable.overwriteManyWithOthers(this.vertices, other.vertices);
 	}
 
-	Mesh.prototype.recalculateDerivedValues = function()
+	recalculateDerivedValues()
 	{
 		for (var f = 0; f < this.faces.length; f++)
 		{
@@ -47,7 +50,7 @@ function Mesh
 
 	// collidable
 
-	Mesh.prototype.addCollisionsWithRayToList = function(ray, listToAddTo)
+	addCollisionsWithRayToList(ray, listToAddTo)
 	{	
 		for (var f = 0; f < this.faces.length; f++)
 		{
@@ -59,7 +62,7 @@ function Mesh
 				(
 					ray,
 					this, // mesh
-					face	
+					face
 				);
 
 				if (collision.colliders["Face"] != null)
@@ -73,16 +76,16 @@ function Mesh
 		return listToAddTo;
 	}
 
-	Mesh.prototype.recalculateDerivedValues = function()
+	recalculateDerivedValues()
 	{
 		for (var f = 0; f < this.faces.length; f++)
 		{
 			var face = this.faces[f];
 			face.recalculateDerivedValues(this);
-		}		
+		}
 	}
 
-	Mesh.prototype.surfaceMaterialColorAndNormalForCollision = function
+	surfaceMaterialColorAndNormalForCollision
 	(
 		scene, 
 		collisionClosest,
@@ -98,7 +101,7 @@ function Mesh
 		(
 			this, // mesh
 			surfacePos,
-			Display.VertexWeightsAtSurfacePos
+			this.VertexWeightsAtSurfacePos
 		);
 
 		surfaceMaterial.overwriteWith(face.material(scene));
@@ -117,9 +120,9 @@ function Mesh
 				surfaceMaterial.texture, 
 				vertexWeightsAtSurfacePos
 			);
-		
+
 			if (texelColor != null)
-			{			
+			{
 				surfaceColor.overwriteWith(texelColor);
 			}
 		}
@@ -131,7 +134,7 @@ function Mesh
 				vertexWeightsAtSurfacePos
 			)
 		); 
-			
+
 		return surfaceColor;
 	}
 }

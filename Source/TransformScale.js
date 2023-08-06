@@ -1,11 +1,12 @@
 
-function TransformScale(scaleFactors)
+class TransformScale
 {
-	this.scaleFactors = scaleFactors;
-}
+	constructor(scaleFactors)
+	{
+		this.scaleFactors = scaleFactors;
+	}
 
-{
-	TransformScale.prototype.transformCoords = function(coordsToTransform)
+	transformCoords(coordsToTransform)
 	{
 		coordsToTransform.multiply(this.scaleFactors);
 

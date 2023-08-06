@@ -1,11 +1,7 @@
 
-function NumberHelper()
+class NumberHelper
 {
-	// static class
-}
-
-{
-	NumberHelper.wrapValueToRange = function(valueToWrap, range)
+	static wrapValueToRange(valueToWrap, range)
 	{
 		while (valueToWrap < 0)
 		{

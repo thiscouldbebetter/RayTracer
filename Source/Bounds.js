@@ -1,18 +1,19 @@
 
 // classes
 
-function Bounds(min, max)
+class Bounds
 {
-	this.min = min;
-	this.max = max;
-	this.minAndMax = [ this.min, this.max ];
-	this.size = new Coords();
+	constructor(min, max)
+	{
+		this.min = min;
+		this.max = max;
+		this.minAndMax = [ this.min, this.max ];
+		this.size = new Coords();
 
-	this.recalculateDerivedValues();
-}
+		this.recalculateDerivedValues();
+	}
 
-{	
-	Bounds.prototype.overlapsWith = function(other)
+	overlapsWith(other)
 	{
 		var returnValue = false;
 
@@ -21,7 +22,7 @@ function Bounds(min, max)
 		for (var b = 0; b < bounds.length; b++)
 		{
 			var boundsThis = bounds[b];
-			var boundsOther = bounds[1 - b];			
+			var boundsOther = bounds[1 - b];
 
 			var doAllDimensionsOverlapSoFar = true;
 
@@ -48,7 +49,7 @@ function Bounds(min, max)
 		return returnValue;
 	}
 
-	Bounds.prototype.recalculateDerivedValues = function()
+	recalculateDerivedValues()
 	{
 		this.size.overwriteWith(this.max).subtract(this.min);
 	}

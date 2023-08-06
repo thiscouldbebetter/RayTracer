@@ -1,6 +1,9 @@
 
-function Ray(startPos, direction)
+class Ray
 {
-	this.startPos = startPos;
-	this.direction = direction;
+	constructor(startPos, direction)
+	{
+		this.startPos = startPos;
+		this.direction = direction;
+	}
 }

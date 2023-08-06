@@ -1,8 +1,7 @@
 
-function Cloneable()
-{}
+class Cloneable
 {
-	Cloneable.cloneMany = function(cloneablesToClone)
+	static cloneMany(cloneablesToClone)
 	{
 		var returnValues = [];
 
@@ -17,7 +16,7 @@ function Cloneable()
 		return returnValues;
 	}
 
-	Cloneable.overwriteManyWithOthers = function(cloneablesToOverwrite, cloneablesToOverwriteWith)
+	static overwriteManyWithOthers(cloneablesToOverwrite, cloneablesToOverwriteWith)
 	{
 		for (var i = 0; i < cloneablesToClone.length; i++)
 		{
@@ -25,6 +24,6 @@ function Cloneable()
 			(
 				cloneablesToOverwriteWith[i]
 			);
-		}		
+		}
 	}
 }

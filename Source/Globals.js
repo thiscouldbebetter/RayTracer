@@ -1,13 +1,9 @@
 
-function Globals()
+class Globals
 {
-	// do nothing
-}
+	static Instance = new Globals();
 
-{
-	Globals.Instance = new Globals();
-
-	Globals.prototype.initialize = function(displaySize, scene)
+	initialize(displaySize, scene)
 	{
 		this.display = new Display();
 		this.display.initialize(displaySize);

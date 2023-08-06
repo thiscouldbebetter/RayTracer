@@ -1,12 +1,13 @@
 
-function LightPoint(intensity, pos)
+class LightPoint
 {
-	this.intensity = intensity;
-	this.pos = pos;
-}
+	constructor(intensity, pos)
+	{
+		this.intensity = intensity;
+		this.pos = pos;
+	}
 
-{
-	LightPoint.prototype.intensityForCollisionMaterialNormalAndCamera = function
+	intensityForCollisionMaterialNormalAndCamera
 	(
 		collision, material, normal, camera
 	)
@@ -21,7 +22,8 @@ function LightPoint(intensity, pos)
 			collision.pos
 		);
 
-		var distanceFromLightToObject = displacementFromObjectToLight.magnitude();
+		var distanceFromLightToObject =
+			displacementFromObjectToLight.magnitude();
 		var distanceFromLightToObjectSquared = Math.pow
 		(
 			distanceFromLightToObject, 2
@@ -54,7 +56,7 @@ function LightPoint(intensity, pos)
 				(
 					directionFromObjectToLight
 				);
-	
+
 			var directionFromObjectToViewer = Lighting.Temp3.overwriteWith
 			(
 				camera.pos
@@ -75,7 +77,7 @@ function LightPoint(intensity, pos)
 
 			returnValue = diffuseComponent + specularComponent;
 		}
-	
+
 		return returnValue;
 	}
 }

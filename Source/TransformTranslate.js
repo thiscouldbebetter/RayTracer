@@ -1,11 +1,12 @@
 
-function TransformTranslate(offset)
+class TransformTranslate
 {
-	this.offset = offset;
-}
+	constructor(offset)
+	{
+		this.offset = offset;
+	}
 
-{
-	TransformTranslate.prototype.transformCoords = function(coordsToTransform)
+	transformCoords(coordsToTransform)
 	{
 		coordsToTransform.add(this.offset);
 

@@ -1,20 +1,105 @@
 
-function Color(name, codeChar, componentsRGBA)
+class Color
 {
-	this.name = name;
-	this.codeChar = codeChar;
-	this.componentsRGBA = componentsRGBA;
-}
+	constructor(name, codeChar, componentsRGBA)
+	{
+		this.name = name;
+		this.codeChar = codeChar;
+		this.componentsRGBA = componentsRGBA;
+	}
 
-{
 	// constants
 
-	Color.NumberOfComponentsRGBA = 4;
-	Color.ComponentMax = 255;
+	static NumberOfComponentsRGBA = 4;
+	static ComponentMax = 255;
 
 	// instances
 
-	function Color_Instances()
+	static Instances()
+	{
+		if (Color._instances == null)
+		{
+			Color._instances = new Color_Instances();
+		}
+		return Color._instances;
+	}
+
+	// static methods
+
+	static blank(name)
+	{
+		return new Color(name, "x", [0, 0, 0, 0]);
+	}
+
+	static byCodeChar(codeChar)
+	{
+		return Color.Instances().byCodeChar(codeChar);
+	}
+
+	// instance methods
+
+	clone()
+	{
+		return new Color
+		(
+			this.name, 
+			this.codeChar, 
+			[
+				this.componentsRGBA[0],
+				this.componentsRGBA[1],
+				this.componentsRGBA[2],
+				this.componentsRGBA[3],
+			]
+		);
+	}
+
+	components(red, green, blue, alpha)
+	{
+		this.componentsRGBA[0] = red;
+		this.componentsRGBA[1] = green;
+		this.componentsRGBA[2] = blue;
+		this.componentsRGBA[3] = alpha;
+	}
+
+	multiply(scalar)
+	{
+		for (var i = 0; i < 3; i++)
+		{
+			this.componentsRGBA[i] *= scalar;
+		}
+
+		return this;
+	}
+
+	overwriteWith(other)
+	{
+		this.name = other.name;
+		this.codeChar = other.codeChar;
+		for (var i = 0; i < this.componentsRGBA.length; i++)
+		{
+			this.componentsRGBA[i] = other.componentsRGBA[i];
+		}
+
+		return this;
+	}
+
+	systemColor()
+	{
+		var returnValue = 
+			"rgba(" 
+			+ Math.round(Color.ComponentMax * this.componentsRGBA[0]) + ", " 
+			+ Math.round(Color.ComponentMax * this.componentsRGBA[1]) + ", " 
+			+ Math.round(Color.ComponentMax * this.componentsRGBA[2]) + ", "
+			+ this.componentsRGBA[3] 
+			+ ")";
+
+		return returnValue;	
+	}
+}
+
+class Color_Instances
+{
+	constructor()
 	{
 		this.Transparent = new Color("Transparent", ".", [0, 0, 0, 0]);
 
@@ -57,76 +142,12 @@ function Color(name, codeChar, componentsRGBA)
 			this.YellowDark,
 		];
 
-		this._All.addLookups("codeChar");
-
+		this._AllByCodeChar =
+			new Map(this._All.map(x => [x.codeChar, x]) );
 	}
 
-	Color.Instances = new Color_Instances();
-
-	// static methods
-
-	Color.blank = function(name)
+	byCodeChar(codeChar)
 	{
-		return new Color(name, "x", [0, 0, 0, 0]);
-	}
-
-	// instance methods
-
-	Color.prototype.clone = function()
-	{
-		return new Color
-		(
-			this.name, 
-			this.codeChar, 
-			[
-				this.componentsRGBA[0],
-				this.componentsRGBA[1],
-				this.componentsRGBA[2],
-				this.componentsRGBA[3],
-			]
-		);
-	}
-
-	Color.prototype.components = function(red, green, blue, alpha)
-	{
-		this.componentsRGBA[0] = red;
-		this.componentsRGBA[1] = green;
-		this.componentsRGBA[2] = blue;
-		this.componentsRGBA[3] = alpha;
-	}
-
-	Color.prototype.multiply = function(scalar)
-	{
-		for (var i = 0; i < 3; i++)
-		{
-			this.componentsRGBA[i] *= scalar;
-		}
-
-		return this;
-	}
-
-	Color.prototype.overwriteWith = function(other)
-	{
-		this.name = other.name;
-		this.codeChar = other.codeChar;
-		for (var i = 0; i < this.componentsRGBA.length; i++)
-		{
-			this.componentsRGBA[i] = other.componentsRGBA[i];
-		}
-
-		return this;
-	}
-
-	Color.prototype.systemColor = function()
-	{
-		var returnValue = 
-			"rgba(" 
-			+ Math.round(Color.ComponentMax * this.componentsRGBA[0]) + ", " 
-			+ Math.round(Color.ComponentMax * this.componentsRGBA[1]) + ", " 
-			+ Math.round(Color.ComponentMax * this.componentsRGBA[2]) + ", "
-			+ this.componentsRGBA[3] 
-			+ ")";	
-
-		return returnValue;	
+		return this._AllByCodeChar.get(codeChar);
 	}
 }

@@ -1,22 +1,22 @@
 
-function Display()
-{}
+class Display
 {
-	// static variables
-
-	Display.Collisions = [];
-	Display.DirectionFromEyeToPixel = new Coords();
-	Display.DisplacementFromEyeToPixel = new Coords();
-	Display.Material = new Material("DisplayMaterial", Color.blank("MaterialColor"));
-	Display.PixelColor = Color.blank("PixelColor");
-	Display.SurfaceNormal = new Coords();
-	Display.TexelColor = Color.blank("TexelColor");
-	Display.TexelUV = new Coords();
-	Display.VertexWeightsAtSurfacePos = [];
+	constructor()
+	{
+		this.Collisions = [];
+		this.DirectionFromEyeToPixel = new Coords();
+		this.DisplacementFromEyeToPixel = new Coords();
+		this.Material = new Material("DisplayMaterial", Color.blank("MaterialColor"));
+		this.PixelColor = Color.blank("PixelColor");
+		this.SurfaceNormal = new Coords();
+		this.TexelColor = Color.blank("TexelColor");
+		this.TexelUV = new Coords();
+		this.VertexWeightsAtSurfacePos = [];
+	}
 
 	// instance methods
 
-	Display.prototype.drawScene = function(scene)
+	drawScene(scene)
 	{
 		this.drawScene_Background(scene);
 
@@ -67,7 +67,7 @@ function Display()
 		}
 	}
 
-	Display.prototype.drawScene_Background = function(scene)
+	drawScene_Background(scene)
 	{
 		this.graphics.fillStyle = scene.backgroundColor.systemColor();
 		this.graphics.fillRect
@@ -78,7 +78,7 @@ function Display()
 		);
 	}
 
-	Display.prototype.drawScene_PixelsGetAndDrawForBounds = function(scene, bounds)
+	drawScene_PixelsGetAndDrawForBounds(scene, bounds)
 	{
 		// todo
 		// It's currently impossible to use DOM objects,
@@ -89,7 +89,7 @@ function Display()
 		var returnValues = [];
 		
 		var pixelPos = new Coords();
-		var pixelColor = Display.PixelColor;
+		var pixelColor = this.PixelColor;
 
 		var boundsMin = bounds.min;
 		var boundsMax = bounds.max;
@@ -129,7 +129,7 @@ function Display()
 		}
 	}
 
-	Display.prototype.drawScene_ColorSetFromPixelAtPos = function
+	drawScene_ColorSetFromPixelAtPos
 	(
 		scene,
 		surfaceColor,
@@ -140,14 +140,14 @@ function Display()
 		(
 			scene,
 			pixelPos
-		);	
+		);
 
 		if (collisionClosest != null)
-		{	
+		{
 			var collidable = collisionClosest.colliders["Collidable"];
 
-			var surfaceNormal = Display.SurfaceNormal;
-			var surfaceMaterial = Display.Material;
+			var surfaceNormal = this.SurfaceNormal;
+			var surfaceMaterial = this.Material;
 
 			collidable.surfaceMaterialColorAndNormalForCollision
 			(
@@ -156,7 +156,7 @@ function Display()
 				surfaceMaterial,
 				surfaceColor,
 				surfaceNormal
-			);				
+			);
 
 			var intensityFromLightsAll = 0;
 
@@ -173,10 +173,10 @@ function Display()
 					surfaceNormal,
 					scene.camera
 				);
-	
-				intensityFromLightsAll += intensity;						
+
+				intensityFromLightsAll += intensity;
 			}
-	
+
 			surfaceColor.multiply
 			(
 				intensityFromLightsAll 
@@ -186,7 +186,7 @@ function Display()
 		return collisionClosest;
 	}
 
-	Display.prototype.drawScene_Pixel_FindClosestCollision = function
+	drawScene_Pixel_FindClosestCollision
 	(
 		scene,
 		pixelPos
@@ -195,8 +195,8 @@ function Display()
 		var camera = scene.camera;
 		var cameraOrientation = camera.orientation;
 
-		var displacementFromEyeToPixel = Display.DisplacementFromEyeToPixel;
-		var cameraOrientationTemp = Orientation.Instances.Camera;
+		var displacementFromEyeToPixel = this.DisplacementFromEyeToPixel;
+		var cameraOrientationTemp = Orientation.Instances().Camera;
 		var cameraForward = cameraOrientationTemp.forward;
 		var cameraRight = cameraOrientationTemp.right;
 		var cameraDown = cameraOrientationTemp.down;
@@ -228,9 +228,9 @@ function Display()
 			(
 				pixelPos.y - this.sizeInPixelsHalf.y
 			)
-		);	
+		);
 
-		var directionFromEyeToPixel = Display.DirectionFromEyeToPixel;
+		var directionFromEyeToPixel = this.DirectionFromEyeToPixel;
 		directionFromEyeToPixel.overwriteWith
 		(
 			displacementFromEyeToPixel
@@ -240,9 +240,9 @@ function Display()
 		(
 			camera.pos,
 			directionFromEyeToPixel
-		);		
+		);
 
-		var collisions = Display.Collisions;
+		var collisions = this.Collisions;
 		collisions.length = 0;
 
 		for (var i = 0; i < scene.collidables.length; i++)
@@ -275,15 +275,19 @@ function Display()
 		return collisionClosest;
 	}
 
-	Display.prototype.initialize = function(sizeInPixels)
+	initialize(sizeInPixels)
 	{
 		this.sizeInPixels = sizeInPixels;
 		this.sizeInPixelsHalf = this.sizeInPixels.clone().divideScalar(2);
 
-		var canvas = document.createElement("canvas");
+		var d = document;
+		var canvas = d.createElement("canvas");
 		canvas.width = this.sizeInPixels.x;
 		canvas.height = this.sizeInPixels.y;
-		document.body.appendChild(canvas);
+
+		var divDisplay = d.getElementById("divDisplay");
+		divDisplay.innerHTML = "";
+		divDisplay.appendChild(canvas);
 
 		this.graphics = canvas.getContext("2d");
 	}

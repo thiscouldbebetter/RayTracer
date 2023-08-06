@@ -1,12 +1,13 @@
 
-function LightDirectional(intensity, orientation)
+class LightDirectional
 {
-	this.intensity = intensity;
-	this.orientation = orientation;
-}
+	constructor(intensity, orientation)
+	{
+		this.intensity = intensity;
+		this.orientation = orientation;
+	}
 
-{
-	LightDirectional.prototype.intensityForCollisionMaterialNormalAndCamera = function
+	intensityForCollisionMaterialNormalAndCamera
 	(
 		collision, material, normal, camera
 	)

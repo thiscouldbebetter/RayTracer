@@ -1,15 +1,17 @@
 
-function Vertex(pos)
+class Vertex
 {
-	this.pos = pos;
-}
-{
-	Vertex.prototype.clone = function()
+	constructor(pos)
+	{
+		this.pos = pos;
+	}
+
+	clone()
 	{
 		return new Vertex(this.pos.clone());
 	}
 
-	Vertex.positionsForMany = function(vertices)
+	static positionsForMany(vertices)
 	{
 		var returnValues = [];
 
@@ -23,7 +25,7 @@ function Vertex(pos)
 
 	// strings
 
-	Vertex.prototype.toString = function()
+	toString()
 	{
 		return this.pos.toString();
 	}

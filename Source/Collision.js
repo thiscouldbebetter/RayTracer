@@ -1,15 +1,16 @@
 
-function Collision()
-{	
-	this.pos = new Coords();
-	this.distanceToCollision = null;
-	this.colliders = [];
-}
-
+class Collision
 {
+	constructor()
+	{
+		this.pos = new Coords();
+		this.distanceToCollision = null;
+		this.colliders = [];
+	}
+
 	// instance methods
 
-	Collision.prototype.rayAndFace = function(ray, mesh, face)
+	rayAndFace(ray, mesh, face)
 	{
 		this.rayAndPlane
 		(
@@ -42,7 +43,7 @@ function Collision()
 		return this;
 	}
 
-	Collision.prototype.rayAndPlane = function(ray, plane)
+	rayAndPlane(ray, plane)
 	{
 		this.distanceToCollision = 
 			(
@@ -70,7 +71,7 @@ function Collision()
 		return this;
 	}
 
-	Collision.prototype.rayAndSphere = function(ray, sphere)
+	rayAndSphere(ray, sphere)
 	{
 		var rayDirection = ray.direction;
 		var displacementFromSphereCenterToCamera = ray.startPos.clone().subtract
@@ -139,7 +140,7 @@ function Collision()
 		return this;
 	}
 
-	Collision.prototype.isPosWithinFace = function(mesh, face)
+	isPosWithinFace(mesh, face)
 	{
 		var displacementFromVertex0ToCollision = new Coords();
 
@@ -163,7 +164,7 @@ function Collision()
 			(
 				face.plane.normal
 			);
-					
+
 			// hack?
 			var epsilon = .01;
 

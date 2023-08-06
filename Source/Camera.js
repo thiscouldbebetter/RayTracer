@@ -1,8 +1,11 @@
 
-function Camera(viewSize, focalLength, pos, orientation)
+class Camera
 {
-	this.viewSize = viewSize;
-	this.focalLength = focalLength;
-	this.pos = pos;
-	this.orientation = orientation;
+	constructor(viewSize, focalLength, pos, orientation)
+	{
+		this.viewSize = viewSize;
+		this.focalLength = focalLength;
+		this.pos = pos;
+		this.orientation = orientation;
+	}
 }
