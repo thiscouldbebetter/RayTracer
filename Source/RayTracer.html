@@ -6,50 +6,54 @@
 
 	<p>
 		This program will render a ray-traced scene.
-		If parts of the scene are black, it may indicate difficulty loading
-		texture files when hosted a web server.  In that case,
-		it may be necessary to reload and/or download the program and run it locally.
+		If parts of the scene are black, it may indicate slow loading
+		of texture files, especially when hosted on a web server. 
+		In that case, it may be necessary to reload
+		and/or download the program and run it locally.
 	</p>
 
 	<div id="divDisplay"></div>
 
 </div>
 
-<script type="text/javascript" src="ArrayExtensions.js"></script>
-<script type="text/javascript" src="Bounds.js"></script>
-<script type="text/javascript" src="Camera.js"></script>
-<script type="text/javascript" src="Cloneable.js"></script>
-<script type="text/javascript" src="Collision.js"></script>
-<script type="text/javascript" src="Color.js"></script>
-<script type="text/javascript" src="Constants.js"></script>
-<script type="text/javascript" src="Coords.js"></script>
-<script type="text/javascript" src="Edge.js"></script>
-<script type="text/javascript" src="Face.js"></script>
-<script type="text/javascript" src="Globals.js"></script>
-<script type="text/javascript" src="Image.js"></script>
-<script type="text/javascript" src="ImageHelper.js"></script>
-<script type="text/javascript" src="LightAmbient.js"></script>
-<script type="text/javascript" src="LightDirectional.js"></script>
-<script type="text/javascript" src="LightPoint.js"></script>
-<script type="text/javascript" src="Lighting.js"></script>
-<script type="text/javascript" src="Material.js"></script>
-<script type="text/javascript" src="Mesh.js"></script>
-<script type="text/javascript" src="MeshHelper.js"></script>
-<script type="text/javascript" src="NumberHelper.js"></script>
-<script type="text/javascript" src="Orientation.js"></script>
-<script type="text/javascript" src="Plane.js"></script>
-<script type="text/javascript" src="Polar.js"></script>
-<script type="text/javascript" src="Ray.js"></script>
-<script type="text/javascript" src="Scene.js"></script>
-<script type="text/javascript" src="Sphere.js"></script>
-<script type="text/javascript" src="Texture.js"></script>
-<script type="text/javascript" src="TransformMultiple.js"></script>
-<script type="text/javascript" src="TransformOrient.js"></script>
-<script type="text/javascript" src="TransformScale.js"></script>
-<script type="text/javascript" src="TransformTranslate.js"></script>
-<script type="text/javascript" src="Vertex.js"></script>
+<script type="text/javascript" src="Display/Color.js"></script>
+<script type="text/javascript" src="Display/Display.js"></script>
+<script type="text/javascript" src="Display/Image.js"></script>
+<script type="text/javascript" src="Display/ImageHelper.js"></script>
 
-<script type="text/javascript" src="Display.js"></script>
+<script type="text/javascript" src="Geometry/Bounds.js"></script>
+<script type="text/javascript" src="Geometry/Collision.js"></script>
+<script type="text/javascript" src="Geometry/Coords.js"></script>
+<script type="text/javascript" src="Geometry/Edge.js"></script>
+<script type="text/javascript" src="Geometry/Face.js"></script>
+<script type="text/javascript" src="Geometry/Mesh.js"></script>
+<script type="text/javascript" src="Geometry/MeshHelper.js"></script>
+<script type="text/javascript" src="Geometry/Orientation.js"></script>
+<script type="text/javascript" src="Geometry/Plane.js"></script>
+<script type="text/javascript" src="Geometry/Polar.js"></script>
+<script type="text/javascript" src="Geometry/Ray.js"></script>
+<script type="text/javascript" src="Geometry/Sphere.js"></script>
+<script type="text/javascript" src="Geometry/Vertex.js"></script>
+
+<script type="text/javascript" src="Geometry/Transforms/TransformMultiple.js"></script>
+<script type="text/javascript" src="Geometry/Transforms/TransformOrient.js"></script>
+<script type="text/javascript" src="Geometry/Transforms/TransformScale.js"></script>
+<script type="text/javascript" src="Geometry/Transforms/TransformTranslate.js"></script>
+
+<script type="text/javascript" src="Lighting/LightAmbient.js"></script>
+<script type="text/javascript" src="Lighting/LightDirectional.js"></script>
+<script type="text/javascript" src="Lighting/LightPoint.js"></script>
+<script type="text/javascript" src="Lighting/Lighting.js"></script>
+
+<script type="text/javascript" src="Utility/Cloneable.js"></script>
+<script type="text/javascript" src="Utility/Constants.js"></script>
+<script type="text/javascript" src="Utility/NumberHelper.js"></script>
+
+<script type="text/javascript" src="Camera.js"></script>
+<script type="text/javascript" src="Globals.js"></script>
+<script type="text/javascript" src="Material.js"></script>
+<script type="text/javascript" src="Scene.js"></script>
+<script type="text/javascript" src="Texture.js"></script>
 
 <script type="text/javascript" src="main.js"></script>
 

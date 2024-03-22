@@ -10,6 +10,11 @@ class Scene
 		this.camera = camera;
 		this.collidables = collidables;
 
-		this.materials.addLookups("name");
+		this._materialsByName = new Map(this.materials.map(x => [x.name, x]) );
+	}
+
+	materialByName(name)
+	{
+		return this._materialsByName.get(name);
 	}
 }

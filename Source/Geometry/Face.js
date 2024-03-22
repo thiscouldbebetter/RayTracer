@@ -109,7 +109,7 @@ class Face
 
 	material(scene)
 	{
-		return scene.materials[this.materialName];
+		return scene.materialByName(this.materialName);
 	}
 
 	normalForVertexWeights(vertexWeights)
