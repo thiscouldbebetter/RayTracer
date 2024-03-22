@@ -21,6 +21,7 @@ class Image2 {
             systemImage.height = canvas.height;
             systemImage.onload = (event) => {
                 var imgElement = event.target;
+                imgElement.isLoaded = true;
                 callback(imgElement);
             };
             systemImage.src = imageFromCanvasURL;

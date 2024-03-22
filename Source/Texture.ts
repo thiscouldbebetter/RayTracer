@@ -17,14 +17,9 @@ class Texture
 
 		var canvas = document.createElement("canvas");
 		this.graphics = canvas.getContext("2d", { willReadFrequently: true} );
-		var g = this.graphics;
-		this.image.systemImageSendToCallback
-		(
-			(systemImage: any) => g.drawImage(systemImage, 0, 0)
-		);
 	}
 
-	colorSetFromUV(texelColor: Color, texelUV: Coords): void
+	colorSetFromUV(texelColor: Color, texelUV: Coords): Color
 	{
 		var imageSizeInPixels = this.image.sizeInPixels;
 
@@ -41,6 +36,22 @@ class Texture
 			texelColorComponents[1] / Color.ComponentMax, 
 			texelColorComponents[2] / Color.ComponentMax, 
 			1 // alpha
+		);
+
+		return texelColor;
+	}
+
+	loadAndSendToCallback(callback: any): void
+	{
+		var texture = this;
+		var g = this.graphics;
+		this.image.systemImageSendToCallback
+		(
+			(systemImage: any) =>
+			{
+				g.drawImage(systemImage, 0, 0);
+				callback(texture);
+			}
 		);
 	}
 }

@@ -4,7 +4,7 @@ class Globals {
         this.display = new Display();
         this.display.initialize(displaySize);
         this.scene = scene;
-        this.display.drawScene(this.scene);
+        this.scene.loadAndSendToCallback((sceneLoaded) => this.display.drawScene(sceneLoaded));
     }
 }
 Globals.Instance = new Globals();

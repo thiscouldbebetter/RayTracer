@@ -31,6 +31,27 @@ class Scene
 			new Map(this.materials.map(x => [x.name, x]) );
 	}
 
+	loadAndSendToCallback(callback: any): void
+	{
+		var materialsCount = this.materials.length;
+		var materialsLoadedSoFarCount = 0;
+		var scene = this;
+		this.materials.forEach
+		(
+			m => m.loadAndSendToCallback
+			(
+				(materialLoaded: Material) =>
+				{
+					materialsLoadedSoFarCount++;
+					if (materialsLoadedSoFarCount >= materialsCount)
+					{
+						callback(scene);
+					}
+				}
+			)
+		);
+	}
+
 	materialByName(name: string): Material
 	{
 		return this._materialsByName.get(name);

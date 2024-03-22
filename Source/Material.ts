@@ -48,6 +48,22 @@ class Material
 
 	// methods
 
+	loadAndSendToCallback(callback: any): void
+	{
+		var material = this;
+		if (this.texture == null)
+		{
+			callback(this);
+		}
+		else
+		{
+			this.texture.loadAndSendToCallback
+			(
+				(textureLoaded: Texture) => callback(material)
+			);
+		}
+	}
+
 	// cloneable
 
 	clone(): Material

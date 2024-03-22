@@ -13,6 +13,10 @@ class Globals
 
 		this.scene = scene;
 
-		this.display.drawScene(this.scene);
+		this.scene.loadAndSendToCallback
+		(
+			(sceneLoaded: Scene) => this.display.drawScene(sceneLoaded)
+		)
+
 	}
 }

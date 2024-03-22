@@ -19,6 +19,15 @@ class Material {
         return Material._instances;
     }
     // methods
+    loadAndSendToCallback(callback) {
+        var material = this;
+        if (this.texture == null) {
+            callback(this);
+        }
+        else {
+            this.texture.loadAndSendToCallback((textureLoaded) => callback(material));
+        }
+    }
     // cloneable
     clone() {
         return new Material(this.name, this.color.clone(), this.ambient, this.diffuse, this.specular, this.shininess, this.texture);

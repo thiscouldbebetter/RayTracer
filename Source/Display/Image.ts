@@ -43,6 +43,7 @@ class Image2
 			systemImage.onload = (event: any) =>
 			{
 				var imgElement = event.target;
+				imgElement.isLoaded = true;
 				callback(imgElement);
 			}
 			systemImage.src = imageFromCanvasURL;
