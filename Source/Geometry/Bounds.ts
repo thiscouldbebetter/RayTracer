@@ -3,17 +3,23 @@
 
 class Bounds
 {
-	constructor(min, max)
+	min: Coords;
+	max: Coords;
+
+	minAndMax: Coords[];
+	size: Coords;
+
+	constructor(min: Coords, max: Coords)
 	{
 		this.min = min;
 		this.max = max;
 		this.minAndMax = [ this.min, this.max ];
-		this.size = new Coords();
+		this.size = Coords.create();
 
 		this.recalculateDerivedValues();
 	}
 
-	overlapsWith(other)
+	overlapsWith(other: Bounds): boolean
 	{
 		var returnValue = false;
 
@@ -39,7 +45,7 @@ class Bounds
 				}
 			}
 
-			if (doAllDimensionsOverlapSoFar == true)
+			if (doAllDimensionsOverlapSoFar)
 			{
 				returnValue = true;
 				break;
@@ -49,7 +55,7 @@ class Bounds
 		return returnValue;
 	}
 
-	recalculateDerivedValues()
+	recalculateDerivedValues(): void
 	{
 		this.size.overwriteWith(this.max).subtract(this.min);
 	}

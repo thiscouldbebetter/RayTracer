@@ -1,19 +1,34 @@
 
-function Coords(x, y, z)
+class Coords
 {
-	this.x = x;
-	this.y = y;
-	this.z = z;
-}
+	x: number;
+	y: number;
+	z: number;
 
-{
+	constructor(x: number, y: number, z: number)
+	{
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+
+	static create(): Coords
+	{
+		return new Coords(0, 0, 0);
+	}
+
+	static fromXY(x: number, y: number): Coords
+	{
+		return new Coords(x, y, 0);
+	}
+
 	// constants
 
-	Coords.NumberOfDimensions = 3;
+	static NumberOfDimensions: number = 3;
 
 	// instance methods
 
-	Coords.prototype.add = function(other)
+	add(other: Coords): Coords
 	{
 		this.x += other.x;
 		this.y += other.y;
@@ -22,12 +37,12 @@ function Coords(x, y, z)
 		return this;
 	}
 
-	Coords.prototype.clone = function()
+	clone(): Coords
 	{
 		return new Coords(this.x, this.y, this.z);
 	}
 
-	Coords.prototype.crossProduct = function(other)
+	crossProduct(other: Coords): Coords
 	{
 		this.overwriteWithXYZ
 		(
@@ -39,12 +54,17 @@ function Coords(x, y, z)
 		return this;
 	}
 
-	Coords.prototype.dimensionValues = function()
+	dimension(dimensionIndex: number): number
+	{
+		return (dimensionIndex == 0 ? this.x : dimensionIndex == 1 ? this.y : this.z);
+	}
+
+	dimensionValues(): number[]
 	{
 		return [ this.x, this.y, this.z ];
 	}
 
-	Coords.prototype.divide = function(other)
+	divide(other: Coords): Coords
 	{
 		this.x /= other.x;
 		this.y /= other.y;
@@ -53,7 +73,7 @@ function Coords(x, y, z)
 		return this;
 	}
 
-	Coords.prototype.divideScalar = function(scalar)
+	divideScalar(scalar: number): Coords
 	{
 		this.x /= scalar;
 		this.y /= scalar;
@@ -62,7 +82,7 @@ function Coords(x, y, z)
 		return this;
 	}
 
-	Coords.prototype.dotProduct = function(other)
+	dotProduct(other: Coords): number
 	{
 		var returnValue =
 			this.x * other.x
@@ -72,7 +92,7 @@ function Coords(x, y, z)
 		return returnValue;
 	}
 
-	Coords.prototype.magnitude = function()
+	magnitude(): number
 	{
 		var returnValue = Math.sqrt
 		(
@@ -84,7 +104,7 @@ function Coords(x, y, z)
 		return returnValue;
 	}
 
-	Coords.prototype.multiply = function(other)
+	multiply(other: Coords): Coords
 	{
 		this.x *= other.x;
 		this.y *= other.y;
@@ -93,7 +113,7 @@ function Coords(x, y, z)
 		return this;
 	}
 
-	Coords.prototype.multiplyScalar = function(scalar)
+	multiplyScalar(scalar: number): Coords
 	{
 		this.x *= scalar;
 		this.y *= scalar;
@@ -102,12 +122,12 @@ function Coords(x, y, z)
 		return this;
 	}
 
-	Coords.prototype.normalize = function()
+	normalize(): Coords
 	{
-		return this.divideScalar(this.magnitude());
+		return this.divideScalar(this.magnitude() );
 	}
 
-	Coords.prototype.overwriteWith = function(other)
+	overwriteWith(other: Coords): Coords
 	{
 		this.x = other.x;
 		this.y = other.y;
@@ -116,7 +136,7 @@ function Coords(x, y, z)
 		return this;
 	}
 
-	Coords.prototype.overwriteWithXYZ = function(x, y, z)
+	overwriteWithXYZ(x: number, y: number, z: number): Coords
 	{
 		this.x = x;
 		this.y = y;
@@ -125,7 +145,7 @@ function Coords(x, y, z)
 		return this;
 	}
 
-	Coords.prototype.subtract = function(other)
+	subtract(other: Coords): Coords
 	{
 		this.x -= other.x;
 		this.y -= other.y;
@@ -134,14 +154,15 @@ function Coords(x, y, z)
 		return this;
 	}
 
-	Coords.prototype.toString = function()
+	toString(): string
 	{
-		var returnValue = "(" + this.x + "," + this.y + "," + this.z + ")";
+		var returnValue =
+			"(" + this.x + "," + this.y + "," + this.z + ")";
 
 		return returnValue;
 	}
 
-	Coords.prototype.trimToRange = function(range)
+	trimToRange(range: Coords): Coords
 	{
 		if (this.x < 0)
 		{

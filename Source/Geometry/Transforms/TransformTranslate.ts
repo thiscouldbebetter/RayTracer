@@ -1,12 +1,14 @@
 
-class TransformTranslate
+class TransformTranslate implements Transform
 {
-	constructor(offset)
+	offset: Coords;
+
+	constructor(offset: Coords)
 	{
 		this.offset = offset;
 	}
 
-	transformCoords(coordsToTransform)
+	transformCoords(coordsToTransform: Coords): Coords
 	{
 		coordsToTransform.add(this.offset);
 

@@ -1,9 +1,26 @@
 
 class Face
 {
+	materialName: string;
+	vertexIndices: number[];
+	textureUVsForVertices: Coords[];
+	normalsForVertices: Coords[];
+
+	edges: Edge[];
+	plane: Plane;
+	triangles: Face[];
+
+	DisplacementFromVertexNextToPos: Coords;
+	TexelColor: Color;
+	VertexValueInterpolated: Coords;
+	VertexValueWeighted: Coords;
+
 	constructor
 	(
-		materialName, vertexIndices, textureUVsForVertices, normalsForVertices
+		materialName: string,
+		vertexIndices: number[],
+		textureUVsForVertices: Coords[],
+		normalsForVertices: Coords[]
 	)
 	{
 		this.materialName = materialName;
@@ -11,13 +28,13 @@ class Face
 		this.textureUVsForVertices = textureUVsForVertices;
 		this.normalsForVertices = normalsForVertices;
 
-		this.DisplacementFromVertexNextToPos = new Coords();
-		this.TexelColor = Color.blank();
-		this.VertexValueInterpolated = new Coords();
-		this.VertexValueWeighted = new Coords();
+		this.DisplacementFromVertexNextToPos = Coords.create();
+		this.TexelColor = Color.blank("TexelColor");
+		this.VertexValueInterpolated = Coords.create();
+		this.VertexValueWeighted = Coords.create();
 	}
 
-	buildTriangles(mesh)
+	buildTriangles(mesh: Mesh): Face[]
 	{
 		// instance variables
 
@@ -38,9 +55,16 @@ class Face
 			var errorMessage = "A Face may only have 3 or 4 vertices.";
 			throw errorMessage;
 		}
+
+		return this.triangles;
 	}
 
-	buildTriangle(vertexIndexIndex0, vertexIndexIndex1, vertexIndexIndex2)
+	buildTriangle
+	(
+		vertexIndexIndex0: number,
+		vertexIndexIndex1: number,
+		vertexIndexIndex2: number
+	): Face
 	{
 		var vertexIndex0 = this.vertexIndices[vertexIndexIndex0];
 		var vertexIndex1 = this.vertexIndices[vertexIndexIndex1];
@@ -79,7 +103,10 @@ class Face
 		return returnValue;
 	}
 
-	interpolateVertexValuesWeighted(vertexValues, weights)
+	interpolateVertexValuesForWeights
+	(
+		vertexValues: Coords[], weights: number[]
+	): Coords
 	{
 		var valueInterpolated = this.VertexValueInterpolated.overwriteWith
 		(
@@ -107,12 +134,12 @@ class Face
 		return valueInterpolated;
 	}
 
-	material(scene)
+	material(scene: Scene): Material
 	{
 		return scene.materialByName(this.materialName);
 	}
 
-	normalForVertexWeights(vertexWeights)
+	normalForVertexWeights(vertexWeights: number[]): Coords
 	{
 		var returnValue;
 
@@ -132,13 +159,13 @@ class Face
 		return returnValue;	
 	}
 
-	recalculateDerivedValues(mesh)
+	recalculateDerivedValues(mesh: Mesh): Face
 	{
 		if (this.normalsForVertices != null)
 		{
 			for (var i = 0; i < this.normalsForVertices.length; i++)
 			{
-				var normalForVertex = normalsForVertices[i];
+				var normalForVertex = this.normalsForVertices[i];
 				normalForVertex.normalize();
 			}
 		}
@@ -159,7 +186,7 @@ class Face
 
 
 		if (this.triangles == null)
-		{	
+		{
 			this.buildTriangles(mesh);
 		}
 		else
@@ -203,9 +230,9 @@ class Face
 		return this;
 	}
 
-	texelColorForVertexWeights(texture, vertexWeights)
+	texelColorForVertexWeights(texture: Texture, vertexWeights: number[]): Color
 	{
-		var texelUV = this.interpolateVertexValuesWeighted
+		var texelUV = this.interpolateVertexValuesForWeights
 		(
 			this.textureUVsForVertices,
 			vertexWeights
@@ -218,7 +245,12 @@ class Face
 		return texelColor;
 	}
 
-	vertexWeightsAtSurfacePosAddToList(mesh, surfacePos, weights)
+	vertexWeightsAtSurfacePosAddToList
+	(
+		mesh: Mesh,
+		surfacePos: Coords,
+		weights: number[]
+	)
 	{
 		var vertices = this.vertices(mesh);
 		
@@ -234,9 +266,13 @@ class Face
 
 		for (var i = 0; i < vertices.length; i++)
 		{
-			var iNext = NumberHelper.wrapValueToRange(i + 1, vertices.length);
+			var iNext = NumberHelper.wrapValueToRange
+			(
+				i + 1,
+				vertices.length
+			);
 
-			var vertex = vertices[i];
+			// var vertex = vertices[i];
 			var vertexNext = vertices[iNext];
 
 			displacementFromVertexNextToPos.overwriteWith
@@ -249,10 +285,11 @@ class Face
 
 			var displacementOfEdgeNext = edges[iNext].displacement;
 
-			var areaOfTriangleFormedByEdgeNextAndPos = displacementOfEdgeNext.clone().crossProduct
-			(
-				displacementFromVertexNextToPos
-			).magnitude() / 2;
+			var areaOfTriangleFormedByEdgeNextAndPos =
+				displacementOfEdgeNext.clone().crossProduct
+				(
+					displacementFromVertexNextToPos
+				).magnitude() / 2;
 
 			var weightOfVertex = 
 				areaOfTriangleFormedByEdgeNextAndPos
@@ -264,16 +301,16 @@ class Face
 		return weights;
 	}
 
-	vertex(mesh, vertexIndexIndex)
+	vertex(mesh: Mesh, vertexIndexIndex: number): Vertex
 	{
 		var vertexIndex = this.vertexIndices[vertexIndexIndex];
 		var vertex = mesh.vertices[vertexIndex];
 		return vertex;
 	}
 
-	vertices(mesh)
+	vertices(mesh: Mesh): Vertex[]
 	{
-		var returnValues = [];
+		var returnValues = new Array<Vertex>();
 
 		for (var i = 0; i < this.vertexIndices.length; i++)
 		{
@@ -287,7 +324,7 @@ class Face
 
 	// cloneable
 
-	clone()
+	clone(): Face
 	{
 		// todo - Deep clone.
 		return new Face
@@ -301,7 +338,7 @@ class Face
 
 	// strings
 
-	toString(mesh)
+	toString(mesh: Mesh): string
 	{
 		var returnValue = this.vertices(mesh).join("->");
 		return returnValue;

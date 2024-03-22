@@ -1,14 +1,19 @@
 
 class Plane
 {
-	constructor(positionsOnPlane)
+	positionsOnPlane: Coords[];
+
+	normal: Coords;
+	distanceFromOrigin: number;
+
+	constructor(positionsOnPlane: Coords[])
 	{
 		this.positionsOnPlane = positionsOnPlane;
 		this.normal = new Coords(0, 0, 0);
 		this.recalculateDerivedValues();
 	}
 
-	recalculateDerivedValues()
+	recalculateDerivedValues(): void
 	{
 		var pos0 = this.positionsOnPlane[0];
 		var displacementFromPos0To1 =

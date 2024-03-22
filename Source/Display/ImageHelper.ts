@@ -5,23 +5,25 @@ class ImageHelper
 
 	static buildImageFromStrings
 	(
-		name, 
-		scaleMultiplier, 
-		stringsForPixels
-	)
+		name: string, 
+		scaleMultiplier: number, 
+		stringsForPixels: string[]
+	): Image2
 	{
-		var sizeInPixels = new Coords
+		var sizeInPixels = Coords.fromXY
 		(
-			stringsForPixels[0].length, stringsForPixels.length
+			stringsForPixels[0].length,
+			stringsForPixels.length
 		);
 
-		var canvas = document.createElement("canvas");
+		var d = document;
+		var canvas = d.createElement("canvas");
 		canvas.width = sizeInPixels.x * scaleMultiplier;
 		canvas.height = sizeInPixels.y * scaleMultiplier;
 
 		var graphics = canvas.getContext("2d");
 
-		var pixelPos = new Coords(0, 0);
+		var pixelPos = Coords.create();
 		var colorForPixel = Color.Instances().Transparent;
 
 		for (var y = 0; y < sizeInPixels.y; y++)
@@ -50,7 +52,7 @@ class ImageHelper
 			0, 0, sizeInPixels.x, sizeInPixels.y
 		);
 
-		var returnValue = new Image
+		var returnValue = new Image2
 		(
 			name, sizeInPixels, imageData
 		);

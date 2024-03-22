@@ -1,7 +1,10 @@
 
 class LightPoint
 {
-	constructor(intensity, pos)
+	intensity: number;
+	pos: Coords;
+
+	constructor(intensity: number, pos: Coords)
 	{
 		this.intensity = intensity;
 		this.pos = pos;
@@ -9,8 +12,11 @@ class LightPoint
 
 	intensityForCollisionMaterialNormalAndCamera
 	(
-		collision, material, normal, camera
-	)
+		collision: Collision,
+		material: Material,
+		normal: Coords,
+		camera: Camera
+	): number
 	{
 		var displacementFromObjectToLight = Lighting.Temp;
 
@@ -31,12 +37,14 @@ class LightPoint
 
 		var surfaceNormal = Lighting.Temp2.overwriteWith(normal);
 
-		var directionFromObjectToLight = displacementFromObjectToLight.normalize();
+		var directionFromObjectToLight =
+			displacementFromObjectToLight.normalize();
 
-		var directionFromObjectToLightDotSurfaceNormal = directionFromObjectToLight.dotProduct
-		(
-			surfaceNormal
-		);
+		var directionFromObjectToLightDotSurfaceNormal =
+			directionFromObjectToLight.dotProduct
+			(
+				surfaceNormal
+			);
 
 		var returnValue = 0;
 

@@ -1,16 +1,32 @@
 
-class Image
+class Image2
 {
-	constructor(name, sizeInPixels, imageData)
+	name: string;
+	sizeInPixels: Coords;
+	imageData: any;
+
+	_systemImage: any;
+	_systemImageIsLoaded: boolean;
+
+	constructor
+	(
+		name: string,
+		sizeInPixels: Coords,
+		imageData: any
+	)
 	{
 		this.name = name;
 		this.sizeInPixels = sizeInPixels;
 		this.imageData = imageData;
 	}
 
-	systemImage()
+	systemImageSendToCallback(callback: any): void
 	{
-		if (this._systemImage == null)
+		if (this._systemImage != null)
+		{
+			callback(this._systemImage);
+		}
+		else
 		{
 			var canvas = document.createElement("canvas");
 			canvas.width = this.sizeInPixels.x;
@@ -24,18 +40,14 @@ class Image
 			var systemImage = document.createElement("img");
 			systemImage.width = canvas.width;
 			systemImage.height = canvas.height;
-			systemImage.isLoaded = false;
-			systemImage.onload = function(event) 
-			{ 
-				event.target.isLoaded = true; 
+			systemImage.onload = (event: any) =>
+			{
+				var imgElement = event.target;
+				callback(imgElement);
 			}
 			systemImage.src = imageFromCanvasURL;
 
 			this._systemImage = systemImage;
-
 		}
-
-		return this._systemImage;
-
 	}
 }

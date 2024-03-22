@@ -1,7 +1,7 @@
 
 class Cloneable
 {
-	static cloneMany(cloneablesToClone)
+	static cloneMany(cloneablesToClone: any[]): any[]
 	{
 		var returnValues = [];
 
@@ -16,14 +16,20 @@ class Cloneable
 		return returnValues;
 	}
 
-	static overwriteManyWithOthers(cloneablesToOverwrite, cloneablesToOverwriteWith)
+	static overwriteManyWithOthers
+	(
+		cloneablesToOverwrite: any[],
+		cloneablesToOverwriteWith: any[]
+	): any[]
 	{
-		for (var i = 0; i < cloneablesToClone.length; i++)
+		for (var i = 0; i < cloneablesToOverwrite.length; i++)
 		{
 			cloneablesToOverwrite[i].overwriteWith
 			(
 				cloneablesToOverwriteWith[i]
 			);
 		}
+
+		return cloneablesToOverwriteWith;
 	}
 }

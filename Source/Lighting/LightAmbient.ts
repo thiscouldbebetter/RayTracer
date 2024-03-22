@@ -1,12 +1,19 @@
 
 class LightAmbient
 {
-	constructor(intensity)
+	intensity: number;
+
+	constructor(intensity: number)
 	{
 		this.intensity = intensity;
 	}
 
-	intensityForCollisionNormalAndCamera(collision, normal, camera)
+	intensityForCollisionNormalAndCamera
+	(
+		collision: Collision,
+		normal: Coords,
+		camera: Camera
+	)
 	{
 		return this.intensity;
 	}

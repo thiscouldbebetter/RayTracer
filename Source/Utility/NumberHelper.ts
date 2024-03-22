@@ -1,7 +1,7 @@
 
 class NumberHelper
 {
-	static wrapValueToRange(valueToWrap, range)
+	static wrapValueToRange(valueToWrap: number, range: number): number
 	{
 		while (valueToWrap < 0)
 		{

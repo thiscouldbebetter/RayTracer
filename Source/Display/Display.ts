@@ -1,38 +1,55 @@
 
 class Display
 {
+	sizeInPixels: Coords;
+	sizeInPixelsHalf: Coords;
+
+	graphics: any;
+
+	Collisions: Collision[];
+	DirectionFromEyeToPixel: Coords;
+	DisplacementFromEyeToPixel: Coords;
+	Material: Material;
+	PixelColor: Color;
+	SurfaceNormal: Coords;
+	TexelColor: Color;
+	TexelUV: Coords;
+	VertexWeightsAtSurfacePos: any[];
+
 	constructor()
 	{
 		this.Collisions = [];
-		this.DirectionFromEyeToPixel = new Coords();
-		this.DisplacementFromEyeToPixel = new Coords();
-		this.Material = new Material("DisplayMaterial", Color.blank("MaterialColor"));
+		this.DirectionFromEyeToPixel = Coords.create();
+		this.DisplacementFromEyeToPixel = Coords.create();
+		this.Material = Material.fromNameAndColor
+		(
+			"DisplayMaterial",
+			Color.blank("MaterialColor")
+		);
 		this.PixelColor = Color.blank("PixelColor");
-		this.SurfaceNormal = new Coords();
+		this.SurfaceNormal = Coords.create();
 		this.TexelColor = Color.blank("TexelColor");
-		this.TexelUV = new Coords();
+		this.TexelUV = Coords.create();
 		this.VertexWeightsAtSurfacePos = [];
 	}
 
 	// instance methods
 
-	drawScene(scene)
+	drawScene(scene: Scene): void
 	{
 		this.drawScene_Background(scene);
 
-		var boundsForTiles = [];
-
-		var sizeInTiles = new Coords(1, 1);
+		var sizeInTiles = Coords.fromXY(1, 1);
 		var tileSizeInPixels = this.sizeInPixels.clone().divide
 		(
 			sizeInTiles
 		);
 
-		var tilePosInTiles = new Coords();
+		var tilePosInTiles = Coords.create();
 	 	var tileBounds = new Bounds
 		(
-			new Coords(),
-			new Coords()
+			Coords.create(),
+			Coords.create()
 		);
 		
 		for (var y = 0; y < sizeInTiles.y; y++)
@@ -67,7 +84,7 @@ class Display
 		}
 	}
 
-	drawScene_Background(scene)
+	drawScene_Background(scene: Scene): void
 	{
 		this.graphics.fillStyle = scene.backgroundColor.systemColor();
 		this.graphics.fillRect
@@ -78,7 +95,7 @@ class Display
 		);
 	}
 
-	drawScene_PixelsGetAndDrawForBounds(scene, bounds)
+	drawScene_PixelsGetAndDrawForBounds(scene: Scene, bounds: Bounds): void
 	{
 		// todo
 		// It's currently impossible to use DOM objects,
@@ -86,9 +103,7 @@ class Display
 		// within a web worker. Hopefully this will 
 		// change in the future.
 
-		var returnValues = [];
-		
-		var pixelPos = new Coords();
+		var pixelPos = Coords.create();
 		var pixelColor = this.PixelColor;
 
 		var boundsMin = bounds.min;
@@ -131,10 +146,10 @@ class Display
 
 	drawScene_ColorSetFromPixelAtPos
 	(
-		scene,
-		surfaceColor,
-		pixelPos
-	)
+		scene: Scene,
+		surfaceColor: Color,
+		pixelPos: Coords
+	): Collision
 	{
 		var collisionClosest = this.drawScene_Pixel_FindClosestCollision
 		(
@@ -144,7 +159,8 @@ class Display
 
 		if (collisionClosest != null)
 		{
-			var collidable = collisionClosest.colliders["Collidable"];
+			var collidable =
+				collisionClosest.colliderByName("Collidable");
 
 			var surfaceNormal = this.SurfaceNormal;
 			var surfaceMaterial = this.Material;
@@ -181,15 +197,15 @@ class Display
 			(
 				intensityFromLightsAll 
 			);
-		}	
+		}
 
 		return collisionClosest;
 	}
 
 	drawScene_Pixel_FindClosestCollision
 	(
-		scene,
-		pixelPos
+		scene: Scene,
+		pixelPos: Coords
 	)
 	{
 		var camera = scene.camera;
@@ -275,10 +291,11 @@ class Display
 		return collisionClosest;
 	}
 
-	initialize(sizeInPixels)
+	initialize(sizeInPixels: Coords): void
 	{
 		this.sizeInPixels = sizeInPixels;
-		this.sizeInPixelsHalf = this.sizeInPixels.clone().divideScalar(2);
+		this.sizeInPixelsHalf =
+			this.sizeInPixels.clone().divideScalar(2);
 
 		var d = document;
 		var canvas = d.createElement("canvas");

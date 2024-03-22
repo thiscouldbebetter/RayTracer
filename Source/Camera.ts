@@ -1,7 +1,18 @@
 
 class Camera
 {
-	constructor(viewSize, focalLength, pos, orientation)
+	viewSize: Coords;
+	focalLength: number;
+	pos: Coords;
+	orientation: Orientation;
+
+	constructor
+	(
+		viewSize: Coords,
+		focalLength: number,
+		pos: Coords,
+		orientation: Orientation
+	)
 	{
 		this.viewSize = viewSize;
 		this.focalLength = focalLength;

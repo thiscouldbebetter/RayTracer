@@ -1,7 +1,16 @@
 
 class Color
 {
-	constructor(name, codeChar, componentsRGBA)
+	name: string;
+	codeChar: string;
+	componentsRGBA: number[];
+
+	constructor
+	(
+		name: string,
+		codeChar: string,
+		componentsRGBA: number[]
+	)
 	{
 		this.name = name;
 		this.codeChar = codeChar;
@@ -10,12 +19,13 @@ class Color
 
 	// constants
 
-	static NumberOfComponentsRGBA = 4;
-	static ComponentMax = 255;
+	static NumberOfComponentsRGBA: number = 4;
+	static ComponentMax: number = 255;
 
 	// instances
 
-	static Instances()
+	static _instances: Color_Instances;
+	static Instances(): Color_Instances
 	{
 		if (Color._instances == null)
 		{
@@ -26,19 +36,17 @@ class Color
 
 	// static methods
 
-	static blank(name)
+	static blank(name: string): Color
 	{
 		return new Color(name, "x", [0, 0, 0, 0]);
 	}
 
-	static byCodeChar(codeChar)
+	static byCodeChar(codeChar: string): Color
 	{
 		return Color.Instances().byCodeChar(codeChar);
 	}
 
-	// instance methods
-
-	clone()
+	clone(): Color
 	{
 		return new Color
 		(
@@ -53,7 +61,7 @@ class Color
 		);
 	}
 
-	components(red, green, blue, alpha)
+	components(red: number, green: number, blue: number, alpha: number): void
 	{
 		this.componentsRGBA[0] = red;
 		this.componentsRGBA[1] = green;
@@ -61,7 +69,7 @@ class Color
 		this.componentsRGBA[3] = alpha;
 	}
 
-	multiply(scalar)
+	multiply(scalar: number): Color
 	{
 		for (var i = 0; i < 3; i++)
 		{
@@ -71,7 +79,7 @@ class Color
 		return this;
 	}
 
-	overwriteWith(other)
+	overwriteWith(other: Color): Color
 	{
 		this.name = other.name;
 		this.codeChar = other.codeChar;
@@ -83,7 +91,7 @@ class Color
 		return this;
 	}
 
-	systemColor()
+	systemColor(): string
 	{
 		var returnValue = 
 			"rgba(" 
@@ -99,6 +107,28 @@ class Color
 
 class Color_Instances
 {
+	Transparent: Color;
+
+	Blue: Color;
+	BlueDark: Color;
+	Black: Color;
+	Cyan: Color;
+	Gray: Color;
+	Green: Color;
+	GreenDark: Color;
+	Orange: Color;
+	OrangeDark: Color;
+	Red: Color;
+	RedDark: Color;
+	Violet: Color;
+	VioletDark: Color;
+	White: Color;
+	Yellow: Color;
+	YellowDark: Color;
+
+	_All: Color[];
+	_AllByCodeChar: Map<string, Color>;
+
 	constructor()
 	{
 		this.Transparent = new Color("Transparent", ".", [0, 0, 0, 0]);
@@ -146,7 +176,7 @@ class Color_Instances
 			new Map(this._All.map(x => [x.codeChar, x]) );
 	}
 
-	byCodeChar(codeChar)
+	byCodeChar(codeChar: string): Color
 	{
 		return this._AllByCodeChar.get(codeChar);
 	}

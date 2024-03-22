@@ -1,17 +1,19 @@
 
 class Vertex
 {
-	constructor(pos)
+	pos: Coords;
+
+	constructor(pos: Coords)
 	{
 		this.pos = pos;
 	}
 
-	clone()
+	clone(): Vertex
 	{
 		return new Vertex(this.pos.clone());
 	}
 
-	static positionsForMany(vertices)
+	static positionsForMany(vertices: Vertex[]): Coords[]
 	{
 		var returnValues = [];
 
@@ -25,7 +27,7 @@ class Vertex
 
 	// strings
 
-	toString()
+	toString(): string
 	{
 		return this.pos.toString();
 	}

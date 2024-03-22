@@ -1,7 +1,10 @@
 
 class LightDirectional
 {
-	constructor(intensity, orientation)
+	intensity: number;
+	orientation: Orientation;
+
+	constructor(intensity: number, orientation: Orientation)
 	{
 		this.intensity = intensity;
 		this.orientation = orientation;
@@ -9,8 +12,11 @@ class LightDirectional
 
 	intensityForCollisionMaterialNormalAndCamera
 	(
-		collision, material, normal, camera
-	)
+		collision: Collision,
+		material: Material,
+		normal: Coords,
+		camera: Camera
+	): number
 	{
 		return 0; // todo
 	}

@@ -1,16 +1,34 @@
 
 class Collision
 {
+	pos: Coords;
+	distanceToCollision: number;
+	colliders: any[];
+
+	_collidersByName: Map<string, any>;
+
 	constructor()
 	{
-		this.pos = new Coords();
+		this.pos = Coords.create();
 		this.distanceToCollision = null;
 		this.colliders = [];
+
+		this._collidersByName = new Map<string, any>();
 	}
 
 	// instance methods
 
-	rayAndFace(ray, mesh, face)
+	colliderByName(name: string): any
+	{
+		return this._collidersByName.get(name);
+	}
+
+	colliderByNameSet(name: string, value: any): void
+	{
+		this._collidersByName.set(name, value);
+	}
+
+	rayAndFace(ray: Ray, mesh: Mesh, face: Face): Collision
 	{
 		this.rayAndPlane
 		(
@@ -18,22 +36,22 @@ class Collision
 			face.plane
 		);
 
-		if (this.colliders["Plane"] != null)
+		if (this.colliderByName(Plane.name) != null)
 		{
 			if (this.isPosWithinFace(mesh, face) == false)
 			{
-				this.colliders["Face"] = null;
+				this.colliderByNameSet(Face.name, null);
 			}
 			else
 			{
-				this.colliders["Face"] = face;
-	
+				this.colliderByNameSet(Face.name, face);
+
 				for (var t = 0; t < face.triangles.length; t++)
 				{
 					var triangle = face.triangles[t];
-					if (this.isPosWithinFace(mesh, triangle) == true)
+					if (this.isPosWithinFace(mesh, triangle))
 					{
-						this.colliders["Triangle"] = triangle;
+						this.colliderByNameSet("Triangle", triangle);
 						break;
 					}
 				}
@@ -43,7 +61,7 @@ class Collision
 		return this;
 	}
 
-	rayAndPlane(ray, plane)
+	rayAndPlane(ray: Ray, plane: Plane): Collision
 	{
 		this.distanceToCollision = 
 			(
@@ -65,13 +83,13 @@ class Collision
 				ray.startPos
 			);
 
-			this.colliders["Plane"] = plane;
+			this.colliderByNameSet(Plane.name, plane);
 		}
 
 		return this;
 	}
 
-	rayAndSphere(ray, sphere)
+	rayAndSphere(ray: Ray, sphere: Sphere): Collision
 	{
 		var rayDirection = ray.direction;
 		var displacementFromSphereCenterToCamera = ray.startPos.clone().subtract
@@ -109,7 +127,11 @@ class Collision
 
 			if (distanceToCollision1 >= 0)
 			{
-				if (distanceToCollision2 >= 0 && distanceToCollision2 < distanceToCollision1)
+				if
+				(
+					distanceToCollision2 >= 0
+					&& distanceToCollision2 < distanceToCollision1
+				)
 				{
 					this.distanceToCollision = distanceToCollision2;
 				}
@@ -120,7 +142,7 @@ class Collision
 			}
 			else
 			{
-				this.distanceToCollision = distanceToCollision2;				
+				this.distanceToCollision = distanceToCollision2;
 			}
 	
 			this.pos.overwriteWith
@@ -134,15 +156,15 @@ class Collision
 				ray.startPos
 			);
 
-			this.colliders["Sphere"] = sphere;
+			this.colliderByNameSet(Sphere.name, sphere);
 		}
 
 		return this;
 	}
 
-	isPosWithinFace(mesh, face)
+	isPosWithinFace(mesh: Mesh, face: Face): boolean
 	{
-		var displacementFromVertex0ToCollision = new Coords();
+		var displacementFromVertex0ToCollision = Coords.create();
 
 		var isPosWithinAllEdgesOfFaceSoFar = true;
 
@@ -172,7 +194,7 @@ class Collision
 			{
 				isPosWithinAllEdgesOfFaceSoFar = false;
 				break;
-			}	
+			}
 		}
 
 		return isPosWithinAllEdgesOfFaceSoFar;

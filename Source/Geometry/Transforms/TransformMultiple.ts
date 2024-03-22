@@ -1,12 +1,14 @@
 
-class TransformMultiple
+class TransformMultiple implements Transform
 {
-	constructor(children)
+	children: Transform[];
+
+	constructor(children: Transform[])
 	{
 		this.children = children;
 	}
 
-	transformCoords(coordsToTransform)
+	transformCoords(coordsToTransform: Coords): Coords
 	{
 		for (var i = 0; i < this.children.length; i++)
 		{

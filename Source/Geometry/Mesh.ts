@@ -1,11 +1,17 @@
 
 class Mesh
 {
+	name: string;
+	vertices: Vertex[];
+	faces: Face[];
+
+	VertexWeightsAtSurfacePos: number[];
+
 	constructor
 	(
-		name, 
-		vertices, 
-		faces
+		name: string, 
+		vertices: Vertex[], 
+		faces: Face[]
 	)
 	{
 		this.name = name;
@@ -18,11 +24,11 @@ class Mesh
 
 	// constants
 
-	static VerticesInATriangle = 3;
+	static VerticesInATriangle: number = 3;
 
 	// methods
 
-	clone()
+	clone(): Mesh
 	{
 		var returnValue = new Mesh
 		(
@@ -34,24 +40,25 @@ class Mesh
 		return returnValue;
 	}
 
-	overwriteWith(other)
+	overwriteWith(other: Mesh): Mesh
 	{
 		Cloneable.overwriteManyWithOthers(this.vertices, other.vertices);
+		return this;
 	}
 
-	recalculateDerivedValues()
+	recalculateDerivedValues(): void
 	{
 		for (var f = 0; f < this.faces.length; f++)
 		{
 			var face = this.faces[f];
-			face.recalculateDerivedValues(mesh);
+			face.recalculateDerivedValues(this);
 		}
 	}
 
 	// collidable
 
-	addCollisionsWithRayToList(ray, listToAddTo)
-	{	
+	addCollisionsWithRayToList(ray: Ray, listToAddTo: Collision[])
+	{
 		for (var f = 0; f < this.faces.length; f++)
 		{
 			var face = this.faces[f];
@@ -65,9 +72,9 @@ class Mesh
 					face
 				);
 
-				if (collision.colliders["Face"] != null)
+				if (collision.colliderByName(Face.name) != null)
 				{
-					collision.colliders["Collidable"] = this;
+					collision.colliderByNameSet("Collidable", this);
 					listToAddTo.push(collision);
 				}
 			}
@@ -76,33 +83,25 @@ class Mesh
 		return listToAddTo;
 	}
 
-	recalculateDerivedValues()
-	{
-		for (var f = 0; f < this.faces.length; f++)
-		{
-			var face = this.faces[f];
-			face.recalculateDerivedValues(this);
-		}
-	}
-
 	surfaceMaterialColorAndNormalForCollision
 	(
-		scene, 
-		collisionClosest,
-		surfaceMaterial,
-		surfaceColor,
-		surfaceNormal
+		scene: Scene, 
+		collisionClosest: Collision,
+		surfaceMaterial: Material,
+		surfaceColor: Color,
+		surfaceNormal: Coords
 	)
 	{
-		var face = collisionClosest.colliders["Triangle"];
+		var face = collisionClosest.colliderByName("Triangle");
 		var surfacePos = collisionClosest.pos;
 
-		var vertexWeightsAtSurfacePos = face.vertexWeightsAtSurfacePosAddToList
-		(
-			this, // mesh
-			surfacePos,
-			this.VertexWeightsAtSurfacePos
-		);
+		var vertexWeightsAtSurfacePos =
+			face.vertexWeightsAtSurfacePosAddToList
+			(
+				this, // mesh
+				surfacePos,
+				this.VertexWeightsAtSurfacePos
+			);
 
 		surfaceMaterial.overwriteWith(face.material(scene));
 

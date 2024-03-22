@@ -1,14 +1,23 @@
 
 class Polar
 {
-	constructor(azimuth, elevation, radius)
+	azimuth: number;
+	elevation: number;
+	radius: number
+
+	constructor(azimuth: number, elevation: number, radius: number)
 	{
 		this.azimuth = azimuth;
 		this.elevation = elevation;
 		this.radius = radius;
 	}
 
-	fromCoords(coordsToConvert)
+	static create(): Polar
+	{
+		return new Polar(0, 0, 0);
+	}
+
+	fromCoords(coordsToConvert: Coords): Polar
 	{
 		this.radius = coordsToConvert.magnitude();
 
@@ -31,7 +40,7 @@ class Polar
 		return this;
 	}
 
-	toCoords(coordsToOverwrite)
+	toCoords(coordsToOverwrite: Coords): Coords
 	{
 		var azimuthInRadians = this.azimuth * Constants.RadiansPerCircle;
 		var elevationInRadians = this.elevation * Constants.RadiansPerRightAngle;
@@ -39,12 +48,14 @@ class Polar
 
 		coordsToOverwrite.overwriteWithXYZ
 		(
-			cosineOfElevation * Math.cos(this.azimuth),
-			cosineOfElevation * Math.sin(this.azimuth),
+			cosineOfElevation * Math.cos(azimuthInRadians),
+			cosineOfElevation * Math.sin(azimuthInRadians),
 			Math.sin(elevationInRadians)
 		).multiplyScalar
 		(
 			this.radius
 		);
+
+		return coordsToOverwrite;
 	}
 }

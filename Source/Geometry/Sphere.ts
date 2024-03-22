@@ -1,7 +1,22 @@
 
 class Sphere
 {
-	constructor(name, materialName, radius, centerPos, orientation)
+	name: string;
+	materialName: string;
+	radius: number;
+	centerPos: Coords;
+	orientation: Orientation;
+
+	TexelUV: Coords;
+
+	constructor
+	(
+		name: string,
+		materialName: string,
+		radius: number,
+		centerPos: Coords,
+		orientation: Orientation
+	)
 	{
 		this.name = name;
 		this.materialName = materialName;
@@ -9,12 +24,12 @@ class Sphere
 		this.centerPos = centerPos;
 		this.orientation = orientation;
 
-		this.TexelUV = new Coords();
+		this.TexelUV = Coords.create();
 	}
 
 	// collidable
 
-	addCollisionsWithRayToList(ray, listToAddTo)
+	addCollisionsWithRayToList(ray: Ray, listToAddTo: Collision[]): Collision[]
 	{
 		var collision = new Collision().rayAndSphere
 		(
@@ -22,30 +37,30 @@ class Sphere
 			this
 		);
 
-		if (collision.colliders["Sphere"] != null)
+		if (collision.colliderByName(Sphere.name) != null)
 		{
-			collision.colliders["Collidable"] = this;
+			collision.colliderByNameSet("Collidable", this);
 			listToAddTo.push(collision);
 		}
 
 		return listToAddTo;
 	}
 
-	material(scene)
+	material(scene: Scene): Material
 	{
 		return scene.materialByName(this.materialName);
 	}
 
 	surfaceMaterialColorAndNormalForCollision
 	(
-		scene, 
-		collisionClosest,
-		surfaceMaterial,
-		surfaceColor,
-		surfaceNormal
-	)
+		scene: Scene, 
+		collisionClosest: Collision,
+		surfaceMaterial: Material,
+		surfaceColor: Color,
+		surfaceNormal: Coords
+	): Color
 	{
-		var sphere = collisionClosest.colliders["Sphere"];
+		var sphere = collisionClosest.colliderByName(Sphere.name);
 		var surfacePos = collisionClosest.pos;
 		surfaceMaterial.overwriteWith(sphere.material(scene));
 
@@ -74,7 +89,7 @@ class Sphere
 				surfaceNormal.clone()
 			);
 
-			var surfaceNormalInLocalCoordsAsPolar = new Polar().fromCoords
+			var surfaceNormalInLocalCoordsAsPolar = Polar.create().fromCoords
 			(
 				surfaceNormalInLocalCoords
 			);
@@ -83,7 +98,8 @@ class Sphere
 			texelUV.overwriteWithXYZ
 			(
 				surfaceNormalInLocalCoordsAsPolar.azimuth,
-				(1 + surfaceNormalInLocalCoordsAsPolar.elevation) / 2
+				(1 + surfaceNormalInLocalCoordsAsPolar.elevation) / 2,
+				0
 			); // todo
 
 			surfaceMaterial.texture.colorSetFromUV

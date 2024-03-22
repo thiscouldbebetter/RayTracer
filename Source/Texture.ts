@@ -1,17 +1,30 @@
 
 class Texture
 {
-	constructor(name, image)
+	name: string;
+	image: Image2;
+
+	graphics: any;
+
+	constructor
+	(
+		name: string,
+		image: Image2
+	)
 	{
 		this.name = name;
 		this.image = image;
 
 		var canvas = document.createElement("canvas");
 		this.graphics = canvas.getContext("2d", { willReadFrequently: true} );
-		this.graphics.drawImage(this.image.systemImage(), 0, 0);
+		var g = this.graphics;
+		this.image.systemImageSendToCallback
+		(
+			(systemImage: any) => g.drawImage(systemImage, 0, 0)
+		);
 	}
 
-	colorSetFromUV(texelColor, texelUV)
+	colorSetFromUV(texelColor: Color, texelUV: Coords): void
 	{
 		var imageSizeInPixels = this.image.sizeInPixels;
 

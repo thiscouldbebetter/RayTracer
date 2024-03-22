@@ -1,12 +1,14 @@
 
-class TransformOrient
+class TransformOrient implements Transform
 {
-	constructor(orientation)
+	orientation: Orientation;
+
+	constructor(orientation: Orientation)
 	{
 		this.orientation = orientation;
 	}
 
-	transformCoords(coordsToTransform)
+	transformCoords(coordsToTransform: Coords): Coords
 	{
 		coordsToTransform.overwriteWithXYZ
 		(

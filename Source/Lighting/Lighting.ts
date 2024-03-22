@@ -1,12 +1,14 @@
 
 class Lighting
 {
-	constructor(lights)
+	lights: any[];
+
+	constructor(lights: any[])
 	{
 		this.lights = lights;
 	}
 
-	static Temp = new Coords();
-	static Temp2 = new Coords();
-	static Temp3 = new Coords();
+	static Temp: Coords = Coords.create();
+	static Temp2: Coords = Coords.create();
+	static Temp3: Coords = Coords.create();
 }

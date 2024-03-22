@@ -1,9 +1,12 @@
 
 class Globals
 {
-	static Instance = new Globals();
+	static Instance: Globals = new Globals();
 
-	initialize(displaySize, scene)
+	display: Display;
+	scene: Scene;
+
+	initialize(displaySize: Coords, scene: Scene): void
 	{
 		this.display = new Display();
 		this.display.initialize(displaySize);

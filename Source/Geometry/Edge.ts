@@ -1,17 +1,24 @@
 
 class Edge
 {
-	constructor(vertexIndices)
+	vertexIndices: number[];
+
+	vertices: Vertex[];
+	displacement: Coords;
+	direction: Coords;
+	transverse: Coords;
+
+	constructor(vertexIndices: number[])
 	{
 		this.vertexIndices = vertexIndices;
 
 		this.vertices = null;
-		this.displacement = new Coords();
-		this.direction = new Coords();
-		this.transverse = new Coords();
+		this.displacement = Coords.create();
+		this.direction = Coords.create();
+		this.transverse = Coords.create();
 	}
 
-	recalculateDerivedValues(mesh, face)
+	recalculateDerivedValues(mesh: Mesh, face: Face): void
 	{
 		if (this.vertices == null)
 		{
@@ -40,7 +47,7 @@ class Edge
 		);
 	}
 
-	vertex(mesh, vertexIndexIndex)
+	vertex(mesh: Mesh, vertexIndexIndex: number): Vertex
 	{
 		var vertexIndex = this.vertexIndices[vertexIndexIndex];
 		var vertex = mesh.vertices[vertexIndex];

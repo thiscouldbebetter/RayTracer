@@ -1,3 +1,4 @@
+
 function main()
 {
 	var imageRTBang = ImageHelper.buildImageFromStrings	

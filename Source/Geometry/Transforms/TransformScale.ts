@@ -1,12 +1,14 @@
 
-class TransformScale
+class TransformScale implements Transform
 {
-	constructor(scaleFactors)
+	scaleFactors: Coords;
+
+	constructor(scaleFactors: Coords)
 	{
 		this.scaleFactors = scaleFactors;
 	}
 
-	transformCoords(coordsToTransform)
+	transformCoords(coordsToTransform: Coords): Coords
 	{
 		coordsToTransform.multiply(this.scaleFactors);
 

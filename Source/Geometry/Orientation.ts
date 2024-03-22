@@ -1,18 +1,22 @@
 
 class Orientation
 {
-	constructor(forward, down)
+	forward: Coords;
+	right: Coords;
+	down: Coords;
+
+	constructor(forward: Coords, down: Coords)
 	{
-		this.forward = new Coords();
-		this.right = new Coords();
-		this.down = new Coords();
+		this.forward = Coords.create();
+		this.right = Coords.create();
+		this.down = Coords.create();
 
 		this.overwriteWithForwardDown(forward, down);
 	}
 
 	// instance methods
 
-	clone()
+	clone(): Orientation
 	{
 		return new Orientation
 		(
@@ -21,16 +25,19 @@ class Orientation
 		);
 	}
 
-	overwriteWithForwardDown(forward, down)
+	overwriteWithForwardDown(forward: Coords, down: Coords): Orientation
 	{
 		this.forward.overwriteWith(forward).normalize();
 		this.right.overwriteWith(down).crossProduct(this.forward).normalize();
 		this.down.overwriteWith(this.forward).crossProduct(this.right).normalize();
+
+		return this;
 	}
 
 	// instances
 
-	static Instances()
+	static _instances: Orientation_Instances
+	static Instances(): Orientation_Instances
 	{
 		if (Orientation._instances == null)
 		{
@@ -42,6 +49,10 @@ class Orientation
 
 class Orientation_Instances
 {
+	Camera: Orientation;
+	ForwardXDownZ: Orientation;
+	ForwardZDownX: Orientation;
+
 	constructor()
 	{
 		this.Camera = new Orientation
