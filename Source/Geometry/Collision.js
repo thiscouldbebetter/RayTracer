@@ -14,15 +14,16 @@ class Collision {
         this._collidersByName.set(name, value);
     }
     rayAndFace(ray, mesh, face) {
-        this.rayAndPlane(ray, face.plane);
+        this.rayAndPlane(ray, face.plane(mesh));
         if (this.colliderByName(Plane.name) != null) {
             if (this.isPosWithinFace(mesh, face) == false) {
                 this.colliderByNameSet(Face.name, null);
             }
             else {
                 this.colliderByNameSet(Face.name, face);
-                for (var t = 0; t < face.triangles.length; t++) {
-                    var triangle = face.triangles[t];
+                var faceTriangles = face.triangles(mesh);
+                for (var t = 0; t < faceTriangles.length; t++) {
+                    var triangle = faceTriangles[t];
                     if (this.isPosWithinFace(mesh, triangle)) {
                         this.colliderByNameSet("Triangle", triangle);
                         break;
@@ -78,11 +79,11 @@ class Collision {
     isPosWithinFace(mesh, face) {
         var displacementFromVertex0ToCollision = Coords.create();
         var isPosWithinAllEdgesOfFaceSoFar = true;
-        var edges = face.edges;
+        var edges = face.edges();
         for (var i = 0; i < edges.length; i++) {
             var edge = edges[i];
             displacementFromVertex0ToCollision.overwriteWith(this.pos).subtract(edge.vertex(mesh, 0).pos);
-            var edgeTransverse = edge.direction.clone().crossProduct(face.plane.normal);
+            var edgeTransverse = edge.direction.clone().crossProduct(face.plane(mesh).normal);
             // hack?
             var epsilon = .01;
             if (displacementFromVertex0ToCollision.dotProduct(edgeTransverse) >= epsilon) {

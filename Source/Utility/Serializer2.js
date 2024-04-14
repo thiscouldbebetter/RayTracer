@@ -1,5 +1,5 @@
 "use strict";
-class Serializer {
+class Serializer2 {
     constructor(typesToSerialize) {
         typesToSerialize = typesToSerialize || [];
         this.typesToSerializeByName = new Map([

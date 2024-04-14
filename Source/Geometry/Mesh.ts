@@ -1,6 +1,8 @@
 
 class Mesh implements Shape
 {
+	typeName: string;
+
 	name: string;
 	vertices: Vertex[];
 	faces: Face[];
@@ -14,6 +16,8 @@ class Mesh implements Shape
 		faces: Face[]
 	)
 	{
+		this.typeName = Mesh.name;
+
 		this.name = name;
 		this.vertices = vertices;
 		this.faces = faces;
@@ -62,8 +66,9 @@ class Mesh implements Shape
 		for (var f = 0; f < this.faces.length; f++)
 		{
 			var face = this.faces[f];
-	
-			if (face.plane.normal.dotProduct(ray.direction) < 0)
+			var facePlane = face.plane(this);
+
+			if (facePlane.normal.dotProduct(ray.direction) < 0)
 			{
 				var collision = new Collision().rayAndFace
 				(
@@ -136,4 +141,24 @@ class Mesh implements Shape
 
 		return surfaceColor;
 	}
+
+	// Serializable.
+
+	fromJson(objectAsJson: string): Mesh
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	prototypesSet(): Mesh
+	{
+		var typeSetOnObject = SerializableHelper.typeSetOnObject;
+		this.faces.forEach(x => typeSetOnObject(Face, x) );
+		return this;
+	}
+
 }

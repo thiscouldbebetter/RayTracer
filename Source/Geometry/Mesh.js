@@ -1,6 +1,7 @@
 "use strict";
 class Mesh {
     constructor(name, vertices, faces) {
+        this.typeName = Mesh.name;
         this.name = name;
         this.vertices = vertices;
         this.faces = faces;
@@ -26,7 +27,8 @@ class Mesh {
     addCollisionsWithRayToList(ray, listToAddTo) {
         for (var f = 0; f < this.faces.length; f++) {
             var face = this.faces[f];
-            if (face.plane.normal.dotProduct(ray.direction) < 0) {
+            var facePlane = face.plane(this);
+            if (facePlane.normal.dotProduct(ray.direction) < 0) {
                 var collision = new Collision().rayAndFace(ray, this, // mesh
                 face);
                 if (collision.colliderByName(Face.name) != null) {
@@ -54,6 +56,18 @@ class Mesh {
         }
         surfaceNormal.overwriteWith(face.normalForVertexWeights(vertexWeightsAtSurfacePos));
         return surfaceColor;
+    }
+    // Serializable.
+    fromJson(objectAsJson) {
+        throw new Error("To be implemented!");
+    }
+    toJson() {
+        throw new Error("To be implemented!");
+    }
+    prototypesSet() {
+        var typeSetOnObject = SerializableHelper.typeSetOnObject;
+        this.faces.forEach(x => typeSetOnObject(Face, x));
+        return this;
     }
 }
 // constants

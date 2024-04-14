@@ -1,5 +1,5 @@
 
-class Coords
+class Coords implements Serializable<Coords>
 {
 	x: number;
 	y: number;
@@ -191,6 +191,23 @@ class Coords
 			this.z = range.z;
 		}
 
+		return this;
+	}
+
+	// Serializable.
+
+	fromJson(objectAsJson: string): Coords
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	prototypesSet(): Coords
+	{
 		return this;
 	}
 }

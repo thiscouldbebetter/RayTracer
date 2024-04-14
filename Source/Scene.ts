@@ -1,5 +1,5 @@
 
-class Scene
+class Scene implements Serializable<Scene>
 {
 	name: string;
 	materials: Material[];
@@ -28,12 +28,16 @@ class Scene
 		this.collidables = collidables;
 	}
 
+	static create(): Scene
+	{
+		return new Scene(null, null, null, null, null, null);
+	}
+
 	static demo(): Scene
 	{
-		var imageRTBang = ImageHelper.buildImageFromStrings	
+		var imageRTBang = new Image2
 		(
 			"RTBang",
-			1, // scaleMultiplier
 			[
 				"RRRRRRRRRRRRRRRR",
 				"RRcccccRcccccRcR",
@@ -88,10 +92,9 @@ class Scene
 			]
 		);
 
-		var imageEyeball = ImageHelper.buildImageFromStrings
+		var imageEyeball = new Image2
 		(
 			"ImageEyeball",
-			1, // scaleMultiplier
 			[
 				"k","b","w","w","w","w","w","w","w","w"
 			]
@@ -205,44 +208,34 @@ class Scene
 		return this._materialsByName.get(name);
 	}
 
-	// JSON.
+	// Serializable.
 
-	static fromJson(sceneAsJson: string): Scene
+	prototypesSet(): Scene
 	{
-		var serializer = Scene.serializerCreate();
-		var scene = serializer.deserialize(sceneAsJson);
-		return scene;
+		var typeSetOnObject = SerializableHelper.typeSetOnObject;
+
+		this.materials.forEach(x => typeSetOnObject(Material, x) );
+		typeSetOnObject(Color, this.backgroundColor);
+		typeSetOnObject(Lighting, this.lighting);
+		typeSetOnObject(Camera, this.camera);
+		this.collidables.forEach(x => ShapeHelper.typeSetOnShape(x) );
+
+		return this;
 	}
 
-	static serializerCreate(): Serializer
+	fromJson(objectAsJson: string): Scene
 	{
-		var serializer = new Serializer
-		([
-			Camera,
-			Color,
-			Coords,
-			Edge,
-			Face,
-			Image2,
-			LightPoint,
-			Lighting,
-			Material,
-			Mesh,
-			Orientation,
-			Plane,
-			Scene,
-			Sphere,
-			Texture,
-			Vertex
-		]);
+		return SerializableHelper.objectOfTypeFromJson(Scene, objectAsJson);
+	}
 
-		return serializer;
+	static fromJson(objectAsJson: string): Scene
+	{
+		return Scene.create().fromJson(objectAsJson);
 	}
 
 	toJson(): string
 	{
-		var serializer = Scene.serializerCreate();
-		var sceneAsJson = serializer.serialize(this);
+		var sceneAsJson = JSON.stringify(this, null, 4);
 		return sceneAsJson;
 	}
 }

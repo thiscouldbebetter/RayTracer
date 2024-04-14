@@ -55,6 +55,17 @@ class Color {
             + ")";
         return returnValue;
     }
+    // Serializable.
+    fromJson(objectAsJson) {
+        throw new Error("To be implemented!");
+    }
+    toJson() {
+        throw new Error("To be implemented!");
+    }
+    prototypesSet() {
+        // Do nothing.
+        return this;
+    }
 }
 // constants
 Color.NumberOfComponentsRGBA = 4;

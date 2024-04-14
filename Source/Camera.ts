@@ -1,5 +1,5 @@
 
-class Camera
+class Camera implements Serializable<Camera>
 {
 	viewSize: Coords;
 	focalLength: number;
@@ -19,4 +19,28 @@ class Camera
 		this.pos = pos;
 		this.orientation = orientation;
 	}
+
+	// Serializable.
+
+	fromJson(objectAsJson: string): Camera
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	prototypesSet(): Camera
+	{
+		var typeSetOnObject = SerializableHelper.typeSetOnObject;
+
+		typeSetOnObject(Coords, this.viewSize);
+		typeSetOnObject(Coords, this.pos);
+		typeSetOnObject(Orientation, this.orientation);
+
+		return this;
+	}
+
 }

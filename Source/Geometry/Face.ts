@@ -1,19 +1,19 @@
 
-class Face
+class Face implements Serializable<Face>
 {
 	materialName: string;
 	vertexIndices: number[];
 	textureUVsForVertices: Coords[];
 	normalsForVertices: Coords[];
 
-	edges: Edge[];
-	plane: Plane;
-	triangles: Face[];
+	_edges: Edge[];
+	_plane: Plane;
+	_triangles: Face[];
 
-	DisplacementFromVertexNextToPos: Coords;
-	TexelColor: Color;
-	VertexValueInterpolated: Coords;
-	VertexValueWeighted: Coords;
+	_displacementFromVertexNextToPos: Coords;
+	_texelColor: Color;
+	_vertexValueInterpolated: Coords;
+	_vertexValueWeighted: Coords;
 
 	constructor
 	(
@@ -28,23 +28,23 @@ class Face
 		this.textureUVsForVertices = textureUVsForVertices;
 		this.normalsForVertices = normalsForVertices;
 
-		this.DisplacementFromVertexNextToPos = Coords.create();
-		this.TexelColor = Color.blank("TexelColor");
-		this.VertexValueInterpolated = Coords.create();
-		this.VertexValueWeighted = Coords.create();
+		this._displacementFromVertexNextToPos = Coords.create();
+		this._texelColor = Color.blank("_texelColor");
+		this._vertexValueInterpolated = Coords.create();
+		this._vertexValueWeighted = Coords.create();
 	}
 
 	buildTriangles(mesh: Mesh): Face[]
 	{
-		// instance variables
+		var triangles = [];
 
 		if (this.vertexIndices.length == 3)
 		{
-			this.triangles = [ this.clone() ];
+			triangles = [ this.clone() ];
 		}
 		else if (this.vertexIndices.length == 4)
 		{
-			this.triangles = 
+			triangles = 
 			[
 				this.buildTriangle(0, 1, 2).recalculateDerivedValues(mesh),
 				this.buildTriangle(2, 3, 0).recalculateDerivedValues(mesh),
@@ -56,7 +56,7 @@ class Face
 			throw errorMessage;
 		}
 
-		return this.triangles;
+		return triangles;
 	}
 
 	buildTriangle
@@ -103,106 +103,11 @@ class Face
 		return returnValue;
 	}
 
-	interpolateVertexValuesForWeights
-	(
-		vertexValues: Coords[], weights: number[]
-	): Coords
+	edges(): Edge[]
 	{
-		var valueInterpolated = this.VertexValueInterpolated.overwriteWith
-		(
-			vertexValues[0]
-		).multiplyScalar
-		(
-			weights[0]
-		);
-
-		var vertexValueWeighted = this.VertexValueWeighted;
-
-		for (var i = 1; i < vertexValues.length; i++)
+		if (this._edges == null)
 		{
-			vertexValueWeighted.overwriteWith
-			(
-				vertexValues[i]
-			).multiplyScalar
-			(
-				weights[i]
-			);
-
-			valueInterpolated.add(vertexValueWeighted);
-		}
-
-		return valueInterpolated;
-	}
-
-	material(scene: Scene): Material
-	{
-		return scene.materialByName(this.materialName);
-	}
-
-	normalForVertexWeights(vertexWeights: number[]): Coords
-	{
-		var returnValue;
-
-		if (this.normalsForVertices == null)
-		{
-			returnValue = this.plane.normal;
-		}
-		else
-		{
-			returnValue = this.interpolateVertexValuesForWeights
-			(
-				this.normalsForVertices,
-				vertexWeights
-			);
-		}
-		
-		return returnValue;	
-	}
-
-	recalculateDerivedValues(mesh: Mesh): Face
-	{
-		if (this.normalsForVertices != null)
-		{
-			for (var i = 0; i < this.normalsForVertices.length; i++)
-			{
-				var normalForVertex = this.normalsForVertices[i];
-				normalForVertex.normalize();
-			}
-		}
-
-		var vertices = this.vertices(mesh);
-
-		if (this.plane == null)
-		{
-			this.plane = new Plane
-			(
-				Vertex.positionsForMany(vertices)
-			);
-		}
-		else
-		{
-			this.plane.recalculateDerivedValues();
-		}
-
-		if (this.triangles == null)
-		{
-			this.buildTriangles(mesh);
-		}
-		else
-		{
-			if (this.triangles.length > 1)
-			{
-				for (var t = 0; t < this.triangles.length; t++)
-				{
-					var triangle = this.triangles[t];
-					triangle.recalculateDerivedValues(mesh);
-				}
-			}
-		}
-
-		if (this.edges == null)
-		{
-			this.edges = [];
+			this._edges = [];
 
 			for (var i = 0; i < this.vertexIndices.length; i++)
 			{
@@ -216,14 +121,114 @@ class Face
 
 				var edge = new Edge([vertexIndex, vertexIndexNext]);
 				
-				this.edges.push(edge);
+				this._edges.push(edge);
 			}
-
 		}
 
-		for (var i = 0; i < this.edges.length; i++)
+		return this._edges;
+	}
+
+	interpolateVertexValuesForWeights
+	(
+		vertexValues: Coords[], weights: number[]
+	): Coords
+	{
+		var valueInterpolated = this._vertexValueInterpolated.overwriteWith
+		(
+			vertexValues[0]
+		).multiplyScalar
+		(
+			weights[0]
+		);
+
+		var _vertexValueWeighted = this._vertexValueWeighted;
+
+		for (var i = 1; i < vertexValues.length; i++)
 		{
-			this.edges[i].recalculateDerivedValues(mesh, this);
+			_vertexValueWeighted.overwriteWith
+			(
+				vertexValues[i]
+			).multiplyScalar
+			(
+				weights[i]
+			);
+
+			valueInterpolated.add(_vertexValueWeighted);
+		}
+
+		return valueInterpolated;
+	}
+
+	material(scene: Scene): Material
+	{
+		return scene.materialByName(this.materialName);
+	}
+
+	normalForVertexWeights(mesh: Mesh, vertexWeights: number[]): Coords
+	{
+		var returnValue;
+
+		if (this.normalsForVertices == null)
+		{
+			returnValue = this.plane(mesh).normal;
+		}
+		else
+		{
+			returnValue = this.interpolateVertexValuesForWeights
+			(
+				this.normalsForVertices,
+				vertexWeights
+			);
+		}
+		
+		return returnValue;	
+	}
+
+	plane(mesh: Mesh): Plane
+	{
+		if (this._plane == null)
+		{
+			var vertices = this.vertices(mesh);
+
+			this._plane = new Plane
+			(
+				Vertex.positionsForMany(vertices)
+			);
+		}
+
+		return this._plane;
+	}
+
+	recalculateDerivedValues(mesh: Mesh): Face
+	{
+		if (this.normalsForVertices != null)
+		{
+			for (var i = 0; i < this.normalsForVertices.length; i++)
+			{
+				var normalForVertex = this.normalsForVertices[i];
+				normalForVertex.normalize();
+			}
+		}
+
+		var plane = this.plane(mesh);
+		plane.recalculateDerivedValues();
+
+		var triangles = this.triangles(mesh);
+
+		if (triangles.length > 1)
+		{
+			for (var t = 0; t < triangles.length; t++)
+			{
+				var triangle = triangles[t];
+				triangle.recalculateDerivedValues(mesh);
+			}
+		}
+
+		var edges = this.edges();
+
+		for (var i = 0; i < edges.length; i++)
+		{
+			edges[i].recalculateDerivedValues(mesh, this);
 		}
 
 		return this;
@@ -237,11 +242,20 @@ class Face
 			vertexWeights
 		);
 
-		var texelColor = this.TexelColor;
+		var _texelColor = this._texelColor;
 
-		texture.colorSetFromUV(texelColor, texelUV);
+		texture.colorSetFromUV(_texelColor, texelUV);
 
-		return texelColor;
+		return _texelColor;
+	}
+
+	triangles(mesh: Mesh): Face[]
+	{
+		if (this._triangles == null)
+		{
+			this._triangles = this.buildTriangles(mesh);
+		}
+		return this._triangles;
 	}
 
 	vertexWeightsAtSurfacePosAddToList
@@ -253,15 +267,15 @@ class Face
 	{
 		var vertices = this.vertices(mesh);
 		
-		var edges = this.edges;
+		var edges = this.edges();
 
 		var areaOfFace = edges[1].displacement.clone().crossProduct
 		(
 			edges[0].displacement
 		).magnitude() / 2;
 
-		var displacementFromVertexNextToPos =
-			this.DisplacementFromVertexNextToPos;
+		var _displacementFromVertexNextToPos =
+			this._displacementFromVertexNextToPos;
 
 		for (var i = 0; i < vertices.length; i++)
 		{
@@ -274,7 +288,7 @@ class Face
 			// var vertex = vertices[i];
 			var vertexNext = vertices[iNext];
 
-			displacementFromVertexNextToPos.overwriteWith
+			_displacementFromVertexNextToPos.overwriteWith
 			(
 				surfacePos
 			).subtract
@@ -287,7 +301,7 @@ class Face
 			var areaOfTriangleFormedByEdgeNextAndPos =
 				displacementOfEdgeNext.clone().crossProduct
 				(
-					displacementFromVertexNextToPos
+					_displacementFromVertexNextToPos
 				).magnitude() / 2;
 
 			var weightOfVertex = 
@@ -337,10 +351,59 @@ class Face
 
 	// strings
 
-	toString(mesh: Mesh): string
+	toStringForMesh(mesh: Mesh): string
 	{
 		var returnValue = this.vertices(mesh).join("->");
 		return returnValue;
+	}
+
+	// Serializable.
+
+	fromJson(objectAsJson: string): Face
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	prototypesSet(): Face
+	{
+		var typeSetOnObject = SerializableHelper.typeSetOnObject;
+
+		if (this.textureUVsForVertices != null)
+		{
+			this.textureUVsForVertices.forEach(x => typeSetOnObject(Coords, x) );
+		}
+
+		if (this.normalsForVertices != null)
+		{
+			this.normalsForVertices.forEach(x => typeSetOnObject(Coords, x) );
+		}
+
+		if (this._edges != null)
+		{
+			this._edges.forEach(x => typeSetOnObject(Edge, x) );
+		}
+
+		if (this._plane != null)
+		{
+			typeSetOnObject(Plane, this._plane);
+		}
+
+		if (this._triangles != null)
+		{
+			this._triangles.forEach(x => typeSetOnObject(Face, x) );
+		}
+
+		typeSetOnObject(Coords, this._displacementFromVertexNextToPos);
+		typeSetOnObject(Color, this._texelColor);
+		typeSetOnObject(Coords, this._vertexValueInterpolated);
+		typeSetOnObject(Coords, this._vertexValueWeighted);
+
+		return this;
 	}
 
 }

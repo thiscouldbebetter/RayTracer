@@ -17,4 +17,16 @@ class Vertex {
     toString() {
         return this.pos.toString();
     }
+    // Serializable.
+    fromJson(objectAsJson) {
+        throw new Error("To be implemented!");
+    }
+    toJson() {
+        throw new Error("To be implemented!");
+    }
+    prototypesSet() {
+        var typeSetOnObject = SerializableHelper.typeSetOnObject;
+        typeSetOnObject(Coords, this.pos);
+        return this;
+    }
 }

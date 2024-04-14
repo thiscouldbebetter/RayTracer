@@ -103,6 +103,25 @@ class Color
 
 		return returnValue;	
 	}
+
+	// Serializable.
+
+	fromJson(objectAsJson: string): Color
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	prototypesSet(): Color
+	{
+		// Do nothing.
+		return this;
+	}
+
 }
 
 class Color_Instances

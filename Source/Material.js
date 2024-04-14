@@ -9,6 +9,21 @@ class Material {
         this.shininess = shininess;
         this.texture = texture;
     }
+    /*
+    static create()
+    {
+        return new Material
+        (
+            "name",
+            Color.create(),
+            0, // ambient
+            0, // diffuse
+            0, // specular
+            0, // shininess
+            Texture.create()
+        );
+    }
+    */
     static fromNameAndColor(name, color) {
         return new Material(name, color, 0, 0, 0, 0, null);
     }
@@ -40,6 +55,21 @@ class Material {
         this.specular = other.specular;
         this.shininess = other.shininess;
         this.texture = other.texture;
+        return this;
+    }
+    // Serializable.
+    fromJson(objectAsJson) {
+        throw new Error("To be implemented!");
+    }
+    toJson() {
+        throw new Error("To be implemented!");
+    }
+    prototypesSet() {
+        var typeSetOnObject = SerializableHelper.typeSetOnObject;
+        typeSetOnObject(Color, this.color);
+        if (this.texture != null) {
+            typeSetOnObject(Texture, this.texture);
+        }
         return this;
     }
 }

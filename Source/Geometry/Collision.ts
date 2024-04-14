@@ -33,7 +33,7 @@ class Collision
 		this.rayAndPlane
 		(
 			ray,
-			face.plane
+			face.plane(mesh)
 		);
 
 		if (this.colliderByName(Plane.name) != null)
@@ -46,9 +46,11 @@ class Collision
 			{
 				this.colliderByNameSet(Face.name, face);
 
-				for (var t = 0; t < face.triangles.length; t++)
+				var faceTriangles = face.triangles(mesh);
+
+				for (var t = 0; t < faceTriangles.length; t++)
 				{
-					var triangle = face.triangles[t];
+					var triangle = faceTriangles[t];
 					if (this.isPosWithinFace(mesh, triangle))
 					{
 						this.colliderByNameSet("Triangle", triangle);
@@ -168,7 +170,7 @@ class Collision
 
 		var isPosWithinAllEdgesOfFaceSoFar = true;
 
-		var edges = face.edges;
+		var edges = face.edges();
 
 		for (var i = 0; i < edges.length; i++)
 		{
@@ -184,7 +186,7 @@ class Collision
 
 			var edgeTransverse = edge.direction.clone().crossProduct
 			(
-				face.plane.normal
+				face.plane(mesh).normal
 			);
 
 			// hack?

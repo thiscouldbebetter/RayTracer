@@ -1,5 +1,5 @@
 
-class Edge
+class Edge implements Serializable<Edge>
 {
 	vertexIndices: number[];
 
@@ -43,7 +43,7 @@ class Edge
 			this.direction
 		).crossProduct
 		(
-			face.plane.normal
+			face.plane(mesh).normal
 		);
 	}
 
@@ -52,5 +52,29 @@ class Edge
 		var vertexIndex = this.vertexIndices[vertexIndexIndex];
 		var vertex = mesh.vertices[vertexIndex];
 		return vertex;
+	}
+
+	// Serializable.
+
+	fromJson(objectAsJson: string): Edge
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	prototypesSet(): Edge
+	{
+		var typeSetOnObject = SerializableHelper.typeSetOnObject;
+
+		this.vertices.forEach(x => typeSetOnObject(Vertex, x) );
+		typeSetOnObject(Coords, this.displacement);
+		typeSetOnObject(Coords, this.direction);
+		typeSetOnObject(Coords, this.transverse);
+
+		return this;
 	}
 }

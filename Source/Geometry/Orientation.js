@@ -22,6 +22,20 @@ class Orientation {
         }
         return Orientation._instances;
     }
+    // Serializable.
+    fromJson(objectAsJson) {
+        throw new Error("To be implemented!");
+    }
+    toJson() {
+        throw new Error("To be implemented!");
+    }
+    prototypesSet() {
+        var typeSetOnObject = SerializableHelper.typeSetOnObject;
+        typeSetOnObject(Coords, this.forward);
+        typeSetOnObject(Coords, this.right);
+        typeSetOnObject(Coords, this.down);
+        return this;
+    }
 }
 class Orientation_Instances {
     constructor() {

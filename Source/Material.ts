@@ -1,5 +1,5 @@
 
-class Material
+class Material implements Serializable<Material>
 {
 	name: string;
 	color: Color;
@@ -28,6 +28,22 @@ class Material
 		this.shininess = shininess;
 		this.texture = texture;
 	}
+
+	/*
+	static create()
+	{
+		return new Material
+		(
+			"name",
+			Color.create(),
+			0, // ambient
+			0, // diffuse
+			0, // specular
+			0, // shininess
+			Texture.create()
+		);
+	}
+	*/
 
 	static fromNameAndColor(name: string, color: Color): Material
 	{
@@ -90,6 +106,29 @@ class Material
 		this.shininess = other.shininess;
 		this.texture = other.texture;
 
+		return this;
+	}
+
+	// Serializable.
+
+	fromJson(objectAsJson: string): Material
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	prototypesSet() : Material
+	{
+		var typeSetOnObject = SerializableHelper.typeSetOnObject;
+		typeSetOnObject(Color, this.color);
+		if (this.texture != null)
+		{
+			typeSetOnObject(Texture, this.texture);
+		}
 		return this;
 	}
 }

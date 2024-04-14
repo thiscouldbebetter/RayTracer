@@ -12,4 +12,17 @@ class Plane {
         this.normal.overwriteWith(displacementFromPos0To1).crossProduct(displacementFromPos0To2).normalize();
         this.distanceFromOrigin = this.normal.dotProduct(pos0);
     }
+    // Serializable.
+    fromJson(objectAsJson) {
+        throw new Error("To be implemented!");
+    }
+    toJson() {
+        throw new Error("To be implemented!");
+    }
+    prototypesSet() {
+        var typeSetOnObject = SerializableHelper.typeSetOnObject;
+        typeSetOnObject(Coords, this.normal);
+        this.positionsOnPlane.forEach(x => typeSetOnObject(Coords, x));
+        return this;
+    }
 }

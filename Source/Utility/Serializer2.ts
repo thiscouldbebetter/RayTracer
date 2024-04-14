@@ -1,5 +1,5 @@
 
-class Serializer
+class Serializer2
 {
 	typesToSerializeByName: Map<string, any>;
 

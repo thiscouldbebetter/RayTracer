@@ -1,13 +1,15 @@
 
 class Sphere implements Shape
 {
+	typeName: string;
+
 	name: string;
 	materialName: string;
 	radius: number;
 	centerPos: Coords;
 	orientation: Orientation;
 
-	TexelUV: Coords;
+	_texelUv: Coords;
 
 	constructor
 	(
@@ -18,13 +20,15 @@ class Sphere implements Shape
 		orientation: Orientation
 	)
 	{
+		this.typeName = Sphere.name;
+
 		this.name = name;
 		this.materialName = materialName;
 		this.radius = radius;
 		this.centerPos = centerPos;
 		this.orientation = orientation;
 
-		this.TexelUV = Coords.create();
+		this._texelUv = Coords.create();
 	}
 
 	// collidable
@@ -94,8 +98,8 @@ class Sphere implements Shape
 				surfaceNormalInLocalCoords
 			);
 
-			var texelUV = this.TexelUV;
-			texelUV.overwriteWithXYZ
+			var _texelUv = this._texelUv;
+			_texelUv.overwriteWithXYZ
 			(
 				surfaceNormalInLocalCoordsAsPolar.azimuth,
 				(1 + surfaceNormalInLocalCoordsAsPolar.elevation) / 2,
@@ -105,10 +109,32 @@ class Sphere implements Shape
 			surfaceMaterial.texture.colorSetFromUV
 			(
 				surfaceColor,
-				texelUV
+				_texelUv
 			);
 		}
 
 		return surfaceColor;
 	}
+
+	// Serializable.
+
+	fromJson(objectAsJson: string): Sphere
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	prototypesSet(): Sphere
+	{
+		var typeSetOnObject = SerializableHelper.typeSetOnObject;
+		typeSetOnObject(Coords, this.centerPos);
+		typeSetOnObject(Orientation, this.orientation);
+		typeSetOnObject(Coords, this._texelUv);
+		return this;
+	}
+
 }

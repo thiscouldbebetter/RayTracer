@@ -1,5 +1,5 @@
 
-class Orientation
+class Orientation implements Serializable<Orientation>
 {
 	forward: Coords;
 	right: Coords;
@@ -44,6 +44,29 @@ class Orientation
 			Orientation._instances = new Orientation_Instances();
 		}
 		return Orientation._instances;
+	}
+
+	// Serializable.
+
+	fromJson(objectAsJson: string): Orientation
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	prototypesSet(): Orientation
+	{
+		var typeSetOnObject = SerializableHelper.typeSetOnObject;
+
+		typeSetOnObject(Coords, this.forward);
+		typeSetOnObject(Coords, this.right);
+		typeSetOnObject(Coords, this.down);
+
+		return this;
 	}
 }
 

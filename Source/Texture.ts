@@ -1,10 +1,10 @@
 
-class Texture
+class Texture implements Serializable<Texture>
 {
 	name: string;
 	image: Image2;
 
-	graphics: any;
+	_graphics: any;
 
 	constructor
 	(
@@ -14,16 +14,15 @@ class Texture
 	{
 		this.name = name;
 		this.image = image;
-
-		var canvas = document.createElement("canvas");
-		this.graphics = canvas.getContext("2d", { willReadFrequently: true} );
 	}
 
 	colorSetFromUV(texelColor: Color, texelUV: Coords): Color
 	{
 		var imageSizeInPixels = this.image.sizeInPixels;
 
-		var texelColorComponents = this.graphics.getImageData
+		var g = this.graphics();
+
+		var texelColorComponents = g.getImageData
 		(
 			texelUV.x * imageSizeInPixels.x, 
 			texelUV.y * imageSizeInPixels.y,
@@ -41,10 +40,21 @@ class Texture
 		return texelColor;
 	}
 
+	graphics(): any
+	{
+		if (this._graphics == null)
+		{
+			var canvas = document.createElement("canvas");
+			this._graphics =
+				canvas.getContext("2d", { willReadFrequently: true} );
+		}
+		return this._graphics;
+	}
+
 	loadAndSendToCallback(callback: any): void
 	{
 		var texture = this;
-		var g = this.graphics;
+		var g = this.graphics();
 		this.image.systemImageSendToCallback
 		(
 			(systemImage: any) =>
@@ -53,5 +63,26 @@ class Texture
 				callback(texture);
 			}
 		);
+	}
+
+	// Serializable.
+
+	fromJson(objectAsJson: string): Texture
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	prototypesSet(): Texture
+	{
+		var typeSetOnObject = SerializableHelper.typeSetOnObject;
+
+		typeSetOnObject(Image2, this.image);
+
+		return this;
 	}
 }

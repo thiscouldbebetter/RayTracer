@@ -1,5 +1,5 @@
 
-class Vertex
+class Vertex implements Serializable<Vertex>
 {
 	pos: Coords;
 
@@ -30,5 +30,26 @@ class Vertex
 	toString(): string
 	{
 		return this.pos.toString();
+	}
+
+	// Serializable.
+
+	fromJson(objectAsJson: string): Vertex
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	prototypesSet(): Vertex
+	{
+		var typeSetOnObject = SerializableHelper.typeSetOnObject;
+
+		typeSetOnObject(Coords, this.pos);
+
+		return this;
 	}
 }

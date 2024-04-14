@@ -113,6 +113,16 @@ class Coords {
         }
         return this;
     }
+    // Serializable.
+    fromJson(objectAsJson) {
+        throw new Error("To be implemented!");
+    }
+    toJson() {
+        throw new Error("To be implemented!");
+    }
+    prototypesSet() {
+        return this;
+    }
 }
 // constants
 Coords.NumberOfDimensions = 3;

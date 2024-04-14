@@ -8,9 +8,11 @@ class Scene {
         this.camera = camera;
         this.collidables = collidables;
     }
+    static create() {
+        return new Scene(null, null, null, null, null, null);
+    }
     static demo() {
-        var imageRTBang = ImageHelper.buildImageFromStrings("RTBang", 1, // scaleMultiplier
-        [
+        var imageRTBang = new Image2("RTBang", [
             "RRRRRRRRRRRRRRRR",
             "RRcccccRcccccRcR",
             "RRcRRRcRRRcRRRcR",
@@ -41,8 +43,7 @@ class Scene {
         [
             new Face(Material.Instances().Green.name, [3, 2, 1, 0], null, null)
         ]);
-        var imageEyeball = ImageHelper.buildImageFromStrings("ImageEyeball", 1, // scaleMultiplier
-        [
+        var imageEyeball = new Image2("ImageEyeball", [
             "k", "b", "w", "w", "w", "w", "w", "w", "w", "w"
         ]);
         var materialEyeball = new Material("MaterialEyeball", Color.Instances().White, 1, // diffuse
@@ -97,36 +98,24 @@ class Scene {
         }
         return this._materialsByName.get(name);
     }
-    // JSON.
-    static fromJson(sceneAsJson) {
-        var serializer = Scene.serializerCreate();
-        var scene = serializer.deserialize(sceneAsJson);
-        return scene;
+    // Serializable.
+    prototypesSet() {
+        var typeSetOnObject = SerializableHelper.typeSetOnObject;
+        this.materials.forEach(x => typeSetOnObject(Material, x));
+        typeSetOnObject(Color, this.backgroundColor);
+        typeSetOnObject(Lighting, this.lighting);
+        typeSetOnObject(Camera, this.camera);
+        this.collidables.forEach(x => ShapeHelper.typeSetOnShape(x));
+        return this;
     }
-    static serializerCreate() {
-        var serializer = new Serializer([
-            Camera,
-            Color,
-            Coords,
-            Edge,
-            Face,
-            Image2,
-            LightPoint,
-            Lighting,
-            Material,
-            Mesh,
-            Orientation,
-            Plane,
-            Scene,
-            Sphere,
-            Texture,
-            Vertex
-        ]);
-        return serializer;
+    fromJson(objectAsJson) {
+        return SerializableHelper.objectOfTypeFromJson(Scene, objectAsJson);
+    }
+    static fromJson(objectAsJson) {
+        return Scene.create().fromJson(objectAsJson);
     }
     toJson() {
-        var serializer = Scene.serializerCreate();
-        var sceneAsJson = serializer.serialize(this);
+        var sceneAsJson = JSON.stringify(this, null, 4);
         return sceneAsJson;
     }
 }

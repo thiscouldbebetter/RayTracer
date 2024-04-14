@@ -1,5 +1,5 @@
 
-class Plane
+class Plane implements Serializable<Plane>
 {
 	positionsOnPlane: Coords[];
 
@@ -30,4 +30,27 @@ class Plane
 
 		this.distanceFromOrigin = this.normal.dotProduct(pos0);
 	}
+
+	// Serializable.
+
+	fromJson(objectAsJson: string): Plane
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	prototypesSet(): Plane
+	{
+		var typeSetOnObject = SerializableHelper.typeSetOnObject;
+
+		typeSetOnObject(Coords, this.normal);
+		this.positionsOnPlane.forEach(x => typeSetOnObject(Coords, x) );
+
+		return this;
+	}
+
 }
