@@ -14,9 +14,19 @@ class Globals
 		this.display = new Display();
 		this.display.initialize(displaySize);
 
+		var timeBeforeRender = new Date();
+
 		this.scene.loadAndSendToCallback
 		(
-			(sceneLoaded: Scene) => this.display.drawScene(sceneLoaded)
+			(sceneLoaded: Scene) =>
+			{
+				this.display.drawScene(sceneLoaded);
+				var timeAfterRender = new Date();
+				var renderTimeInMilliseconds =
+					timeAfterRender.valueOf()
+					- timeBeforeRender.valueOf();
+				console.log("Scene rendered in " + renderTimeInMilliseconds + " ms.");
+			}
 		)
 
 	}

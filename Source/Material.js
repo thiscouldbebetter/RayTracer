@@ -9,21 +9,6 @@ class Material {
         this.shininess = shininess;
         this.texture = texture;
     }
-    /*
-    static create()
-    {
-        return new Material
-        (
-            "name",
-            Color.create(),
-            0, // ambient
-            0, // diffuse
-            0, // specular
-            0, // shininess
-            Texture.create()
-        );
-    }
-    */
     static fromNameAndColor(name, color) {
         return new Material(name, color, 0, 0, 0, 0, null);
     }
