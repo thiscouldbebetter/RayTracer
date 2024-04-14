@@ -29,22 +29,6 @@ class Material implements Serializable<Material>
 		this.texture = texture;
 	}
 
-	/*
-	static create()
-	{
-		return new Material
-		(
-			"name",
-			Color.create(),
-			0, // ambient
-			0, // diffuse
-			0, // specular
-			0, // shininess
-			Texture.create()
-		);
-	}
-	*/
-
 	static fromNameAndColor(name: string, color: Color): Material
 	{
 		return new Material(name, color, 0, 0, 0, 0, null);
