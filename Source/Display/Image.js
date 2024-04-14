@@ -23,8 +23,10 @@ class Image2 {
         var colorForPixel = Color.Instances().Transparent;
         for (var y = 0; y < sizeInPixels.y; y++) {
             var stringForPixelRow = stringsForPixels[y];
+            pixelPos.y = y;
             for (var x = 0; x < sizeInPixels.x; x++) {
                 var charForPixel = stringForPixelRow[x];
+                pixelPos.x = x;
                 colorForPixel = Color.byCodeChar(charForPixel);
                 graphics.fillStyle = colorForPixel.systemColor();
                 graphics.fillRect(pixelPos.x, pixelPos.y, 1, 1);
