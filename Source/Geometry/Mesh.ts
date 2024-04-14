@@ -1,5 +1,5 @@
 
-class Mesh
+class Mesh implements Shape
 {
 	name: string;
 	vertices: Vertex[];
@@ -57,7 +57,7 @@ class Mesh
 
 	// collidable
 
-	addCollisionsWithRayToList(ray: Ray, listToAddTo: Collision[])
+	addCollisionsWithRayToList(ray: Ray, listToAddTo: Collision[]): Collision[]
 	{
 		for (var f = 0; f < this.faces.length; f++)
 		{

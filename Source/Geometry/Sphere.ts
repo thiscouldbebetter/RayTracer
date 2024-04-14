@@ -1,5 +1,5 @@
 
-class Sphere
+class Sphere implements Shape
 {
 	name: string;
 	materialName: string;

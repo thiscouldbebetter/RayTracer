@@ -40,7 +40,7 @@ class Face
 
 		if (this.vertexIndices.length == 3)
 		{
-			this.triangles = [ this ];
+			this.triangles = [ this.clone() ];
 		}
 		else if (this.vertexIndices.length == 4)
 		{
@@ -183,7 +183,6 @@ class Face
 		{
 			this.plane.recalculateDerivedValues();
 		}
-
 
 		if (this.triangles == null)
 		{

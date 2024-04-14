@@ -5,15 +5,64 @@
 	<h3>Ray Tracer</h3>
 
 	<p>
-		This program will render a ray-traced scene.
-		If parts of the scene are black, it indicates problems loading
-		the texture image files, in which case it may be necessary to reload
-		and/or download the program and run it locally.
+		Enter a representation of a scene in JSON
+		and click the button to render it as an image.
 	</p>
 
-	<div id="divDisplay"></div>
+	<div>
+		<label>Scene as JSON:</label>
+		<button onclick="buttonClear_Clicked();">Clear</button>
+		<button onclick="buttonDemoLoad_Clicked();">Demo</button>
+		<br />
+		<textarea id="textareaSceneAsJson" cols="80" rows="25"></textarea>
+		<br />
+	</div>
+
+	<button onclick="buttonRender_Clicked();">Render</button>
+
+	<div>
+		<label>Rendered Image:</label>
+		<div id="divDisplay">[none]</div>
+	</div>
 
 </div>
+
+<script type="text/javascript">
+
+function buttonClear_Clicked()
+{
+	var d = document;
+	var textareaSceneAsJson =
+		d.getElementById("textareaSceneAsJson");
+	textareaSceneAsJson.value = "";
+}
+
+function buttonDemoLoad_Clicked()
+{
+	var d = document;
+	var textareaSceneAsJson =
+		d.getElementById("textareaSceneAsJson");
+
+	var scene = Scene.demo();
+	var sceneAsJson = scene.toJson();
+
+	textareaSceneAsJson.value = sceneAsJson;
+}
+
+function buttonRender_Clicked()
+{
+	var d = document;
+	var textareaSceneAsJson =
+		d.getElementById("textareaSceneAsJson");
+
+	var sceneAsJson = textareaSceneAsJson.value;
+
+	var scene = Scene.fromJson(sceneAsJson);
+
+	Globals.Instance.initialize(scene);
+}
+
+</script>
 
 <script type="text/javascript" src="Display/Color.js"></script>
 <script type="text/javascript" src="Display/Display.js"></script>
@@ -47,6 +96,7 @@
 <script type="text/javascript" src="Utility/Cloneable.js"></script>
 <script type="text/javascript" src="Utility/Constants.js"></script>
 <script type="text/javascript" src="Utility/NumberHelper.js"></script>
+<script type="text/javascript" src="Utility/Serializer.js"></script>
 
 <script type="text/javascript" src="Camera.js"></script>
 <script type="text/javascript" src="Globals.js"></script>
@@ -55,10 +105,6 @@
 <script type="text/javascript" src="Texture.js"></script>
 
 <script type="text/javascript" src="main.js"></script>
-
-<script type="text/javascript">
-main();
-</script>
 
 </body>
 </html>

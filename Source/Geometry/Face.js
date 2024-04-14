@@ -13,7 +13,7 @@ class Face {
     buildTriangles(mesh) {
         // instance variables
         if (this.vertexIndices.length == 3) {
-            this.triangles = [this];
+            this.triangles = [this.clone()];
         }
         else if (this.vertexIndices.length == 4) {
             this.triangles =

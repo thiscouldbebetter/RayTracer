@@ -1,9 +1,9 @@
 
 class Lighting
 {
-	lights: any[];
+	lights: Light[];
 
-	constructor(lights: any[])
+	constructor(lights: Light[])
 	{
 		this.lights = lights;
 	}
