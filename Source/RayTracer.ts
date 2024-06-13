@@ -1,12 +1,10 @@
 
-class Globals
+class RayTracer
 {
-	static Instance: Globals = new Globals();
-
 	display: Display;
 	scene: Scene;
 
-	initialize(scene: Scene): void
+	sceneRender(scene: Scene): void
 	{
 		this.scene = scene;
 

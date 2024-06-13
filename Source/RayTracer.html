@@ -59,7 +59,8 @@ function buttonRender_Clicked()
 
 	var scene = Scene.fromJson(sceneAsJson);
 
-	Globals.Instance.initialize(scene);
+	var rayTracer = new RayTracer();
+	rayTracer.sceneRender(scene);
 }
 
 </script>
@@ -100,12 +101,10 @@ function buttonRender_Clicked()
 <script type="text/javascript" src="Utility/Serializable.js"></script>
 
 <script type="text/javascript" src="Camera.js"></script>
-<script type="text/javascript" src="Globals.js"></script>
 <script type="text/javascript" src="Material.js"></script>
+<script type="text/javascript" src="RayTracer.js"></script>
 <script type="text/javascript" src="Scene.js"></script>
 <script type="text/javascript" src="Texture.js"></script>
-
-<script type="text/javascript" src="main.js"></script>
 
 </body>
 </html>

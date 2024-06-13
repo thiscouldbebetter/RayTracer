@@ -1,6 +1,6 @@
 "use strict";
-class Globals {
-    initialize(scene) {
+class RayTracer {
+    sceneRender(scene) {
         this.scene = scene;
         var displaySize = this.scene.camera.viewSize;
         this.display = new Display();
@@ -15,4 +15,3 @@ class Globals {
         });
     }
 }
-Globals.Instance = new Globals();
