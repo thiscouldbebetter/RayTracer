@@ -7,7 +7,7 @@ class RayTracer {
         this.display.initialize(displaySize);
         var timeBeforeRender = new Date();
         this.scene.loadAndSendToCallback((sceneLoaded) => {
-            this.display.drawScene(sceneLoaded);
+            sceneLoaded.drawToDisplay(this.display);
             var timeAfterRender = new Date();
             var renderTimeInMilliseconds = timeAfterRender.valueOf()
                 - timeBeforeRender.valueOf();

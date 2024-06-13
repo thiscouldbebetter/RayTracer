@@ -59,8 +59,17 @@ function buttonRender_Clicked()
 
 	var scene = Scene.fromJson(sceneAsJson);
 
-	var rayTracer = new RayTracer();
-	rayTracer.sceneRender(scene);
+	if (scene == null)
+	{
+		var errorMessage =
+			"The specified JSON for the scene did not have the expected format.";
+		alert(errorMessage);
+	}
+	else
+	{
+		var rayTracer = new RayTracer();
+		rayTracer.sceneRender(scene);
+	}
 }
 
 </script>
