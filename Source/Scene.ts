@@ -299,21 +299,25 @@ class Scene implements Serializable<Scene>
 		display: Display, bounds: Bounds
 	): void
 	{
-		// todo
-		// It's currently impossible to use DOM objects,
-		// including Canvas and GraphicsContext objects,
-		// within a web worker. Hopefully this will 
-		// change in the future.
-
-		var pixelColor = this._pixelColor;
-
 		var boundsMin = bounds.min;
 		var boundsMax = bounds.max;
 
-		var sceneBackgroundColor = this.backgroundColor;
-
 		var pane = new Pane(boundsMin, boundsMax);
+
+		this.drawToDisplay_PaneRender(display, pane);
+
+		pane.drawToDisplay(display);
+	}
+
+	drawToDisplay_PaneRender(display: Display, pane: Pane)
+	{
+		var scene = this;
+
+		var pixelColor = scene._pixelColor;
+		var sceneBackgroundColor = scene.backgroundColor;
+
 		var paneSize = pane.sizeInPixels;
+		var boundsMin = pane.boundsMin;
 
 		var pixelPosAbsolute = Coords.create();
 		var pixelPosRelative = Coords.create();
@@ -331,7 +335,7 @@ class Scene implements Serializable<Scene>
 					.add(boundsMin);
 
 				var collisionForRayFromCameraToPixel =
-					this.drawToDisplay_ColorSetFromPixelAtPos
+					scene.drawToDisplay_ColorSetFromPixelAtPos
 					(
 						display,
 						pixelColor,
@@ -350,7 +354,6 @@ class Scene implements Serializable<Scene>
 			}
 		}
 
-		pane.drawToDisplay(display);
 	}
 
 	drawToDisplay_ColorSetFromPixelAtPos

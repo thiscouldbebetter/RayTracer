@@ -130,17 +130,18 @@ class Scene {
         display.fillWithColor(this.backgroundColor);
     }
     drawToDisplay_PixelsGetAndDrawForBounds(display, bounds) {
-        // todo
-        // It's currently impossible to use DOM objects,
-        // including Canvas and GraphicsContext objects,
-        // within a web worker. Hopefully this will 
-        // change in the future.
-        var pixelColor = this._pixelColor;
         var boundsMin = bounds.min;
         var boundsMax = bounds.max;
-        var sceneBackgroundColor = this.backgroundColor;
         var pane = new Pane(boundsMin, boundsMax);
+        this.drawToDisplay_PaneRender(display, pane);
+        pane.drawToDisplay(display);
+    }
+    drawToDisplay_PaneRender(display, pane) {
+        var scene = this;
+        var pixelColor = scene._pixelColor;
+        var sceneBackgroundColor = scene.backgroundColor;
         var paneSize = pane.sizeInPixels;
+        var boundsMin = pane.boundsMin;
         var pixelPosAbsolute = Coords.create();
         var pixelPosRelative = Coords.create();
         for (var y = 0; y < paneSize.y; y++) {
@@ -150,14 +151,13 @@ class Scene {
                 pixelPosAbsolute
                     .overwriteWith(pixelPosRelative)
                     .add(boundsMin);
-                var collisionForRayFromCameraToPixel = this.drawToDisplay_ColorSetFromPixelAtPos(display, pixelColor, pixelPosAbsolute);
+                var collisionForRayFromCameraToPixel = scene.drawToDisplay_ColorSetFromPixelAtPos(display, pixelColor, pixelPosAbsolute);
                 if (collisionForRayFromCameraToPixel == null) {
                     pixelColor.overwriteWith(sceneBackgroundColor);
                 }
                 pane.pixelAtPosRelativeSetToColor(pixelPosRelative, pixelColor);
             }
         }
-        pane.drawToDisplay(display);
     }
     drawToDisplay_ColorSetFromPixelAtPos(display, surfaceColor, pixelPos) {
         var collisionClosest = this.drawToDisplay_Pixel_FindClosestCollision(display, pixelPos);
