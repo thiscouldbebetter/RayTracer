@@ -1,0 +1,1 @@
+cls && tsc > TranspileErrors.txt
