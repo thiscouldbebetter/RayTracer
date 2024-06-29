@@ -3,7 +3,10 @@ class Color {
     constructor(name, codeChar, componentsRGBA) {
         this.name = name;
         this.codeChar = codeChar;
-        this.componentsRGBA = componentsRGBA;
+        this.componentsRGBA = componentsRGBA || [0, 0, 0, 0];
+    }
+    static create() {
+        return new Color(null, null, null);
     }
     static Instances() {
         if (Color._instances == null) {

@@ -305,7 +305,6 @@ class Scene implements Serializable<Scene>
 		// within a web worker. Hopefully this will 
 		// change in the future.
 
-		var pixelPos = Coords.create();
 		var pixelColor = this._pixelColor;
 
 		var boundsMin = bounds.min;
@@ -313,20 +312,30 @@ class Scene implements Serializable<Scene>
 
 		var sceneBackgroundColor = this.backgroundColor;
 
-		for (var y = boundsMin.y; y < boundsMax.y; y++)
-		{
-			pixelPos.y = y;
+		var pane = new Pane(boundsMin, boundsMax);
+		var paneSize = pane.sizeInPixels;
 
-			for (var x = boundsMin.x; x < boundsMax.x; x++)
+		var pixelPosAbsolute = Coords.create();
+		var pixelPosRelative = Coords.create();
+
+		for (var y = 0; y < paneSize.y; y++)
+		{
+			pixelPosRelative.y = y;
+
+			for (var x = 0; x < paneSize.x; x++)
 			{
-				pixelPos.x = x;
+				pixelPosRelative.x = x;
+
+				pixelPosAbsolute
+					.overwriteWith(pixelPosRelative)
+					.add(boundsMin);
 
 				var collisionForRayFromCameraToPixel =
 					this.drawToDisplay_ColorSetFromPixelAtPos
 					(
 						display,
 						pixelColor,
-						pixelPos
+						pixelPosAbsolute
 					);
 
 				if (collisionForRayFromCameraToPixel == null)
@@ -334,13 +343,14 @@ class Scene implements Serializable<Scene>
 					pixelColor.overwriteWith(sceneBackgroundColor);
 				}
 
-				display.pixelAtPosSetToColor
+				pane.pixelAtPosRelativeSetToColor
 				(
-					pixelPos, pixelColor
+					pixelPosRelative, pixelColor
 				);
-
 			}
 		}
+
+		pane.drawToDisplay(display);
 	}
 
 	drawToDisplay_ColorSetFromPixelAtPos
