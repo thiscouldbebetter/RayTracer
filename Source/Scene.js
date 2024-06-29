@@ -151,7 +151,7 @@ class Scene {
                 pixelPosAbsolute
                     .overwriteWith(pixelPosRelative)
                     .add(boundsMin);
-                var collisionForRayFromCameraToPixel = scene.drawToDisplay_ColorSetFromPixelAtPos(display, pixelColor, pixelPosAbsolute);
+                var collisionForRayFromCameraToPixel = scene.drawToDisplay_ColorSetFromPixelAtPos(pixelColor, pixelPosAbsolute);
                 if (collisionForRayFromCameraToPixel == null) {
                     pixelColor.overwriteWith(sceneBackgroundColor);
                 }
@@ -159,8 +159,8 @@ class Scene {
             }
         }
     }
-    drawToDisplay_ColorSetFromPixelAtPos(display, surfaceColor, pixelPos) {
-        var collisionClosest = this.drawToDisplay_Pixel_FindClosestCollision(display, pixelPos);
+    drawToDisplay_ColorSetFromPixelAtPos(surfaceColor, pixelPos) {
+        var collisionClosest = this.drawToDisplay_Pixel_FindClosestCollision(pixelPos);
         if (collisionClosest != null) {
             var collidable = collisionClosest.colliderByName("Collidable");
             var surfaceNormal = this._surfaceNormal;
@@ -177,7 +177,7 @@ class Scene {
         }
         return collisionClosest;
     }
-    drawToDisplay_Pixel_FindClosestCollision(display, pixelPos) {
+    drawToDisplay_Pixel_FindClosestCollision(pixelPos) {
         var camera = this.camera;
         var cameraOrientation = camera.orientation;
         var displacementFromEyeToPixel = this._displacementFromEyeToPixel;
@@ -185,7 +185,7 @@ class Scene {
         var cameraForward = cameraOrientationTemp.forward;
         var cameraRight = cameraOrientationTemp.right;
         var cameraDown = cameraOrientationTemp.down;
-        var displaySizeInPixelsHalf = display.sizeInPixelsHalf;
+        var displaySizeInPixelsHalf = camera.viewSizeHalf();
         displacementFromEyeToPixel.overwriteWith(cameraForward.overwriteWith(cameraOrientation.forward).multiplyScalar(camera.focalLength)).add(cameraRight.overwriteWith(cameraOrientation.right).multiplyScalar(pixelPos.x - displaySizeInPixelsHalf.x)).add(cameraDown.overwriteWith(cameraOrientation.down).multiplyScalar(pixelPos.y - displaySizeInPixelsHalf.y));
         var directionFromEyeToPixel = this._directionFromEyeToPixel;
         directionFromEyeToPixel.overwriteWith(displacementFromEyeToPixel).normalize();

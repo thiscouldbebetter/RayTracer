@@ -49,6 +49,9 @@ class Coords {
             + this.z * other.z;
         return returnValue;
     }
+    half() {
+        return this.divideScalar(2);
+    }
     magnitude() {
         var returnValue = Math.sqrt(this.x * this.x
             + this.y * this.y

@@ -337,7 +337,6 @@ class Scene implements Serializable<Scene>
 				var collisionForRayFromCameraToPixel =
 					scene.drawToDisplay_ColorSetFromPixelAtPos
 					(
-						display,
 						pixelColor,
 						pixelPosAbsolute
 					);
@@ -358,14 +357,12 @@ class Scene implements Serializable<Scene>
 
 	drawToDisplay_ColorSetFromPixelAtPos
 	(
-		display: Display,
 		surfaceColor: Color,
 		pixelPos: Coords
 	): Collision
 	{
 		var collisionClosest = this.drawToDisplay_Pixel_FindClosestCollision
 		(
-			display,
 			pixelPos
 		);
 
@@ -416,7 +413,6 @@ class Scene implements Serializable<Scene>
 
 	drawToDisplay_Pixel_FindClosestCollision
 	(
-		display: Display,
 		pixelPos: Coords
 	)
 	{
@@ -428,7 +424,7 @@ class Scene implements Serializable<Scene>
 		var cameraForward = cameraOrientationTemp.forward;
 		var cameraRight = cameraOrientationTemp.right;
 		var cameraDown = cameraOrientationTemp.down;
-		var displaySizeInPixelsHalf = display.sizeInPixelsHalf;
+		var displaySizeInPixelsHalf = camera.viewSizeHalf();
 
 		displacementFromEyeToPixel.overwriteWith
 		(

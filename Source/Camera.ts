@@ -6,6 +6,8 @@ class Camera implements Serializable<Camera>
 	pos: Coords;
 	orientation: Orientation;
 
+	_viewSizeHalf: Coords;
+
 	constructor
 	(
 		viewSize: Coords,
@@ -18,6 +20,13 @@ class Camera implements Serializable<Camera>
 		this.focalLength = focalLength;
 		this.pos = pos;
 		this.orientation = orientation;
+
+		this._viewSizeHalf = this.viewSize.clone().half();
+	}
+
+	viewSizeHalf(): Coords
+	{
+		return this._viewSizeHalf;
 	}
 
 	// Serializable.
