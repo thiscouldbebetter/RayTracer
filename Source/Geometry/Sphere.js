@@ -26,7 +26,8 @@ class Sphere {
         var surfacePos = collisionClosest.pos;
         surfaceMaterial.overwriteWith(sphere.material(scene));
         surfaceNormal.overwriteWith(surfacePos).subtract(sphere.centerPos).normalize();
-        if (surfaceMaterial.texture == null) {
+        var textureShouldBeUsed = surfaceMaterial.textureIsSetAndLoaded();
+        if (textureShouldBeUsed == false) {
             surfaceColor.overwriteWith(surfaceMaterial.color);
         }
         else {

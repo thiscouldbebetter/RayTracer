@@ -28,6 +28,9 @@ class Material {
             this.texture.loadAndSendToCallback((textureLoaded) => callback(material));
         }
     }
+    textureIsSetAndLoaded() {
+        return (this.texture != null && this.texture.loaded());
+    }
     // cloneable
     clone() {
         return new Material(this.name, this.color.clone(), this.ambient, this.diffuse, this.specular, this.shininess, this.texture);

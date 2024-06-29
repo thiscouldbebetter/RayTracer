@@ -5,11 +5,12 @@ class LightPoint {
         this.pos = pos;
     }
     intensityForCollisionMaterialNormalAndCamera(collision, material, normal, camera) {
-        var displacementFromObjectToLight = Lighting.Temp;
+        this.temporaryVariablesInitializeIfNecessary();
+        var displacementFromObjectToLight = this._displacementFromObjectToLight;
         displacementFromObjectToLight.overwriteWith(this.pos).subtract(collision.pos);
         var distanceFromLightToObject = displacementFromObjectToLight.magnitude();
         var distanceFromLightToObjectSquared = Math.pow(distanceFromLightToObject, 2);
-        var surfaceNormal = Lighting.Temp2.overwriteWith(normal);
+        var surfaceNormal = this._surfaceNormal.overwriteWith(normal);
         var directionFromObjectToLight = displacementFromObjectToLight.normalize();
         var directionFromObjectToLightDotSurfaceNormal = directionFromObjectToLight.dotProduct(surfaceNormal);
         var returnValue = 0;
@@ -19,7 +20,7 @@ class LightPoint {
                 * this.intensity
                 / distanceFromLightToObjectSquared;
             var directionOfReflection = surfaceNormal.multiplyScalar(2 * directionFromObjectToLightDotSurfaceNormal).subtract(directionFromObjectToLight);
-            var directionFromObjectToViewer = Lighting.Temp3.overwriteWith(camera.pos).subtract(collision.pos).normalize();
+            var directionFromObjectToViewer = this._directionFromObjectToViewer.overwriteWith(camera.pos).subtract(collision.pos).normalize();
             var specularComponent = material.specular
                 * Math.pow(directionOfReflection.dotProduct(directionFromObjectToViewer), material.shininess)
                 * this.intensity
@@ -27,5 +28,16 @@ class LightPoint {
             returnValue = diffuseComponent + specularComponent;
         }
         return returnValue;
+    }
+    temporaryVariablesInitializeIfNecessary() {
+        if (this._directionFromObjectToViewer == null) {
+            this._directionFromObjectToViewer = Coords.create();
+        }
+        if (this._displacementFromObjectToLight == null) {
+            this._displacementFromObjectToLight = Coords.create();
+        }
+        if (this._surfaceNormal == null) {
+            this._surfaceNormal = Coords.create();
+        }
     }
 }

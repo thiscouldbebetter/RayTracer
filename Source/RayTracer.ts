@@ -14,12 +14,14 @@ class RayTracer
 
 		var timeBeforeRender = new Date();
 
-		this.scene.loadAndSendToCallback
+		var sceneRenderer = SceneRenderer.maximal(); // todo - Make configurable through UI.
+
+		this.scene.loadForRendererAndSendToCallback
 		(
+			sceneRenderer,
 			(sceneLoaded: Scene) =>
 			{
 				this.scene = sceneLoaded;
-				var sceneRenderer = new SceneRenderer();
 				sceneRenderer.drawSceneToDisplay(this.scene, this.display);
 				var timeAfterRender = new Date();
 				var renderTimeInMilliseconds =

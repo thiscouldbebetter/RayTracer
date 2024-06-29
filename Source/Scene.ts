@@ -174,25 +174,36 @@ class Scene implements Serializable<Scene>
 		return scene;
 	}
 
-	loadAndSendToCallback(callback: any): void
+	loadForRendererAndSendToCallback
+	(
+		sceneRenderer: SceneRenderer,
+		callback: (s: Scene) => void
+	): void
 	{
-		var materialsCount = this.materials.length;
-		var materialsLoadedSoFarCount = 0;
-		var scene = this;
-		this.materials.forEach
-		(
-			m => m.loadAndSendToCallback
+		if (sceneRenderer.texturesAreEnabled)
+		{
+			var materialsCount = this.materials.length;
+			var materialsLoadedSoFarCount = 0;
+			var scene = this;
+			this.materials.forEach
 			(
-				(materialLoaded: Material) =>
-				{
-					materialsLoadedSoFarCount++;
-					if (materialsLoadedSoFarCount >= materialsCount)
+				m => m.loadAndSendToCallback
+				(
+					(materialLoaded: Material) =>
 					{
-						callback(scene);
+						materialsLoadedSoFarCount++;
+						if (materialsLoadedSoFarCount >= materialsCount)
+						{
+							callback(scene);
+						}
 					}
-				}
-			)
-		);
+				)
+			);
+		}
+		else
+		{
+			callback(this);
+		}
 	}
 
 	materialByName(name: string): Material

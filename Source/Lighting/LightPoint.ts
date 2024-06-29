@@ -4,6 +4,10 @@ class LightPoint
 	intensity: number;
 	pos: Coords;
 
+	_directionFromObjectToViewer: Coords;
+	_displacementFromObjectToLight: Coords;
+	_surfaceNormal: Coords;
+
 	constructor(intensity: number, pos: Coords)
 	{
 		this.intensity = intensity;
@@ -18,7 +22,10 @@ class LightPoint
 		camera: Camera
 	): number
 	{
-		var displacementFromObjectToLight = Lighting.Temp;
+		this.temporaryVariablesInitializeIfNecessary();
+
+		var displacementFromObjectToLight =
+			this._displacementFromObjectToLight;
 
 		displacementFromObjectToLight.overwriteWith
 		(
@@ -35,7 +42,7 @@ class LightPoint
 			distanceFromLightToObject, 2
 		);
 
-		var surfaceNormal = Lighting.Temp2.overwriteWith(normal);
+		var surfaceNormal = this._surfaceNormal.overwriteWith(normal);
 
 		var directionFromObjectToLight =
 			displacementFromObjectToLight.normalize();
@@ -65,14 +72,14 @@ class LightPoint
 					directionFromObjectToLight
 				);
 
-			var directionFromObjectToViewer = Lighting.Temp3.overwriteWith
+			var directionFromObjectToViewer = this._directionFromObjectToViewer.overwriteWith
 			(
 				camera.pos
 			).subtract
 			(
 				collision.pos
 			).normalize();
-	
+
 			var specularComponent = 
 				material.specular
 				* Math.pow
@@ -87,5 +94,21 @@ class LightPoint
 		}
 
 		return returnValue;
+	}
+
+	temporaryVariablesInitializeIfNecessary(): void
+	{
+		if (this._directionFromObjectToViewer == null)
+		{
+			this._directionFromObjectToViewer = Coords.create();
+		}
+		if (this._displacementFromObjectToLight == null)
+		{
+			this._displacementFromObjectToLight = Coords.create();
+		}
+		if (this._surfaceNormal == null)
+		{
+			this._surfaceNormal = Coords.create();
+		}
 	}
 }

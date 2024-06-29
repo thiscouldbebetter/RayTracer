@@ -1,6 +1,32 @@
 
 class SceneRenderer
 {
+	lightingIsEnabled: boolean;
+	shadowsAreEnabled: boolean; // todo
+	texturesAreEnabled: boolean;
+
+	constructor
+	(
+		lightingIsEnabled: boolean,
+		shadowsAreEnabled: boolean,
+		texturesAreEnabled: boolean
+	)
+	{
+		this.lightingIsEnabled = lightingIsEnabled;
+		this.shadowsAreEnabled = shadowsAreEnabled;
+		this.texturesAreEnabled = texturesAreEnabled;
+	}
+
+	static minimal(): SceneRenderer
+	{
+		return new SceneRenderer(false, false, false);
+	}
+
+	static maximal(): SceneRenderer
+	{
+		return new SceneRenderer(true, true, true);
+	}
+
 	// Drawing.
 
 	_collisions: Collision[];
@@ -105,7 +131,6 @@ class SceneRenderer
 	drawSceneToDisplay_PaneRender(scene: Scene, display: Display, pane: Pane)
 	{
 		var pixelColor = this._pixelColor;
-		var sceneBackgroundColor = scene.backgroundColor;
 
 		var paneSize = pane.sizeInPixels;
 		var boundsMin = pane.boundsMin;
@@ -133,15 +158,14 @@ class SceneRenderer
 						pixelPosAbsolute
 					);
 
-				if (collisionForRayFromCameraToPixel == null)
+				if (collisionForRayFromCameraToPixel != null)
 				{
-					pixelColor.overwriteWith(sceneBackgroundColor);
+					pane.pixelAtPosRelativeSetToColor
+					(
+						pixelPosRelative, pixelColor
+					);
 				}
 
-				pane.pixelAtPosRelativeSetToColor
-				(
-					pixelPosRelative, pixelColor
-				);
 			}
 		}
 
@@ -179,21 +203,28 @@ class SceneRenderer
 
 			var intensityFromLightsAll = 0;
 
-			var lights = scene.lighting.lights;
-
-			for (var i = 0; i < lights.length; i++)
+			if (this.lightingIsEnabled == false)
 			{
-				var light = lights[i];
+				intensityFromLightsAll = 1;
+			}
+			else
+			{
+				var lights = scene.lighting.lights;
 
-				var intensity = light.intensityForCollisionMaterialNormalAndCamera
-				(
-					collisionClosest,
-					surfaceMaterial,
-					surfaceNormal,
-					scene.camera
-				);
+				for (var i = 0; i < lights.length; i++)
+				{
+					var light = lights[i];
 
-				intensityFromLightsAll += intensity;
+					var intensity = light.intensityForCollisionMaterialNormalAndCamera
+					(
+						collisionClosest,
+						surfaceMaterial,
+						surfaceNormal,
+						scene.camera
+					);
+
+					intensityFromLightsAll += intensity;
+				}
 			}
 
 			surfaceColor.multiply

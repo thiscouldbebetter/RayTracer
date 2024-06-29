@@ -7,7 +7,7 @@ class Mesh implements Shape
 	vertices: Vertex[];
 	faces: Face[];
 
-	VertexWeightsAtSurfacePos: number[];
+	_vertexWeightsAtSurfacePos: number[];
 
 	constructor
 	(
@@ -23,7 +23,7 @@ class Mesh implements Shape
 		this.faces = faces;
 		this.recalculateDerivedValues();
 
-		this.VertexWeightsAtSurfacePos = [];
+		this._vertexWeightsAtSurfacePos = [];
 	}
 
 	// constants
@@ -100,17 +100,21 @@ class Mesh implements Shape
 		var face = collisionClosest.colliderByName("Triangle");
 		var surfacePos = collisionClosest.pos;
 
-		var vertexWeightsAtSurfacePos =
+		var _vertexWeightsAtSurfacePos =
 			face.vertexWeightsAtSurfacePosAddToList
 			(
 				this, // mesh
 				surfacePos,
-				this.VertexWeightsAtSurfacePos
+				this._vertexWeightsAtSurfacePos
 			);
 
-		surfaceMaterial.overwriteWith(face.material(scene));
+		var faceMaterial = face.material(scene);
 
-		if (surfaceMaterial.texture == null)
+		surfaceMaterial.overwriteWith(faceMaterial);
+
+		var textureShouldBeUsed = surfaceMaterial.textureIsSetAndLoaded();
+
+		if (textureShouldBeUsed == false)
 		{
 			surfaceColor.overwriteWith
 			(
@@ -122,7 +126,7 @@ class Mesh implements Shape
 			var texelColor = face.texelColorForVertexWeights
 			(
 				surfaceMaterial.texture, 
-				vertexWeightsAtSurfacePos
+				_vertexWeightsAtSurfacePos
 			);
 
 			if (texelColor != null)
@@ -135,7 +139,7 @@ class Mesh implements Shape
 		(
 			face.normalForVertexWeights
 			(
-				vertexWeightsAtSurfacePos
+				_vertexWeightsAtSurfacePos
 			)
 		); 
 

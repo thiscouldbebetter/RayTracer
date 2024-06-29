@@ -48,7 +48,7 @@ class Material implements Serializable<Material>
 
 	// methods
 
-	loadAndSendToCallback(callback: any): void
+	loadAndSendToCallback(callback: (m: Material) => void): void
 	{
 		var material = this;
 		if (this.texture == null)
@@ -62,6 +62,11 @@ class Material implements Serializable<Material>
 				(textureLoaded: Texture) => callback(material)
 			);
 		}
+	}
+
+	textureIsSetAndLoaded(): boolean
+	{
+		return (this.texture != null && this.texture.loaded() );
 	}
 
 	// cloneable

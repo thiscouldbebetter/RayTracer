@@ -81,16 +81,21 @@ class Scene {
         ]);
         return scene;
     }
-    loadAndSendToCallback(callback) {
-        var materialsCount = this.materials.length;
-        var materialsLoadedSoFarCount = 0;
-        var scene = this;
-        this.materials.forEach(m => m.loadAndSendToCallback((materialLoaded) => {
-            materialsLoadedSoFarCount++;
-            if (materialsLoadedSoFarCount >= materialsCount) {
-                callback(scene);
-            }
-        }));
+    loadForRendererAndSendToCallback(sceneRenderer, callback) {
+        if (sceneRenderer.texturesAreEnabled) {
+            var materialsCount = this.materials.length;
+            var materialsLoadedSoFarCount = 0;
+            var scene = this;
+            this.materials.forEach(m => m.loadAndSendToCallback((materialLoaded) => {
+                materialsLoadedSoFarCount++;
+                if (materialsLoadedSoFarCount >= materialsCount) {
+                    callback(scene);
+                }
+            }));
+        }
+        else {
+            callback(this);
+        }
     }
     materialByName(name) {
         if (this._materialsByName == null) {
