@@ -116,15 +116,15 @@ class Scene {
         }
     }
     drawToDisplay_InitializeTemporaryVariables() {
-        this.Collisions = [];
-        this.DirectionFromEyeToPixel = Coords.create();
-        this.DisplacementFromEyeToPixel = Coords.create();
-        this.Material = Material.fromNameAndColor("DisplayMaterial", Color.blank("MaterialColor"));
-        this.PixelColor = Color.blank("PixelColor");
-        this.SurfaceNormal = Coords.create();
-        this.TexelColor = Color.blank("TexelColor");
-        this.TexelUV = Coords.create();
-        this.VertexWeightsAtSurfacePos = [];
+        this._collisions = [];
+        this._directionFromEyeToPixel = Coords.create();
+        this._displacementFromEyeToPixel = Coords.create();
+        this._material = Material.fromNameAndColor("DisplayMaterial", Color.blank("MaterialColor"));
+        this._pixelColor = Color.blank("PixelColor");
+        this._surfaceNormal = Coords.create();
+        this._texelColor = Color.blank("TexelColor");
+        this._texelUV = Coords.create();
+        this._vertexWeightsAtSurfacePos = [];
     }
     drawToDisplay_Background(display) {
         display.fillWithColor(this.backgroundColor);
@@ -136,7 +136,7 @@ class Scene {
         // within a web worker. Hopefully this will 
         // change in the future.
         var pixelPos = Coords.create();
-        var pixelColor = this.PixelColor;
+        var pixelColor = this._pixelColor;
         var boundsMin = bounds.min;
         var boundsMax = bounds.max;
         var sceneBackgroundColor = this.backgroundColor;
@@ -156,8 +156,8 @@ class Scene {
         var collisionClosest = this.drawToDisplay_Pixel_FindClosestCollision(display, pixelPos);
         if (collisionClosest != null) {
             var collidable = collisionClosest.colliderByName("Collidable");
-            var surfaceNormal = this.SurfaceNormal;
-            var surfaceMaterial = this.Material;
+            var surfaceNormal = this._surfaceNormal;
+            var surfaceMaterial = this._material;
             collidable.surfaceMaterialColorAndNormalForCollision(this, collisionClosest, surfaceMaterial, surfaceColor, surfaceNormal);
             var intensityFromLightsAll = 0;
             var lights = this.lighting.lights;
@@ -173,17 +173,17 @@ class Scene {
     drawToDisplay_Pixel_FindClosestCollision(display, pixelPos) {
         var camera = this.camera;
         var cameraOrientation = camera.orientation;
-        var displacementFromEyeToPixel = this.DisplacementFromEyeToPixel;
+        var displacementFromEyeToPixel = this._displacementFromEyeToPixel;
         var cameraOrientationTemp = Orientation.Instances().Camera;
         var cameraForward = cameraOrientationTemp.forward;
         var cameraRight = cameraOrientationTemp.right;
         var cameraDown = cameraOrientationTemp.down;
         var displaySizeInPixelsHalf = display.sizeInPixelsHalf;
         displacementFromEyeToPixel.overwriteWith(cameraForward.overwriteWith(cameraOrientation.forward).multiplyScalar(camera.focalLength)).add(cameraRight.overwriteWith(cameraOrientation.right).multiplyScalar(pixelPos.x - displaySizeInPixelsHalf.x)).add(cameraDown.overwriteWith(cameraOrientation.down).multiplyScalar(pixelPos.y - displaySizeInPixelsHalf.y));
-        var directionFromEyeToPixel = this.DirectionFromEyeToPixel;
+        var directionFromEyeToPixel = this._directionFromEyeToPixel;
         directionFromEyeToPixel.overwriteWith(displacementFromEyeToPixel).normalize();
         var rayFromEyeToPixel = new Ray(camera.pos, directionFromEyeToPixel);
-        var collisions = this.Collisions;
+        var collisions = this._collisions;
         collisions.length = 0;
         var collidables = this.collidables;
         for (var i = 0; i < collidables.length; i++) {

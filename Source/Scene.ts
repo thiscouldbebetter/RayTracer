@@ -210,15 +210,15 @@ class Scene implements Serializable<Scene>
 
 	// Drawing.
 
-	Collisions: Collision[];
-	DirectionFromEyeToPixel: Coords;
-	DisplacementFromEyeToPixel: Coords;
-	Material: Material;
-	PixelColor: Color;
-	SurfaceNormal: Coords;
-	TexelColor: Color;
-	TexelUV: Coords;
-	VertexWeightsAtSurfacePos: any[];
+	_collisions: Collision[];
+	_directionFromEyeToPixel: Coords;
+	_displacementFromEyeToPixel: Coords;
+	_material: Material;
+	_pixelColor: Color;
+	_surfaceNormal: Coords;
+	_texelColor: Color;
+	_texelUV: Coords;
+	_vertexWeightsAtSurfacePos: any[];
 
 	drawToDisplay(display: Display): void
 	{
@@ -273,19 +273,19 @@ class Scene implements Serializable<Scene>
 
 	drawToDisplay_InitializeTemporaryVariables(): void
 	{
-		this.Collisions = [];
-		this.DirectionFromEyeToPixel = Coords.create();
-		this.DisplacementFromEyeToPixel = Coords.create();
-		this.Material = Material.fromNameAndColor
+		this._collisions = [];
+		this._directionFromEyeToPixel = Coords.create();
+		this._displacementFromEyeToPixel = Coords.create();
+		this._material = Material.fromNameAndColor
 		(
 			"DisplayMaterial",
 			Color.blank("MaterialColor")
 		);
-		this.PixelColor = Color.blank("PixelColor");
-		this.SurfaceNormal = Coords.create();
-		this.TexelColor = Color.blank("TexelColor");
-		this.TexelUV = Coords.create();
-		this.VertexWeightsAtSurfacePos = [];
+		this._pixelColor = Color.blank("PixelColor");
+		this._surfaceNormal = Coords.create();
+		this._texelColor = Color.blank("TexelColor");
+		this._texelUV = Coords.create();
+		this._vertexWeightsAtSurfacePos = [];
 
 	}
 
@@ -306,7 +306,7 @@ class Scene implements Serializable<Scene>
 		// change in the future.
 
 		var pixelPos = Coords.create();
-		var pixelColor = this.PixelColor;
+		var pixelColor = this._pixelColor;
 
 		var boundsMin = bounds.min;
 		var boundsMax = bounds.max;
@@ -361,8 +361,8 @@ class Scene implements Serializable<Scene>
 			var collidable =
 				collisionClosest.colliderByName("Collidable");
 
-			var surfaceNormal = this.SurfaceNormal;
-			var surfaceMaterial = this.Material;
+			var surfaceNormal = this._surfaceNormal;
+			var surfaceMaterial = this._material;
 
 			collidable.surfaceMaterialColorAndNormalForCollision
 			(
@@ -410,7 +410,7 @@ class Scene implements Serializable<Scene>
 		var camera = this.camera;
 		var cameraOrientation = camera.orientation;
 
-		var displacementFromEyeToPixel = this.DisplacementFromEyeToPixel;
+		var displacementFromEyeToPixel = this._displacementFromEyeToPixel;
 		var cameraOrientationTemp = Orientation.Instances().Camera;
 		var cameraForward = cameraOrientationTemp.forward;
 		var cameraRight = cameraOrientationTemp.right;
@@ -446,7 +446,7 @@ class Scene implements Serializable<Scene>
 			)
 		);
 
-		var directionFromEyeToPixel = this.DirectionFromEyeToPixel;
+		var directionFromEyeToPixel = this._directionFromEyeToPixel;
 		directionFromEyeToPixel.overwriteWith
 		(
 			displacementFromEyeToPixel
@@ -458,7 +458,7 @@ class Scene implements Serializable<Scene>
 			directionFromEyeToPixel
 		);
 
-		var collisions = this.Collisions;
+		var collisions = this._collisions;
 		collisions.length = 0;
 
 		var collidables = this.collidables;
