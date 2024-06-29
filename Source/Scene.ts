@@ -146,10 +146,11 @@ class Scene implements Serializable<Scene>
 			(
 				// lights
 				[
-					//new LightAmbient(.1),
-					new LightPoint(30000, new Coords(-200, -200, -300)),
+					new LightAmbient(.05),
+					new LightDirectional(.5, new Coords(1, 1, 1) ),
+					// new LightPoint(30000, new Coords(-200, -200, -300)),
 					new LightPoint(60000, new Coords(200, -200, -300)),
-					new LightPoint(30000, new Coords(200, 200, -300)),
+					// new LightPoint(30000, new Coords(200, 200, -300)),
 				]
 			),
 			new Camera

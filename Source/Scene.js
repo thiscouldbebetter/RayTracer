@@ -64,10 +64,11 @@ class Scene {
         new Lighting(
         // lights
         [
-            //new LightAmbient(.1),
-            new LightPoint(30000, new Coords(-200, -200, -300)),
+            new LightAmbient(.05),
+            new LightDirectional(.5, new Coords(1, 1, 1)),
+            // new LightPoint(30000, new Coords(-200, -200, -300)),
             new LightPoint(60000, new Coords(200, -200, -300)),
-            new LightPoint(30000, new Coords(200, 200, -300)),
+            // new LightPoint(30000, new Coords(200, 200, -300)),
         ]), new Camera(displaySize.clone(), 200, // focalLength
         new Coords(-150, -300, -60), // pos
         new Orientation(new Coords(1, 2, 0), // forward

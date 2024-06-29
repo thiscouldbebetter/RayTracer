@@ -1,6 +1,7 @@
 "use strict";
 class LightPoint {
     constructor(intensity, pos) {
+        this.typeName = LightPoint.name;
         this.intensity = intensity;
         this.pos = pos;
     }

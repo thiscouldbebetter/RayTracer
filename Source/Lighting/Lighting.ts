@@ -8,10 +8,6 @@ class Lighting implements Serializable<Lighting>
 		this.lights = lights;
 	}
 
-	static Temp: Coords = Coords.create();
-	static Temp2: Coords = Coords.create();
-	static Temp3: Coords = Coords.create();
-
 	// Serializable.
 
 	fromJson(objectAsJson: string): Lighting
@@ -26,7 +22,27 @@ class Lighting implements Serializable<Lighting>
 
 	prototypesSet(): Lighting
 	{
-		this.lights.forEach(x => Object.setPrototypeOf(x, LightPoint.prototype) ); // hack
+		this.lights.forEach
+		(
+			x =>
+			{
+				var prototypeToSet =
+					x.typeName == LightAmbient.name
+					? LightAmbient.prototype
+					: x.typeName == LightDirectional.name
+					? LightDirectional.prototype
+					: x.typeName == LightPoint.name
+					? LightPoint.prototype
+					: null;
+
+				if (prototypeToSet == null)
+				{
+					throw new Error("Unrecognized Light type.");
+				}
+
+				Object.setPrototypeOf(x, prototypeToSet);
+			}
+		); // hack
 		return this;
 	}
 

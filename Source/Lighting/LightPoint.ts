@@ -1,6 +1,8 @@
 
 class LightPoint
 {
+	typeName: string; // For serialization.
+
 	intensity: number;
 	pos: Coords;
 
@@ -10,6 +12,8 @@ class LightPoint
 
 	constructor(intensity: number, pos: Coords)
 	{
+		this.typeName = LightPoint.name;
+
 		this.intensity = intensity;
 		this.pos = pos;
 	}

@@ -8,4 +8,6 @@ interface Light
 		normal: Coords,
 		camera: Camera
 	): number;
+
+	typeName: string;
 }

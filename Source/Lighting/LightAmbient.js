@@ -1,9 +1,10 @@
 "use strict";
 class LightAmbient {
     constructor(intensity) {
+        this.typeName = LightAmbient.name;
         this.intensity = intensity;
     }
-    intensityForCollisionNormalAndCamera(collision, normal, camera) {
+    intensityForCollisionMaterialNormalAndCamera(collision, material, normal, camera) {
         return this.intensity;
     }
 }

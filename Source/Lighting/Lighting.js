@@ -11,10 +11,19 @@ class Lighting {
         throw new Error("To be implemented!");
     }
     prototypesSet() {
-        this.lights.forEach(x => Object.setPrototypeOf(x, LightPoint.prototype)); // hack
+        this.lights.forEach(x => {
+            var prototypeToSet = x.typeName == LightAmbient.name
+                ? LightAmbient.prototype
+                : x.typeName == LightDirectional.name
+                    ? LightDirectional.prototype
+                    : x.typeName == LightPoint.name
+                        ? LightPoint.prototype
+                        : null;
+            if (prototypeToSet == null) {
+                throw new Error("Unrecognized Light type.");
+            }
+            Object.setPrototypeOf(x, prototypeToSet);
+        }); // hack
         return this;
     }
 }
-Lighting.Temp = Coords.create();
-Lighting.Temp2 = Coords.create();
-Lighting.Temp3 = Coords.create();
