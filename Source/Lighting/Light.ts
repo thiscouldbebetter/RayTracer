@@ -6,7 +6,8 @@ interface Light
 		collision: Collision,
 		material: Material,
 		normal: Coords,
-		camera: Camera
+		camera: Camera,
+		sceneRenderer: SceneRenderer
 	): number;
 
 	typeName: string;

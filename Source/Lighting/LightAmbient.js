@@ -4,7 +4,7 @@ class LightAmbient {
         this.typeName = LightAmbient.name;
         this.intensity = intensity;
     }
-    intensityForCollisionMaterialNormalAndCamera(collision, material, normal, camera) {
+    intensityForCollisionMaterialNormalAndCamera(collision, material, normal, camera, sceneRenderer) {
         return this.intensity;
     }
 }

@@ -17,7 +17,8 @@ class LightAmbient
 		collision: Collision,
 		material: Material,
 		normal: Coords,
-		camera: Camera
+		camera: Camera,
+		sceneRenderer: SceneRenderer
 	): number
 	{
 		return this.intensity;

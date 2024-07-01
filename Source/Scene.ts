@@ -175,6 +175,32 @@ class Scene implements Serializable<Scene>
 		return scene;
 	}
 
+	collisionsOfRayWithObjectsMinusExceptionAddToList
+	(
+		ray: Ray,
+		collidableToExcept: any,
+		collisionsSoFar: Collision[]
+	): Collision[]
+	{
+		var collidables = this.collidables;
+
+		for (var i = 0; i < collidables.length; i++)
+		{
+			var collidable = collidables[i];
+
+			if (collidable != collidableToExcept)
+			{
+				collidable.addCollisionsWithRayToList
+				(
+					ray,
+					collisionsSoFar
+				);
+			}
+		}
+
+		return collisionsSoFar;
+	}
+
 	loadForRendererAndSendToCallback
 	(
 		sceneRenderer: SceneRenderer,

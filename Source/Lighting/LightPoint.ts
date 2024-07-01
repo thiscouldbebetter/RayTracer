@@ -23,7 +23,8 @@ class LightPoint
 		collision: Collision,
 		material: Material,
 		normal: Coords,
-		camera: Camera
+		camera: Camera,
+		sceneRenderer: SceneRenderer
 	): number
 	{
 		this.temporaryVariablesInitializeIfNecessary();
@@ -61,40 +62,66 @@ class LightPoint
 
 		if (directionFromObjectToLightDotSurfaceNormal > 0)
 		{
-			var diffuseComponent = 
-				material.diffuse
-				* directionFromObjectToLightDotSurfaceNormal
-				* this.intensity
-				/ distanceFromLightToObjectSquared;
+			var objectIsLitByThisLight = false;
 
-			var directionOfReflection = 
-				surfaceNormal.multiplyScalar
+			if (sceneRenderer.shadowsAreEnabled)
+			{
+				var rayFromObjectToBeLitToLight = new Ray
 				(
-					2 * directionFromObjectToLightDotSurfaceNormal
-				).subtract
-				(
+					collision.pos,
 					directionFromObjectToLight
 				);
 
-			var directionFromObjectToViewer = this._directionFromObjectToViewer.overwriteWith
-			(
-				camera.pos
-			).subtract
-			(
-				collision.pos
-			).normalize();
+				var scene = sceneRenderer.scene;
 
-			var specularComponent = 
-				material.specular
-				* Math.pow
+				var collisionsBlockingLight = 
+					scene.collisionsOfRayWithObjectsMinusExceptionAddToList
+					(
+						rayFromObjectToBeLitToLight,
+						collision.colliderFirst(), // objectToExcept
+						[]
+					);
+
+				objectIsLitByThisLight = (collisionsBlockingLight.length == 0);
+			}
+
+			if (objectIsLitByThisLight)
+			{
+				var diffuseComponent = 
+					material.diffuse
+					* directionFromObjectToLightDotSurfaceNormal
+					* this.intensity
+					/ distanceFromLightToObjectSquared;
+
+				var directionOfReflection = 
+					surfaceNormal.multiplyScalar
+					(
+						2 * directionFromObjectToLightDotSurfaceNormal
+					).subtract
+					(
+						directionFromObjectToLight
+					);
+
+				var directionFromObjectToViewer = this._directionFromObjectToViewer.overwriteWith
 				(
-					directionOfReflection.dotProduct(directionFromObjectToViewer),
-					material.shininess
-				)
-				* this.intensity
-				/ distanceFromLightToObjectSquared;
+					camera.pos
+				).subtract
+				(
+					collision.pos
+				).normalize();
 
-			returnValue = diffuseComponent + specularComponent;
+				var specularComponent = 
+					material.specular
+					* Math.pow
+					(
+						directionOfReflection.dotProduct(directionFromObjectToViewer),
+						material.shininess
+					)
+					* this.intensity
+					/ distanceFromLightToObjectSquared;
+
+				returnValue = diffuseComponent + specularComponent;
+			}
 		}
 
 		return returnValue;

@@ -5,6 +5,8 @@ class SceneRenderer
 	shadowsAreEnabled: boolean; // todo
 	texturesAreEnabled: boolean;
 
+	scene: Scene;
+
 	constructor
 	(
 		lightingIsEnabled: boolean,
@@ -41,6 +43,8 @@ class SceneRenderer
 
 	drawSceneToDisplay(scene: Scene, display: Display): void
 	{
+		this.scene = scene;
+
 		this.drawSceneToDisplay_InitializeTemporaryVariables();
 
 		this.drawSceneToDisplay_Background(scene, display);
@@ -220,7 +224,8 @@ class SceneRenderer
 						collisionClosest,
 						surfaceMaterial,
 						surfaceNormal,
-						scene.camera
+						scene.camera,
+						this
 					);
 
 					intensityFromLightsAll += intensity;
@@ -295,18 +300,12 @@ class SceneRenderer
 		var collisions = this._collisions;
 		collisions.length = 0;
 
-		var collidables = scene.collidables;
-
-		for (var i = 0; i < collidables.length; i++)
-		{
-			var collidable = collidables[i];
-
-			collidable.addCollisionsWithRayToList
-			(
-				rayFromEyeToPixel,
-				collisions
-			);
-		}
+		collisions = scene.collisionsOfRayWithObjectsMinusExceptionAddToList
+		(
+			rayFromEyeToPixel,
+			null, // objectToExcept
+			collisions
+		);
 
 		var collisionClosest = null;
 

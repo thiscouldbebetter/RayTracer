@@ -82,6 +82,16 @@ class Scene {
         ]);
         return scene;
     }
+    collisionsOfRayWithObjectsMinusExceptionAddToList(ray, collidableToExcept, collisionsSoFar) {
+        var collidables = this.collidables;
+        for (var i = 0; i < collidables.length; i++) {
+            var collidable = collidables[i];
+            if (collidable != collidableToExcept) {
+                collidable.addCollisionsWithRayToList(ray, collisionsSoFar);
+            }
+        }
+        return collisionsSoFar;
+    }
     loadForRendererAndSendToCallback(sceneRenderer, callback) {
         if (sceneRenderer.texturesAreEnabled) {
             var materialsCount = this.materials.length;

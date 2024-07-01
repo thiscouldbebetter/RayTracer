@@ -5,25 +5,35 @@ class LightDirectional {
         this.intensity = intensity;
         this.direction = direction.normalize();
     }
-    intensityForCollisionMaterialNormalAndCamera(collision, material, normal, camera) {
+    intensityForCollisionMaterialNormalAndCamera(collision, material, normal, camera, sceneRenderer) {
         this.temporaryVariablesInitializeIfNecessary();
         var surfaceNormal = this._surfaceNormal.overwriteWith(normal);
         var directionFromObjectToLight = this._directionInverted.overwriteWith(this.direction).invert();
         var directionFromObjectToLightDotSurfaceNormal = directionFromObjectToLight.dotProduct(surfaceNormal);
         var returnValue = 0;
         if (directionFromObjectToLightDotSurfaceNormal > 0) {
-            var diffuseComponent = material.diffuse
-                * directionFromObjectToLightDotSurfaceNormal
-                * this.intensity;
-            var directionOfReflection = surfaceNormal.multiplyScalar(2 * directionFromObjectToLightDotSurfaceNormal).subtract(directionFromObjectToLight);
-            var directionFromObjectToViewer = this._directionFromObjectToViewer
-                .overwriteWith(camera.pos)
-                .subtract(collision.pos)
-                .normalize();
-            var specularComponent = material.specular
-                * Math.pow(directionOfReflection.dotProduct(directionFromObjectToViewer), material.shininess)
-                * this.intensity;
-            returnValue = diffuseComponent + specularComponent;
+            var objectIsLitByThisLight = false;
+            if (sceneRenderer.shadowsAreEnabled) {
+                var rayFromObjectToBeLitToLight = new Ray(collision.pos, directionFromObjectToLight);
+                var scene = sceneRenderer.scene;
+                var collisionsBlockingLight = scene.collisionsOfRayWithObjectsMinusExceptionAddToList(rayFromObjectToBeLitToLight, collision.colliderFirst(), // objectToExcept
+                []);
+                objectIsLitByThisLight = (collisionsBlockingLight.length == 0);
+            }
+            if (objectIsLitByThisLight) {
+                var diffuseComponent = material.diffuse
+                    * directionFromObjectToLightDotSurfaceNormal
+                    * this.intensity;
+                var directionOfReflection = surfaceNormal.multiplyScalar(2 * directionFromObjectToLightDotSurfaceNormal).subtract(directionFromObjectToLight);
+                var directionFromObjectToViewer = this._directionFromObjectToViewer
+                    .overwriteWith(camera.pos)
+                    .subtract(collision.pos)
+                    .normalize();
+                var specularComponent = material.specular
+                    * Math.pow(directionOfReflection.dotProduct(directionFromObjectToViewer), material.shininess)
+                    * this.intensity;
+                returnValue = diffuseComponent + specularComponent;
+            }
         }
         return returnValue;
     }

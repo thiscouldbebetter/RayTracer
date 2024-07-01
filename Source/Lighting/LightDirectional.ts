@@ -23,7 +23,8 @@ class LightDirectional
 		collision: Collision,
 		material: Material,
 		normal: Coords,
-		camera: Camera
+		camera: Camera,
+		sceneRenderer: SceneRenderer
 	): number
 	{
 		this.temporaryVariablesInitializeIfNecessary();
@@ -43,36 +44,62 @@ class LightDirectional
 
 		if (directionFromObjectToLightDotSurfaceNormal > 0)
 		{
-			var diffuseComponent = 
-				material.diffuse
-				* directionFromObjectToLightDotSurfaceNormal
-				* this.intensity;
+			var objectIsLitByThisLight = false;
 
-			var directionOfReflection = 
-				surfaceNormal.multiplyScalar
+			if (sceneRenderer.shadowsAreEnabled)
+			{
+				var rayFromObjectToBeLitToLight = new Ray
 				(
-					2 * directionFromObjectToLightDotSurfaceNormal
-				).subtract
-				(
+					collision.pos,
 					directionFromObjectToLight
 				);
 
-			var directionFromObjectToViewer =
-				this._directionFromObjectToViewer
-					.overwriteWith(camera.pos)
-					.subtract(collision.pos)
-					.normalize();
+				var scene = sceneRenderer.scene;
 
-			var specularComponent = 
-				material.specular
-				* Math.pow
-				(
-					directionOfReflection.dotProduct(directionFromObjectToViewer),
-					material.shininess
-				)
-				* this.intensity;
+				var collisionsBlockingLight = 
+					scene.collisionsOfRayWithObjectsMinusExceptionAddToList
+					(
+						rayFromObjectToBeLitToLight,
+						collision.colliderFirst(), // objectToExcept
+						[]
+					);
 
-			returnValue = diffuseComponent + specularComponent;
+				objectIsLitByThisLight = (collisionsBlockingLight.length == 0);
+			}
+
+			if (objectIsLitByThisLight)
+			{
+				var diffuseComponent = 
+					material.diffuse
+					* directionFromObjectToLightDotSurfaceNormal
+					* this.intensity;
+
+				var directionOfReflection = 
+					surfaceNormal.multiplyScalar
+					(
+						2 * directionFromObjectToLightDotSurfaceNormal
+					).subtract
+					(
+						directionFromObjectToLight
+					);
+
+				var directionFromObjectToViewer =
+					this._directionFromObjectToViewer
+						.overwriteWith(camera.pos)
+						.subtract(collision.pos)
+						.normalize();
+
+				var specularComponent = 
+					material.specular
+					* Math.pow
+					(
+						directionOfReflection.dotProduct(directionFromObjectToViewer),
+						material.shininess
+					)
+					* this.intensity;
+
+				returnValue = diffuseComponent + specularComponent;
+			}
 		}
 
 		return returnValue;
