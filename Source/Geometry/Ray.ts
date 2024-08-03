@@ -1,7 +1,7 @@
 
 class Ray
 {
-	startPos: Coords;
+	startPos: Coords; // Also called "the vertex".
 	direction: Coords;
 
 	constructor(startPos: Coords, direction: Coords)

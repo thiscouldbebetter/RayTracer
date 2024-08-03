@@ -25,7 +25,13 @@ class Collision
 
 	colliderByNameSet(name: string, value: any): void
 	{
+		this.colliders.push(value);
 		this._collidersByName.set(name, value);
+	}
+
+	colliderFirst(): any
+	{
+		return this.colliders[0];
 	}
 
 	rayAndFace(ray: Ray, mesh: Mesh, face: Face): Collision

@@ -76,7 +76,10 @@ class Sphere implements Shape
 			sphere.centerPos
 		).normalize();
 
-		if (surfaceMaterial.texture == null)
+		var textureShouldBeUsed =
+			surfaceMaterial.textureIsSetAndLoaded();
+
+		if (textureShouldBeUsed == false)
 		{
 			surfaceColor.overwriteWith
 			(

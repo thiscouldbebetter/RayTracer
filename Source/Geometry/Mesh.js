@@ -6,7 +6,7 @@ class Mesh {
         this.vertices = vertices;
         this.faces = faces;
         this.recalculateDerivedValues();
-        this.VertexWeightsAtSurfacePos = [];
+        this._vertexWeightsAtSurfacePos = [];
     }
     // methods
     clone() {
@@ -42,19 +42,21 @@ class Mesh {
     surfaceMaterialColorAndNormalForCollision(scene, collisionClosest, surfaceMaterial, surfaceColor, surfaceNormal) {
         var face = collisionClosest.colliderByName("Triangle");
         var surfacePos = collisionClosest.pos;
-        var vertexWeightsAtSurfacePos = face.vertexWeightsAtSurfacePosAddToList(this, // mesh
-        surfacePos, this.VertexWeightsAtSurfacePos);
-        surfaceMaterial.overwriteWith(face.material(scene));
-        if (surfaceMaterial.texture == null) {
+        var _vertexWeightsAtSurfacePos = face.vertexWeightsAtSurfacePosAddToList(this, // mesh
+        surfacePos, this._vertexWeightsAtSurfacePos);
+        var faceMaterial = face.material(scene);
+        surfaceMaterial.overwriteWith(faceMaterial);
+        var textureShouldBeUsed = surfaceMaterial.textureIsSetAndLoaded();
+        if (textureShouldBeUsed == false) {
             surfaceColor.overwriteWith(surfaceMaterial.color);
         }
         else {
-            var texelColor = face.texelColorForVertexWeights(surfaceMaterial.texture, vertexWeightsAtSurfacePos);
+            var texelColor = face.texelColorForVertexWeights(surfaceMaterial.texture, _vertexWeightsAtSurfacePos);
             if (texelColor != null) {
                 surfaceColor.overwriteWith(texelColor);
             }
         }
-        surfaceNormal.overwriteWith(face.normalForVertexWeights(vertexWeightsAtSurfacePos));
+        surfaceNormal.overwriteWith(face.normalForVertexWeights(_vertexWeightsAtSurfacePos));
         return surfaceColor;
     }
     // Serializable.

@@ -92,6 +92,16 @@ class Coords implements Serializable<Coords>
 		return returnValue;
 	}
 
+	half(): Coords
+	{
+		return this.divideScalar(2);
+	}
+
+	invert(): Coords
+	{
+		return this.multiplyScalar(-1);
+	}
+
 	magnitude(): number
 	{
 		var returnValue = Math.sqrt

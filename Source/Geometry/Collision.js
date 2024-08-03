@@ -11,7 +11,11 @@ class Collision {
         return this._collidersByName.get(name);
     }
     colliderByNameSet(name, value) {
+        this.colliders.push(value);
         this._collidersByName.set(name, value);
+    }
+    colliderFirst() {
+        return this.colliders[0];
     }
     rayAndFace(ray, mesh, face) {
         this.rayAndPlane(ray, face.plane(mesh));

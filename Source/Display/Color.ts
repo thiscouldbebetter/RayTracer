@@ -14,7 +14,12 @@ class Color
 	{
 		this.name = name;
 		this.codeChar = codeChar;
-		this.componentsRGBA = componentsRGBA;
+		this.componentsRGBA = componentsRGBA || [0, 0, 0, 0];
+	}
+
+	static create(): Color
+	{
+		return new Color(null, null, null);
 	}
 
 	// constants

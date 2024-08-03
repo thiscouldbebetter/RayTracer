@@ -4,6 +4,8 @@ class Texture implements Serializable<Texture>
 	name: string;
 	image: Image2;
 
+	_loaded: boolean;
+
 	_graphics: any;
 
 	constructor
@@ -14,6 +16,8 @@ class Texture implements Serializable<Texture>
 	{
 		this.name = name;
 		this.image = image;
+
+		this._loaded = false;
 	}
 
 	colorSetFromUV(texelColor: Color, texelUV: Coords): Color
@@ -60,9 +64,15 @@ class Texture implements Serializable<Texture>
 			(systemImage: any) =>
 			{
 				g.drawImage(systemImage, 0, 0);
+				texture._loaded = true;
 				callback(texture);
 			}
 		);
+	}
+
+	loaded(): boolean
+	{
+		return this._loaded;
 	}
 
 	// Serializable.

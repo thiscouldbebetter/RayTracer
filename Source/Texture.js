@@ -3,6 +3,7 @@ class Texture {
     constructor(name, image) {
         this.name = name;
         this.image = image;
+        this._loaded = false;
     }
     colorSetFromUV(texelColor, texelUV) {
         var imageSizeInPixels = this.image.sizeInPixels;
@@ -25,8 +26,12 @@ class Texture {
         var g = this.graphics();
         this.image.systemImageSendToCallback((systemImage) => {
             g.drawImage(systemImage, 0, 0);
+            texture._loaded = true;
             callback(texture);
         });
+    }
+    loaded() {
+        return this._loaded;
     }
     // Serializable.
     fromJson(objectAsJson) {
