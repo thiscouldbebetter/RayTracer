@@ -138,7 +138,25 @@ class Scene {
         return Scene.create().fromJson(objectAsJson);
     }
     toJson() {
+        Scene.temporaryFieldsRemoveFromObjectAndDescendants(this, 0);
         var sceneAsJson = JSON.stringify(this, null, 4);
         return sceneAsJson;
+    }
+    static temporaryFieldsRemoveFromObjectAndDescendants(objectToRemoveFrom, depth) {
+        for (var fieldName in objectToRemoveFrom) {
+            if (fieldName.startsWith("_")) {
+                delete objectToRemoveFrom[fieldName];
+            }
+            else {
+                var fieldValue = objectToRemoveFrom[fieldName];
+                if (fieldValue != null) {
+                    var fieldTypeName = fieldValue.constructor.name;
+                    var fieldTypeIsPrimitive = (fieldTypeName == String.name);
+                    if (fieldTypeIsPrimitive == false) {
+                        Scene.temporaryFieldsRemoveFromObjectAndDescendants(fieldValue, depth + 1);
+                    }
+                }
+            }
+        }
     }
 }
