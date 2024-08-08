@@ -7,7 +7,6 @@ class Sphere {
         this.radius = radius;
         this.centerPos = centerPos;
         this.orientation = orientation;
-        this._texelUv = Coords.create();
     }
     // collidable
     addCollisionsWithRayToList(ray, listToAddTo) {
@@ -33,9 +32,9 @@ class Sphere {
         else {
             var surfaceNormalInLocalCoords = new TransformOrient(this.orientation).transformCoords(surfaceNormal.clone());
             var surfaceNormalInLocalCoordsAsPolar = Polar.create().fromCoords(surfaceNormalInLocalCoords);
-            var _texelUv = this._texelUv;
-            _texelUv.overwriteWithXYZ(surfaceNormalInLocalCoordsAsPolar.azimuth, (1 + surfaceNormalInLocalCoordsAsPolar.elevation) / 2, 0); // todo
-            surfaceMaterial.texture.colorSetFromUV(surfaceColor, _texelUv);
+            var texelUv = this.texelUv();
+            texelUv.overwriteWithXYZ(surfaceNormalInLocalCoordsAsPolar.azimuth, (1 + surfaceNormalInLocalCoordsAsPolar.elevation) / 2, 0); // todo
+            surfaceMaterial.texture.colorSetFromUV(surfaceColor, texelUv);
         }
         return surfaceColor;
     }
@@ -52,5 +51,12 @@ class Sphere {
         typeSetOnObject(Orientation, this.orientation);
         typeSetOnObject(Coords, this._texelUv);
         return this;
+    }
+    // Temporary variables.
+    texelUv() {
+        if (this._texelUv == null) {
+            this._texelUv = Coords.create();
+        }
+        return this._texelUv;
     }
 }

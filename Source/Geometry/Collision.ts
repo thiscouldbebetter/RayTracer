@@ -36,15 +36,15 @@ class Collision
 
 	rayAndFace(ray: Ray, mesh: Mesh, face: Face): Collision
 	{
-		this.rayAndPlane
-		(
-			ray,
-			face.plane(mesh)
-		);
+		var plane = face.plane(mesh);
+		this.rayAndPlane(ray, plane);
 
-		if (this.colliderByName(Plane.name) != null)
+		var colliderPlane = this.colliderByName(Plane.name);
+		if (colliderPlane != null)
 		{
-			if (this.isPosWithinFace(mesh, face) == false)
+			var collisionPosIsWithinFace =
+				this.isPosWithinFace(mesh, face);
+			if (collisionPosIsWithinFace == false)
 			{
 				this.colliderByNameSet(Face.name, null);
 			}
@@ -57,7 +57,9 @@ class Collision
 				for (var t = 0; t < faceTriangles.length; t++)
 				{
 					var triangle = faceTriangles[t];
-					if (this.isPosWithinFace(mesh, triangle))
+					var collisionPosIsWithinTriangle =
+						this.isPosWithinFace(mesh, triangle);
+					if (collisionPosIsWithinTriangle)
 					{
 						this.colliderByNameSet("Triangle", triangle);
 						break;
@@ -182,23 +184,28 @@ class Collision
 		{
 			var edge = edges[i];
 
-			displacementFromVertex0ToCollision.overwriteWith
-			(
-				this.pos
-			).subtract
-			(
-				edge.vertex(mesh, 0).pos
-			);
+			var edgeVertex0 = edge.vertex(mesh, 0);
 
-			var edgeTransverse = edge.direction.clone().crossProduct
-			(
-				face.plane(mesh).normal
-			);
+			displacementFromVertex0ToCollision
+				.overwriteWith(this.pos)
+				.subtract(edgeVertex0.pos);
+
+			var facePlane = face.plane(mesh);
+
+			var edgeDirection = edge.direction(mesh);
+
+			var edgeTransverse =
+				edgeDirection
+					.clone()
+					.crossProduct(facePlane.normal);
 
 			// hack?
 			var epsilon = .01;
 
-			if (displacementFromVertex0ToCollision.dotProduct(edgeTransverse) >= epsilon)
+			var displacementDotEdgeTransverse =
+				displacementFromVertex0ToCollision.dotProduct(edgeTransverse);
+
+			if (displacementDotEdgeTransverse >= epsilon)
 			{
 				isPosWithinAllEdgesOfFaceSoFar = false;
 				break;

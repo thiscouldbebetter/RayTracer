@@ -18,9 +18,16 @@ class SerializableHelper
 
 	static typeSetOnObject(objectType: any, objectToSetTypesOn: Serializable<any>): any
 	{
-		Object.setPrototypeOf(objectToSetTypesOn, objectType.prototype);
-		var objectWithTypes = objectToSetTypesOn.prototypesSet();
-		return objectWithTypes;
+		var returnValue: any = null;
+
+		if (objectToSetTypesOn != null)
+		{
+			Object.setPrototypeOf(objectToSetTypesOn, objectType.prototype);
+			var objectWithTypes = objectToSetTypesOn.prototypesSet();
+			returnValue = objectWithTypes;
+		}
+
+		return returnValue;
 	}
 
 	static typeSetOnObjectFromTypeArray

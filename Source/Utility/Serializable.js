@@ -6,9 +6,13 @@ class SerializableHelper {
         return objectWithTypes;
     }
     static typeSetOnObject(objectType, objectToSetTypesOn) {
-        Object.setPrototypeOf(objectToSetTypesOn, objectType.prototype);
-        var objectWithTypes = objectToSetTypesOn.prototypesSet();
-        return objectWithTypes;
+        var returnValue = null;
+        if (objectToSetTypesOn != null) {
+            Object.setPrototypeOf(objectToSetTypesOn, objectType.prototype);
+            var objectWithTypes = objectToSetTypesOn.prototypesSet();
+            returnValue = objectWithTypes;
+        }
+        return returnValue;
     }
     static typeSetOnObjectFromTypeArray(objectToSetTypeOn, typesToChooseFrom) {
         var typeName = objectToSetTypeOn.typeName;

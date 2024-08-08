@@ -95,9 +95,14 @@ class Mesh implements Shape
 		surfaceMaterial: Material,
 		surfaceColor: Color,
 		surfaceNormal: Coords
-	)
+	): Color
 	{
 		var face = collisionClosest.colliderByName("Triangle");
+		if (face == null)
+		{
+			throw new Error("todo");
+		}
+
 		var surfacePos = collisionClosest.pos;
 
 		var _vertexWeightsAtSurfacePos =
@@ -161,6 +166,7 @@ class Mesh implements Shape
 	prototypesSet(): Mesh
 	{
 		var typeSetOnObject = SerializableHelper.typeSetOnObject;
+		this.vertices.forEach(x => typeSetOnObject(Vertex, x) );
 		this.faces.forEach(x => typeSetOnObject(Face, x) );
 		return this;
 	}

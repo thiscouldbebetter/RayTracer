@@ -25,7 +25,7 @@ class Plane implements Serializable<Plane>
 			displacementFromPos0To1
 		).crossProduct
 		(
-			displacementFromPos0To2
+			displacementFromPos0To2	
 		).normalize();
 
 		this.distanceFromOrigin = this.normal.dotProduct(pos0);

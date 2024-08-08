@@ -10,11 +10,6 @@ class Face implements Serializable<Face>
 	_plane: Plane;
 	_triangles: Face[];
 
-	_displacementFromVertexNextToPos: Coords;
-	_texelColor: Color;
-	_vertexValueInterpolated: Coords;
-	_vertexValueWeighted: Coords;
-
 	constructor
 	(
 		materialName: string,
@@ -27,11 +22,6 @@ class Face implements Serializable<Face>
 		this.vertexIndices = vertexIndices;
 		this.textureUVsForVertices = textureUVsForVertices;
 		this.normalsForVertices = normalsForVertices;
-
-		this._displacementFromVertexNextToPos = Coords.create();
-		this._texelColor = Color.blank("_texelColor");
-		this._vertexValueInterpolated = Coords.create();
-		this._vertexValueWeighted = Coords.create();
 	}
 
 	buildTriangles(mesh: Mesh): Face[]
@@ -107,7 +97,7 @@ class Face implements Serializable<Face>
 	{
 		if (this._edges == null)
 		{
-			this._edges = [];
+			var edges = [];
 
 			for (var i = 0; i < this.vertexIndices.length; i++)
 			{
@@ -120,9 +110,11 @@ class Face implements Serializable<Face>
 				var vertexIndexNext = this.vertexIndices[iNext];
 
 				var edge = new Edge([vertexIndex, vertexIndexNext]);
-				
-				this._edges.push(edge);
+
+				edges.push(edge);
 			}
+
+			this._edges = edges;
 		}
 
 		return this._edges;
@@ -133,7 +125,7 @@ class Face implements Serializable<Face>
 		vertexValues: Coords[], weights: number[]
 	): Coords
 	{
-		var valueInterpolated = this._vertexValueInterpolated.overwriteWith
+		var valueInterpolated = this.vertexValueInterpolated().overwriteWith
 		(
 			vertexValues[0]
 		).multiplyScalar
@@ -141,11 +133,11 @@ class Face implements Serializable<Face>
 			weights[0]
 		);
 
-		var _vertexValueWeighted = this._vertexValueWeighted;
+		var vertexValueWeighted = this.vertexValueWeighted();
 
 		for (var i = 1; i < vertexValues.length; i++)
 		{
-			_vertexValueWeighted.overwriteWith
+			vertexValueWeighted.overwriteWith
 			(
 				vertexValues[i]
 			).multiplyScalar
@@ -153,7 +145,7 @@ class Face implements Serializable<Face>
 				weights[i]
 			);
 
-			valueInterpolated.add(_vertexValueWeighted);
+			valueInterpolated.add(vertexValueWeighted);
 		}
 
 		return valueInterpolated;
@@ -228,7 +220,7 @@ class Face implements Serializable<Face>
 
 		for (var i = 0; i < edges.length; i++)
 		{
-			edges[i].recalculateDerivedValues(mesh, this);
+			edges[i].recalculateDerivedValues();
 		}
 
 		return this;
@@ -242,11 +234,11 @@ class Face implements Serializable<Face>
 			vertexWeights
 		);
 
-		var _texelColor = this._texelColor;
+		var texelColor = this.texelColor();
 
-		texture.colorSetFromUV(_texelColor, texelUV);
+		texture.colorSetFromUV(texelColor, texelUV);
 
-		return _texelColor;
+		return texelColor;
 	}
 
 	triangles(mesh: Mesh): Face[]
@@ -266,16 +258,22 @@ class Face implements Serializable<Face>
 	)
 	{
 		var vertices = this.vertices(mesh);
-		
+
 		var edges = this.edges();
 
-		var areaOfFace = edges[1].displacement.clone().crossProduct
-		(
-			edges[0].displacement
-		).magnitude() / 2;
+		var edge0Displacement = edges[0].displacement(mesh);
+		var edge1Displacement = edges[1].displacement(mesh);
 
-		var _displacementFromVertexNextToPos =
-			this._displacementFromVertexNextToPos;
+		var areaOfFace =
+			edge1Displacement
+				.clone()
+				.crossProduct(edge0Displacement)
+				.magnitude() / 2;
+
+		var displacementFromVertexNextToPos =
+			this.displacementFromVertexNextToPos();
+
+		var weights = new Array<number>();
 
 		for (var i = 0; i < vertices.length; i++)
 		{
@@ -288,26 +286,22 @@ class Face implements Serializable<Face>
 			// var vertex = vertices[i];
 			var vertexNext = vertices[iNext];
 
-			_displacementFromVertexNextToPos.overwriteWith
-			(
-				surfacePos
-			).subtract
-			(
-				vertexNext.pos
-			);
+			displacementFromVertexNextToPos
+				.overwriteWith(surfacePos)
+				.subtract(vertexNext.pos);
 
-			var displacementOfEdgeNext = edges[iNext].displacement;
+			var displacementOfEdgeNext = edges[iNext].displacement(mesh);
 
 			var areaOfTriangleFormedByEdgeNextAndPos =
 				displacementOfEdgeNext.clone().crossProduct
 				(
-					_displacementFromVertexNextToPos
+					displacementFromVertexNextToPos
 				).magnitude() / 2;
 
 			var weightOfVertex = 
 				areaOfTriangleFormedByEdgeNextAndPos
 				/ areaOfFace;
-			
+
 			weights[i] = weightOfVertex;
 		}
 
@@ -383,27 +377,69 @@ class Face implements Serializable<Face>
 			this.normalsForVertices.forEach(x => typeSetOnObject(Coords, x) );
 		}
 
-		if (this._edges != null)
+		/*
+		var edges = this.edges();
+		if (edges != null)
 		{
-			this._edges.forEach(x => typeSetOnObject(Edge, x) );
+			edges.forEach(x => typeSetOnObject(Edge, x) );
 		}
 
-		if (this._plane != null)
+		var plane = this.plane();
+		if (plane != null)
 		{
-			typeSetOnObject(Plane, this._plane);
+			typeSetOnObject(Plane, plane);
 		}
 
-		if (this._triangles != null)
+		var triangles = this.triangles();
+		if (triangles != null)
 		{
-			this._triangles.forEach(x => typeSetOnObject(Face, x) );
+			triangles.forEach(x => typeSetOnObject(Face, x) );
 		}
-
-		typeSetOnObject(Coords, this._displacementFromVertexNextToPos);
-		typeSetOnObject(Color, this._texelColor);
-		typeSetOnObject(Coords, this._vertexValueInterpolated);
-		typeSetOnObject(Coords, this._vertexValueWeighted);
+		*/
 
 		return this;
 	}
+
+	// Temporary variables.
+
+	displacementFromVertexNextToPos(): Coords
+	{
+		if (this._displacementFromVertexNextToPos == null)
+		{
+			this._displacementFromVertexNextToPos = Coords.create();
+		}
+		return this._displacementFromVertexNextToPos;
+	}
+	_displacementFromVertexNextToPos: Coords;
+
+	texelColor(): Color
+	{
+		if (this._texelColor == null)
+		{
+			this._texelColor = Color.create();
+		}
+		return this._texelColor;
+	}
+	_texelColor: Color;
+
+	vertexValueInterpolated(): Coords
+	{
+		if (this._vertexValueInterpolated == null)
+		{
+			this._vertexValueInterpolated = Coords.create();
+		}
+		return this._vertexValueInterpolated;
+	}
+	_vertexValueInterpolated: Coords;
+
+	vertexValueWeighted(): Coords
+	{
+		if (this._vertexValueWeighted == null)
+		{
+			this._vertexValueWeighted = Coords.create();
+		}
+		return this._vertexValueWeighted;
+	}
+	_vertexValueWeighted: Coords;
 
 }

@@ -5,9 +5,11 @@ class Camera {
         this.focalLength = focalLength;
         this.pos = pos;
         this.orientation = orientation;
-        this._viewSizeHalf = this.viewSize.clone().half();
     }
     viewSizeHalf() {
+        if (this._viewSizeHalf == null) {
+            this._viewSizeHalf = this.viewSize.clone().half();
+        }
         return this._viewSizeHalf;
     }
     // Serializable.

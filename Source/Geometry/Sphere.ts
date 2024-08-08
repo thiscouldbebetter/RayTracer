@@ -9,8 +9,6 @@ class Sphere implements Shape
 	centerPos: Coords;
 	orientation: Orientation;
 
-	_texelUv: Coords;
-
 	constructor
 	(
 		name: string,
@@ -27,8 +25,6 @@ class Sphere implements Shape
 		this.radius = radius;
 		this.centerPos = centerPos;
 		this.orientation = orientation;
-
-		this._texelUv = Coords.create();
 	}
 
 	// collidable
@@ -101,8 +97,8 @@ class Sphere implements Shape
 				surfaceNormalInLocalCoords
 			);
 
-			var _texelUv = this._texelUv;
-			_texelUv.overwriteWithXYZ
+			var texelUv = this.texelUv();
+			texelUv.overwriteWithXYZ
 			(
 				surfaceNormalInLocalCoordsAsPolar.azimuth,
 				(1 + surfaceNormalInLocalCoordsAsPolar.elevation) / 2,
@@ -112,7 +108,7 @@ class Sphere implements Shape
 			surfaceMaterial.texture.colorSetFromUV
 			(
 				surfaceColor,
-				_texelUv
+				texelUv
 			);
 		}
 
@@ -139,5 +135,17 @@ class Sphere implements Shape
 		typeSetOnObject(Coords, this._texelUv);
 		return this;
 	}
+
+	// Temporary variables.
+
+	texelUv(): Coords
+	{
+		if (this._texelUv == null)
+		{
+			this._texelUv = Coords.create();
+		}
+		return this._texelUv;
+	}
+	_texelUv: Coords;
 
 }

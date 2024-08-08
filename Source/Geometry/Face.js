@@ -5,10 +5,6 @@ class Face {
         this.vertexIndices = vertexIndices;
         this.textureUVsForVertices = textureUVsForVertices;
         this.normalsForVertices = normalsForVertices;
-        this._displacementFromVertexNextToPos = Coords.create();
-        this._texelColor = Color.blank("_texelColor");
-        this._vertexValueInterpolated = Coords.create();
-        this._vertexValueWeighted = Coords.create();
     }
     buildTriangles(mesh) {
         var triangles = [];
@@ -55,23 +51,24 @@ class Face {
     }
     edges() {
         if (this._edges == null) {
-            this._edges = [];
+            var edges = [];
             for (var i = 0; i < this.vertexIndices.length; i++) {
                 var iNext = NumberHelper.wrapValueToRange(i + 1, this.vertexIndices.length);
                 var vertexIndex = this.vertexIndices[i];
                 var vertexIndexNext = this.vertexIndices[iNext];
                 var edge = new Edge([vertexIndex, vertexIndexNext]);
-                this._edges.push(edge);
+                edges.push(edge);
             }
+            this._edges = edges;
         }
         return this._edges;
     }
     interpolateVertexValuesForWeights(vertexValues, weights) {
-        var valueInterpolated = this._vertexValueInterpolated.overwriteWith(vertexValues[0]).multiplyScalar(weights[0]);
-        var _vertexValueWeighted = this._vertexValueWeighted;
+        var valueInterpolated = this.vertexValueInterpolated().overwriteWith(vertexValues[0]).multiplyScalar(weights[0]);
+        var vertexValueWeighted = this.vertexValueWeighted();
         for (var i = 1; i < vertexValues.length; i++) {
-            _vertexValueWeighted.overwriteWith(vertexValues[i]).multiplyScalar(weights[i]);
-            valueInterpolated.add(_vertexValueWeighted);
+            vertexValueWeighted.overwriteWith(vertexValues[i]).multiplyScalar(weights[i]);
+            valueInterpolated.add(vertexValueWeighted);
         }
         return valueInterpolated;
     }
@@ -113,15 +110,15 @@ class Face {
         }
         var edges = this.edges();
         for (var i = 0; i < edges.length; i++) {
-            edges[i].recalculateDerivedValues(mesh, this);
+            edges[i].recalculateDerivedValues();
         }
         return this;
     }
     texelColorForVertexWeights(texture, vertexWeights) {
         var texelUV = this.interpolateVertexValuesForWeights(this.textureUVsForVertices, vertexWeights);
-        var _texelColor = this._texelColor;
-        texture.colorSetFromUV(_texelColor, texelUV);
-        return _texelColor;
+        var texelColor = this.texelColor();
+        texture.colorSetFromUV(texelColor, texelUV);
+        return texelColor;
     }
     triangles(mesh) {
         if (this._triangles == null) {
@@ -132,15 +129,23 @@ class Face {
     vertexWeightsAtSurfacePosAddToList(mesh, surfacePos, weights) {
         var vertices = this.vertices(mesh);
         var edges = this.edges();
-        var areaOfFace = edges[1].displacement.clone().crossProduct(edges[0].displacement).magnitude() / 2;
-        var _displacementFromVertexNextToPos = this._displacementFromVertexNextToPos;
+        var edge0Displacement = edges[0].displacement(mesh);
+        var edge1Displacement = edges[1].displacement(mesh);
+        var areaOfFace = edge1Displacement
+            .clone()
+            .crossProduct(edge0Displacement)
+            .magnitude() / 2;
+        var displacementFromVertexNextToPos = this.displacementFromVertexNextToPos();
+        var weights = new Array();
         for (var i = 0; i < vertices.length; i++) {
             var iNext = NumberHelper.wrapValueToRange(i + 1, vertices.length);
             // var vertex = vertices[i];
             var vertexNext = vertices[iNext];
-            _displacementFromVertexNextToPos.overwriteWith(surfacePos).subtract(vertexNext.pos);
-            var displacementOfEdgeNext = edges[iNext].displacement;
-            var areaOfTriangleFormedByEdgeNextAndPos = displacementOfEdgeNext.clone().crossProduct(_displacementFromVertexNextToPos).magnitude() / 2;
+            displacementFromVertexNextToPos
+                .overwriteWith(surfacePos)
+                .subtract(vertexNext.pos);
+            var displacementOfEdgeNext = edges[iNext].displacement(mesh);
+            var areaOfTriangleFormedByEdgeNextAndPos = displacementOfEdgeNext.clone().crossProduct(displacementFromVertexNextToPos).magnitude() / 2;
             var weightOfVertex = areaOfTriangleFormedByEdgeNextAndPos
                 / areaOfFace;
             weights[i] = weightOfVertex;
@@ -186,19 +191,50 @@ class Face {
         if (this.normalsForVertices != null) {
             this.normalsForVertices.forEach(x => typeSetOnObject(Coords, x));
         }
-        if (this._edges != null) {
-            this._edges.forEach(x => typeSetOnObject(Edge, x));
+        /*
+        var edges = this.edges();
+        if (edges != null)
+        {
+            edges.forEach(x => typeSetOnObject(Edge, x) );
         }
-        if (this._plane != null) {
-            typeSetOnObject(Plane, this._plane);
+
+        var plane = this.plane();
+        if (plane != null)
+        {
+            typeSetOnObject(Plane, plane);
         }
-        if (this._triangles != null) {
-            this._triangles.forEach(x => typeSetOnObject(Face, x));
+
+        var triangles = this.triangles();
+        if (triangles != null)
+        {
+            triangles.forEach(x => typeSetOnObject(Face, x) );
         }
-        typeSetOnObject(Coords, this._displacementFromVertexNextToPos);
-        typeSetOnObject(Color, this._texelColor);
-        typeSetOnObject(Coords, this._vertexValueInterpolated);
-        typeSetOnObject(Coords, this._vertexValueWeighted);
+        */
         return this;
+    }
+    // Temporary variables.
+    displacementFromVertexNextToPos() {
+        if (this._displacementFromVertexNextToPos == null) {
+            this._displacementFromVertexNextToPos = Coords.create();
+        }
+        return this._displacementFromVertexNextToPos;
+    }
+    texelColor() {
+        if (this._texelColor == null) {
+            this._texelColor = Color.create();
+        }
+        return this._texelColor;
+    }
+    vertexValueInterpolated() {
+        if (this._vertexValueInterpolated == null) {
+            this._vertexValueInterpolated = Coords.create();
+        }
+        return this._vertexValueInterpolated;
+    }
+    vertexValueWeighted() {
+        if (this._vertexValueWeighted == null) {
+            this._vertexValueWeighted = Coords.create();
+        }
+        return this._vertexValueWeighted;
     }
 }

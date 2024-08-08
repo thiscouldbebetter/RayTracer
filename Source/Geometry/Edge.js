@@ -2,18 +2,12 @@
 class Edge {
     constructor(vertexIndices) {
         this.vertexIndices = vertexIndices;
-        this.vertices = null;
-        this.displacement = Coords.create();
-        this.direction = Coords.create();
-        this.transverse = Coords.create();
     }
-    recalculateDerivedValues(mesh, face) {
-        if (this.vertices == null) {
-            this.vertices = [this.vertex(mesh, 0), this.vertex(mesh, 1)];
-        }
-        this.displacement.overwriteWith(this.vertices[1].pos).subtract(this.vertices[0].pos);
-        this.direction.overwriteWith(this.displacement).normalize();
-        this.transverse.overwriteWith(this.direction).crossProduct(face.plane(mesh).normal);
+    recalculateDerivedValues() {
+        this._vertices = null;
+        this._displacement = null;
+        this._direction = null;
+        this._transverse = null;
     }
     vertex(mesh, vertexIndexIndex) {
         var vertexIndex = this.vertexIndices[vertexIndexIndex];
@@ -28,11 +22,47 @@ class Edge {
         throw new Error("To be implemented!");
     }
     prototypesSet() {
-        var typeSetOnObject = SerializableHelper.typeSetOnObject;
-        this.vertices.forEach(x => typeSetOnObject(Vertex, x));
-        typeSetOnObject(Coords, this.displacement);
-        typeSetOnObject(Coords, this.direction);
-        typeSetOnObject(Coords, this.transverse);
         return this;
+    }
+    // Temporary values.
+    vertices(mesh) {
+        if (this._vertices == null) {
+            var vertex0 = this.vertex(mesh, 0);
+            var vertex1 = this.vertex(mesh, 1);
+            this._vertices = [vertex0, vertex1];
+        }
+        return this._vertices;
+    }
+    displacement(mesh) {
+        if (this._displacement == null) {
+            var vertices = this.vertices(mesh);
+            this._displacement =
+                vertices[1].pos
+                    .clone()
+                    .subtract(vertices[0].pos);
+        }
+        return this._displacement;
+    }
+    direction(mesh) {
+        if (this._direction == null) {
+            var displacement = this.displacement(mesh);
+            this._direction =
+                displacement
+                    .clone()
+                    .normalize();
+        }
+        ;
+        return this._direction;
+    }
+    transverse(mesh, face) {
+        if (this._transverse == null) {
+            var direction = this.direction(mesh);
+            var facePlane = face.plane(mesh);
+            this._transverse =
+                direction
+                    .clone()
+                    .crossProduct(facePlane.normal);
+        }
+        return this._transverse;
     }
 }

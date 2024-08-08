@@ -18,9 +18,12 @@ class Collision {
         return this.colliders[0];
     }
     rayAndFace(ray, mesh, face) {
-        this.rayAndPlane(ray, face.plane(mesh));
-        if (this.colliderByName(Plane.name) != null) {
-            if (this.isPosWithinFace(mesh, face) == false) {
+        var plane = face.plane(mesh);
+        this.rayAndPlane(ray, plane);
+        var colliderPlane = this.colliderByName(Plane.name);
+        if (colliderPlane != null) {
+            var collisionPosIsWithinFace = this.isPosWithinFace(mesh, face);
+            if (collisionPosIsWithinFace == false) {
                 this.colliderByNameSet(Face.name, null);
             }
             else {
@@ -28,7 +31,8 @@ class Collision {
                 var faceTriangles = face.triangles(mesh);
                 for (var t = 0; t < faceTriangles.length; t++) {
                     var triangle = faceTriangles[t];
-                    if (this.isPosWithinFace(mesh, triangle)) {
+                    var collisionPosIsWithinTriangle = this.isPosWithinFace(mesh, triangle);
+                    if (collisionPosIsWithinTriangle) {
                         this.colliderByNameSet("Triangle", triangle);
                         break;
                     }
@@ -86,11 +90,19 @@ class Collision {
         var edges = face.edges();
         for (var i = 0; i < edges.length; i++) {
             var edge = edges[i];
-            displacementFromVertex0ToCollision.overwriteWith(this.pos).subtract(edge.vertex(mesh, 0).pos);
-            var edgeTransverse = edge.direction.clone().crossProduct(face.plane(mesh).normal);
+            var edgeVertex0 = edge.vertex(mesh, 0);
+            displacementFromVertex0ToCollision
+                .overwriteWith(this.pos)
+                .subtract(edgeVertex0.pos);
+            var facePlane = face.plane(mesh);
+            var edgeDirection = edge.direction(mesh);
+            var edgeTransverse = edgeDirection
+                .clone()
+                .crossProduct(facePlane.normal);
             // hack?
             var epsilon = .01;
-            if (displacementFromVertex0ToCollision.dotProduct(edgeTransverse) >= epsilon) {
+            var displacementDotEdgeTransverse = displacementFromVertex0ToCollision.dotProduct(edgeTransverse);
+            if (displacementDotEdgeTransverse >= epsilon) {
                 isPosWithinAllEdgesOfFaceSoFar = false;
                 break;
             }
