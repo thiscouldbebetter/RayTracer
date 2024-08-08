@@ -115,6 +115,20 @@ class Sphere implements Shape
 		return surfaceColor;
 	}
 
+	// Clonable.
+
+	clone(): Sphere
+	{
+		return new Sphere
+		(
+			this.name,
+			this.materialName,
+			this.radius,
+			this.centerPos.clone(),
+			this.orientation.clone()
+		);
+	}
+
 	// Serializable.
 
 	fromJson(objectAsJson: string): Sphere
@@ -147,5 +161,4 @@ class Sphere implements Shape
 		return this._texelUv;
 	}
 	_texelUv: Coords;
-
 }

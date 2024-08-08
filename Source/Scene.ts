@@ -6,7 +6,8 @@ class Scene implements Serializable<Scene>
 	backgroundColor: Color;
 	lighting: Lighting;
 	camera: Camera;
-	shapes: Shape[];
+	shapeDefinitions: Shape[];
+	shapeBuilders: ShapeBuilder[];
 
 	_materialsByName: Map<string, Material>;
 
@@ -17,7 +18,8 @@ class Scene implements Serializable<Scene>
 		backgroundColor: Color,
 		lighting: Lighting,
 		camera: Camera,
-		shapes: Shape[]
+		shapeDefinitions: Shape[],
+		shapeBuilders: ShapeBuilder[]
 	)
 	{
 		this.name = name;
@@ -25,12 +27,13 @@ class Scene implements Serializable<Scene>
 		this.backgroundColor = backgroundColor;
 		this.lighting = lighting;
 		this.camera = camera;
-		this.shapes = shapes;
+		this.shapeDefinitions = shapeDefinitions;
+		this.shapeBuilders = shapeBuilders;
 	}
 
 	static create(): Scene
 	{
-		return new Scene(null, null, null, null, null, null);
+		return new Scene(null, null, null, null, null, null, null);
 	}
 
 	static demo(): Scene
@@ -135,41 +138,51 @@ class Scene implements Serializable<Scene>
 			)
 		);
 
+		var lighting = new Lighting
+		(
+			// lights
+			[
+				new LightAmbient(.05),
+				new LightDirectional(.5, new Coords(1, 1, 1) ),
+				// new LightPoint(30000, new Coords(-200, -200, -300)),
+				new LightPoint(60000, new Coords(200, -200, -300)),
+				// new LightPoint(30000, new Coords(200, 200, -300)),
+			]
+		);
+
 		var displaySize = new Coords(320, 240, 960);
+
+		var camera = new Camera
+		(
+			displaySize.clone(),
+			200, // focalLength
+			new Coords(-150, -300, -60), // pos
+			new Orientation
+			(
+				new Coords(1, 2, 0), // forward
+				new Coords(0, 0, 1) // down
+			)
+		);
+
+		var shapeDefinitions: Array<Shape> =
+		[
+			sphereEyeball,
+			meshMonolith,
+			meshGround,
+		];
 
 		var scene = new Scene
 		(
 			"Scene0",
 			materials,
 			Color.Instances().BlueDark, // backgroundColor
-			new Lighting
+			lighting,
+			camera,
+			shapeDefinitions,
+			shapeDefinitions.map
 			(
-				// lights
-				[
-					new LightAmbient(.05),
-					new LightDirectional(.5, new Coords(1, 1, 1) ),
-					// new LightPoint(30000, new Coords(-200, -200, -300)),
-					new LightPoint(60000, new Coords(200, -200, -300)),
-					// new LightPoint(30000, new Coords(200, 200, -300)),
-				]
-			),
-			new Camera
-			(
-				displaySize.clone(),
-				200, // focalLength
-				new Coords(-150, -300, -60), // pos
-				new Orientation
-				(
-					new Coords(1, 2, 0), // forward
-					new Coords(0, 0, 1) // down
-				)
-			),
-			// shapes
-			[
-				sphereEyeball,
-				meshMonolith,
-				meshGround,
-			]
+				x => new ShapeBuilder(x.name, new Coords(0, 0, 0) )
+			)
 		);
 
 		return scene;
@@ -178,11 +191,11 @@ class Scene implements Serializable<Scene>
 	collisionsOfRayWithObjectsMinusExceptionAddToList
 	(
 		ray: Ray,
-		shapeToExcept: any,
+		shapeToExcept: Shape,
 		collisionsSoFar: Collision[]
 	): Collision[]
 	{
-		var shapes = this.shapes;
+		var shapes = this.shapes();
 
 		for (var i = 0; i < shapes.length; i++)
 		{
@@ -246,6 +259,20 @@ class Scene implements Serializable<Scene>
 		return this._materialsByName.get(name);
 	}
 
+	shapeDefinitionByName(name: string): Shape
+	{
+		return this.shapeDefinitions.find(x => x.name == name);
+	}
+
+	shapes(): Shape[]
+	{
+		if (this._shapes == null)
+		{
+			this._shapes = this.shapeBuilders.map(x => x.toShape(this) );
+		}
+		return this._shapes;
+	}
+	_shapes: Shape[];
 
 	// Serializable.
 
@@ -257,7 +284,8 @@ class Scene implements Serializable<Scene>
 		typeSetOnObject(Color, this.backgroundColor);
 		typeSetOnObject(Lighting, this.lighting);
 		typeSetOnObject(Camera, this.camera);
-		this.shapes.forEach(x => ShapeHelper.typeSetOnShape(x) );
+		this.shapeDefinitions.forEach(x => ShapeHelper.typeSetOnShape(x) );
+		this.shapeBuilders.forEach(x => Object.setPrototypeOf(x, ShapeBuilder.prototype) );
 
 		return this;
 	}

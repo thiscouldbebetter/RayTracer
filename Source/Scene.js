@@ -1,15 +1,16 @@
 "use strict";
 class Scene {
-    constructor(name, materials, backgroundColor, lighting, camera, shapes) {
+    constructor(name, materials, backgroundColor, lighting, camera, shapeDefinitions, shapeBuilders) {
         this.name = name;
         this.materials = materials;
         this.backgroundColor = backgroundColor;
         this.lighting = lighting;
         this.camera = camera;
-        this.shapes = shapes;
+        this.shapeDefinitions = shapeDefinitions;
+        this.shapeBuilders = shapeBuilders;
     }
     static create() {
-        return new Scene(null, null, null, null, null, null);
+        return new Scene(null, null, null, null, null, null, null);
     }
     static demo() {
         var imageRTBang = new Image2("RTBang", [
@@ -59,9 +60,7 @@ class Scene {
         var sphereEyeball = new Sphere("SphereEyeball", materialEyeball.name, 100, // radius
         new Coords(200, 200, -270), new Orientation(new Coords(1, 0, 0), new Coords(1, 1, 0) // down = SE
         ));
-        var displaySize = new Coords(320, 240, 960);
-        var scene = new Scene("Scene0", materials, Color.Instances().BlueDark, // backgroundColor
-        new Lighting(
+        var lighting = new Lighting(
         // lights
         [
             new LightAmbient(.05),
@@ -69,21 +68,24 @@ class Scene {
             // new LightPoint(30000, new Coords(-200, -200, -300)),
             new LightPoint(60000, new Coords(200, -200, -300)),
             // new LightPoint(30000, new Coords(200, 200, -300)),
-        ]), new Camera(displaySize.clone(), 200, // focalLength
+        ]);
+        var displaySize = new Coords(320, 240, 960);
+        var camera = new Camera(displaySize.clone(), 200, // focalLength
         new Coords(-150, -300, -60), // pos
         new Orientation(new Coords(1, 2, 0), // forward
         new Coords(0, 0, 1) // down
-        )), 
-        // shapes
-        [
+        ));
+        var shapeDefinitions = [
             sphereEyeball,
             meshMonolith,
             meshGround,
-        ]);
+        ];
+        var scene = new Scene("Scene0", materials, Color.Instances().BlueDark, // backgroundColor
+        lighting, camera, shapeDefinitions, shapeDefinitions.map(x => new ShapeBuilder(x.name, new Coords(0, 0, 0))));
         return scene;
     }
     collisionsOfRayWithObjectsMinusExceptionAddToList(ray, shapeToExcept, collisionsSoFar) {
-        var shapes = this.shapes;
+        var shapes = this.shapes();
         for (var i = 0; i < shapes.length; i++) {
             var shape = shapes[i];
             if (shape != shapeToExcept) {
@@ -114,6 +116,15 @@ class Scene {
         }
         return this._materialsByName.get(name);
     }
+    shapeDefinitionByName(name) {
+        return this.shapeDefinitions.find(x => x.name == name);
+    }
+    shapes() {
+        if (this._shapes == null) {
+            this._shapes = this.shapeBuilders.map(x => x.toShape(this));
+        }
+        return this._shapes;
+    }
     // Serializable.
     prototypesSet() {
         var typeSetOnObject = SerializableHelper.typeSetOnObject;
@@ -121,7 +132,8 @@ class Scene {
         typeSetOnObject(Color, this.backgroundColor);
         typeSetOnObject(Lighting, this.lighting);
         typeSetOnObject(Camera, this.camera);
-        this.shapes.forEach(x => ShapeHelper.typeSetOnShape(x));
+        this.shapeDefinitions.forEach(x => ShapeHelper.typeSetOnShape(x));
+        this.shapeBuilders.forEach(x => Object.setPrototypeOf(x, ShapeBuilder.prototype));
         return this;
     }
     fromJson(objectAsJson) {

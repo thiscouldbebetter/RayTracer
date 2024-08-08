@@ -38,6 +38,10 @@ class Sphere {
         }
         return surfaceColor;
     }
+    // Clonable.
+    clone() {
+        return new Sphere(this.name, this.materialName, this.radius, this.centerPos.clone(), this.orientation.clone());
+    }
     // Serializable.
     fromJson(objectAsJson) {
         throw new Error("To be implemented!");
