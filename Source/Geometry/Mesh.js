@@ -23,7 +23,7 @@ class Mesh {
             face.recalculateDerivedValues(this);
         }
     }
-    // collidable
+    // Shape.
     addCollisionsWithRayToList(ray, listToAddTo) {
         for (var f = 0; f < this.faces.length; f++) {
             var face = this.faces[f];
@@ -32,7 +32,7 @@ class Mesh {
                 var collision = new Collision().rayAndFace(ray, this, // mesh
                 face);
                 if (collision.colliderByName(Face.name) != null) {
-                    collision.colliderByNameSet("Collidable", this);
+                    collision.colliderByNameSet(ShapeHelper.name, this);
                     listToAddTo.push(collision);
                 }
             }

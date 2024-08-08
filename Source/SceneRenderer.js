@@ -73,10 +73,10 @@ class SceneRenderer {
     drawSceneToDisplay_ColorSetFromPixelAtPos(scene, surfaceColor, pixelPos) {
         var collisionClosest = this.drawSceneToDisplay_Pixel_FindClosestCollision(scene, pixelPos);
         if (collisionClosest != null) {
-            var collidable = collisionClosest.colliderByName("Collidable");
+            var shape = collisionClosest.colliderByName(ShapeHelper.name);
             var surfaceNormal = this._surfaceNormal;
             var surfaceMaterial = this._material;
-            collidable.surfaceMaterialColorAndNormalForCollision(scene, collisionClosest, surfaceMaterial, surfaceColor, surfaceNormal);
+            shape.surfaceMaterialColorAndNormalForCollision(scene, collisionClosest, surfaceMaterial, surfaceColor, surfaceNormal);
             var intensityFromLightsAll = 0;
             if (this.lightingIsEnabled == false) {
                 intensityFromLightsAll = 1;

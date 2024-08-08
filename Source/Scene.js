@@ -1,12 +1,12 @@
 "use strict";
 class Scene {
-    constructor(name, materials, backgroundColor, lighting, camera, collidables) {
+    constructor(name, materials, backgroundColor, lighting, camera, shapes) {
         this.name = name;
         this.materials = materials;
         this.backgroundColor = backgroundColor;
         this.lighting = lighting;
         this.camera = camera;
-        this.collidables = collidables;
+        this.shapes = shapes;
     }
     static create() {
         return new Scene(null, null, null, null, null, null);
@@ -74,7 +74,7 @@ class Scene {
         new Orientation(new Coords(1, 2, 0), // forward
         new Coords(0, 0, 1) // down
         )), 
-        // collidables
+        // shapes
         [
             sphereEyeball,
             meshMonolith,
@@ -82,12 +82,12 @@ class Scene {
         ]);
         return scene;
     }
-    collisionsOfRayWithObjectsMinusExceptionAddToList(ray, collidableToExcept, collisionsSoFar) {
-        var collidables = this.collidables;
-        for (var i = 0; i < collidables.length; i++) {
-            var collidable = collidables[i];
-            if (collidable != collidableToExcept) {
-                collidable.addCollisionsWithRayToList(ray, collisionsSoFar);
+    collisionsOfRayWithObjectsMinusExceptionAddToList(ray, shapeToExcept, collisionsSoFar) {
+        var shapes = this.shapes;
+        for (var i = 0; i < shapes.length; i++) {
+            var shape = shapes[i];
+            if (shape != shapeToExcept) {
+                shape.addCollisionsWithRayToList(ray, collisionsSoFar);
             }
         }
         return collisionsSoFar;
@@ -121,7 +121,7 @@ class Scene {
         typeSetOnObject(Color, this.backgroundColor);
         typeSetOnObject(Lighting, this.lighting);
         typeSetOnObject(Camera, this.camera);
-        this.collidables.forEach(x => ShapeHelper.typeSetOnShape(x));
+        this.shapes.forEach(x => ShapeHelper.typeSetOnShape(x));
         return this;
     }
     fromJson(objectAsJson) {

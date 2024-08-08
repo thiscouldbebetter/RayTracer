@@ -59,7 +59,7 @@ class Mesh implements Shape
 		}
 	}
 
-	// collidable
+	// Shape.
 
 	addCollisionsWithRayToList(ray: Ray, listToAddTo: Collision[]): Collision[]
 	{
@@ -79,7 +79,7 @@ class Mesh implements Shape
 
 				if (collision.colliderByName(Face.name) != null)
 				{
-					collision.colliderByNameSet("Collidable", this);
+					collision.colliderByNameSet(ShapeHelper.name, this);
 					listToAddTo.push(collision);
 				}
 			}

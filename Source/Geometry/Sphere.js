@@ -8,11 +8,11 @@ class Sphere {
         this.centerPos = centerPos;
         this.orientation = orientation;
     }
-    // collidable
+    // Shape.
     addCollisionsWithRayToList(ray, listToAddTo) {
         var collision = new Collision().rayAndSphere(ray, this);
         if (collision.colliderByName(Sphere.name) != null) {
-            collision.colliderByNameSet("Collidable", this);
+            collision.colliderByNameSet(ShapeHelper.name, this);
             listToAddTo.push(collision);
         }
         return listToAddTo;

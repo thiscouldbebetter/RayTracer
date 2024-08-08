@@ -6,7 +6,7 @@ class Scene implements Serializable<Scene>
 	backgroundColor: Color;
 	lighting: Lighting;
 	camera: Camera;
-	collidables: Shape[];
+	shapes: Shape[];
 
 	_materialsByName: Map<string, Material>;
 
@@ -17,7 +17,7 @@ class Scene implements Serializable<Scene>
 		backgroundColor: Color,
 		lighting: Lighting,
 		camera: Camera,
-		collidables: Shape[]
+		shapes: Shape[]
 	)
 	{
 		this.name = name;
@@ -25,7 +25,7 @@ class Scene implements Serializable<Scene>
 		this.backgroundColor = backgroundColor;
 		this.lighting = lighting;
 		this.camera = camera;
-		this.collidables = collidables;
+		this.shapes = shapes;
 	}
 
 	static create(): Scene
@@ -164,7 +164,7 @@ class Scene implements Serializable<Scene>
 					new Coords(0, 0, 1) // down
 				)
 			),
-			// collidables
+			// shapes
 			[
 				sphereEyeball,
 				meshMonolith,
@@ -178,19 +178,19 @@ class Scene implements Serializable<Scene>
 	collisionsOfRayWithObjectsMinusExceptionAddToList
 	(
 		ray: Ray,
-		collidableToExcept: any,
+		shapeToExcept: any,
 		collisionsSoFar: Collision[]
 	): Collision[]
 	{
-		var collidables = this.collidables;
+		var shapes = this.shapes;
 
-		for (var i = 0; i < collidables.length; i++)
+		for (var i = 0; i < shapes.length; i++)
 		{
-			var collidable = collidables[i];
+			var shape = shapes[i];
 
-			if (collidable != collidableToExcept)
+			if (shape != shapeToExcept)
 			{
-				collidable.addCollisionsWithRayToList
+				shape.addCollisionsWithRayToList
 				(
 					ray,
 					collisionsSoFar
@@ -257,7 +257,7 @@ class Scene implements Serializable<Scene>
 		typeSetOnObject(Color, this.backgroundColor);
 		typeSetOnObject(Lighting, this.lighting);
 		typeSetOnObject(Camera, this.camera);
-		this.collidables.forEach(x => ShapeHelper.typeSetOnShape(x) );
+		this.shapes.forEach(x => ShapeHelper.typeSetOnShape(x) );
 
 		return this;
 	}

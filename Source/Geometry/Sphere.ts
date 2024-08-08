@@ -27,7 +27,7 @@ class Sphere implements Shape
 		this.orientation = orientation;
 	}
 
-	// collidable
+	// Shape.
 
 	addCollisionsWithRayToList(ray: Ray, listToAddTo: Collision[]): Collision[]
 	{
@@ -39,7 +39,7 @@ class Sphere implements Shape
 
 		if (collision.colliderByName(Sphere.name) != null)
 		{
-			collision.colliderByNameSet("Collidable", this);
+			collision.colliderByNameSet(ShapeHelper.name, this);
 			listToAddTo.push(collision);
 		}
 
