@@ -22,7 +22,7 @@ class Texture implements Serializable<Texture>
 
 	colorSetFromUV(texelColor: Color, texelUV: Coords): Color
 	{
-		var imageSizeInPixels = this.image.sizeInPixels;
+		var imageSizeInPixels = this.image.sizeInPixels();
 
 		var g = this.graphics();
 
@@ -91,7 +91,7 @@ class Texture implements Serializable<Texture>
 	{
 		var typeSetOnObject = SerializableHelper.typeSetOnObject;
 
-		typeSetOnObject(Image2, this.image);
+		typeSetOnObject(ImageFromStrings, this.image);
 
 		return this;
 	}

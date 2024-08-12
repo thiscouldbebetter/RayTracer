@@ -13,7 +13,7 @@ class Scene {
         return new Scene(null, null, null, null, null, null, null);
     }
     static demo() {
-        var imageRTBang = new Image2("RTBang", [
+        var imageRTBang = new ImageFromStrings("RTBang", [
             "RRRRRRRRRRRRRRRR",
             "RRcccccRcccccRcR",
             "RRcRRRcRRRcRRRcR",
@@ -44,7 +44,7 @@ class Scene {
         [
             new Face(Material.Instances().Green.name, [3, 2, 1, 0], null, null)
         ]);
-        var imageEyeball = new Image2("ImageEyeball", [
+        var imageEyeball = new ImageFromStrings("ImageEyeball", [
             "k", "b", "w", "w", "w", "w", "w", "w", "w", "w"
         ]);
         var materialEyeball = new Material("MaterialEyeball", Color.Instances().White, 1, // diffuse

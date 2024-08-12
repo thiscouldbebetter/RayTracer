@@ -6,7 +6,7 @@ class Texture {
         this._loaded = false;
     }
     colorSetFromUV(texelColor, texelUV) {
-        var imageSizeInPixels = this.image.sizeInPixels;
+        var imageSizeInPixels = this.image.sizeInPixels();
         var g = this.graphics();
         var texelColorComponents = g.getImageData(texelUV.x * imageSizeInPixels.x, texelUV.y * imageSizeInPixels.y, 1, 1).data;
         texelColor.components(texelColorComponents[0] / Color.ComponentMax, texelColorComponents[1] / Color.ComponentMax, texelColorComponents[2] / Color.ComponentMax, 1 // alpha
@@ -42,7 +42,7 @@ class Texture {
     }
     prototypesSet() {
         var typeSetOnObject = SerializableHelper.typeSetOnObject;
-        typeSetOnObject(Image2, this.image);
+        typeSetOnObject(ImageFromStrings, this.image);
         return this;
     }
 }

@@ -38,7 +38,7 @@ class Scene implements Serializable<Scene>
 
 	static demo(): Scene
 	{
-		var imageRTBang = new Image2
+		var imageRTBang = new ImageFromStrings
 		(
 			"RTBang",
 			[
@@ -95,7 +95,7 @@ class Scene implements Serializable<Scene>
 			]
 		);
 
-		var imageEyeball = new Image2
+		var imageEyeball = new ImageFromStrings
 		(
 			"ImageEyeball",
 			[

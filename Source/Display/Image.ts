@@ -1,10 +1,16 @@
 
-class Image2 implements Serializable<Image2>
+interface Image2 extends Serializable<Image2>
+{
+	sizeInPixels(): Coords;
+	systemImageSendToCallback(callback: any): void
+}
+
+class ImageFromStrings implements Image2
 {
 	name: string;
 	imageDataAsStrings: string[];
 
-	sizeInPixels: Coords;
+	_sizeInPixels: Coords;
 
 	_imageData: ImageData;
 	_systemImage: any;
@@ -18,12 +24,6 @@ class Image2 implements Serializable<Image2>
 	{
 		this.name = name;
 		this.imageDataAsStrings = imageDataAsStrings;
-
-		this.sizeInPixels = Coords.fromXY
-		(
-			this.imageDataAsStrings[0].length,
-			this.imageDataAsStrings.length
-		);
 	}
 
 	imageData(): ImageData
@@ -91,8 +91,9 @@ class Image2 implements Serializable<Image2>
 		else
 		{
 			var canvas = document.createElement("canvas");
-			canvas.width = this.sizeInPixels.x;
-			canvas.height = this.sizeInPixels.y;
+			var sizeInPixels = this.sizeInPixels();
+			canvas.width = sizeInPixels.x;
+			canvas.height = sizeInPixels.y;
 
 			var graphics = canvas.getContext("2d");
 			var imageData = this.imageData();
@@ -113,6 +114,22 @@ class Image2 implements Serializable<Image2>
 
 			this._systemImage = systemImage;
 		}
+	}
+
+	// Image2 implementation.
+
+	sizeInPixels(): Coords
+	{
+		if (this._sizeInPixels == null)
+		{
+			this._sizeInPixels = Coords.fromXY
+			(
+				this.imageDataAsStrings[0].length,
+				this.imageDataAsStrings.length
+			);
+		}
+
+		return this._sizeInPixels;
 	}
 
 	// Serializable.

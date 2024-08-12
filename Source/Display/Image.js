@@ -1,9 +1,8 @@
 "use strict";
-class Image2 {
+class ImageFromStrings {
     constructor(name, imageDataAsStrings) {
         this.name = name;
         this.imageDataAsStrings = imageDataAsStrings;
-        this.sizeInPixels = Coords.fromXY(this.imageDataAsStrings[0].length, this.imageDataAsStrings.length);
     }
     imageData() {
         if (this._imageData == null) {
@@ -41,8 +40,9 @@ class Image2 {
         }
         else {
             var canvas = document.createElement("canvas");
-            canvas.width = this.sizeInPixels.x;
-            canvas.height = this.sizeInPixels.y;
+            var sizeInPixels = this.sizeInPixels();
+            canvas.width = sizeInPixels.x;
+            canvas.height = sizeInPixels.y;
             var graphics = canvas.getContext("2d");
             var imageData = this.imageData();
             graphics.putImageData(imageData, 0, 0);
@@ -58,6 +58,13 @@ class Image2 {
             systemImage.src = imageFromCanvasURL;
             this._systemImage = systemImage;
         }
+    }
+    // Image2 implementation.
+    sizeInPixels() {
+        if (this._sizeInPixels == null) {
+            this._sizeInPixels = Coords.fromXY(this.imageDataAsStrings[0].length, this.imageDataAsStrings.length);
+        }
+        return this._sizeInPixels;
     }
     // Serializable.
     fromJson(objectAsJson) {
