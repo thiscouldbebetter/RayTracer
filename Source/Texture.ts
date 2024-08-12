@@ -89,9 +89,7 @@ class Texture implements Serializable<Texture>
 
 	prototypesSet(): Texture
 	{
-		var typeSetOnObject = SerializableHelper.typeSetOnObject;
-
-		typeSetOnObject(ImageFromStrings, this.image);
+		ImageHelper.imageTypeSet(this.image);
 
 		return this;
 	}

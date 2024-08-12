@@ -44,9 +44,16 @@ class Scene {
         [
             new Face(Material.Instances().Green.name, [3, 2, 1, 0], null, null)
         ]);
-        var imageEyeball = new ImageFromStrings("ImageEyeball", [
-            "k", "b", "w", "w", "w", "w", "w", "w", "w", "w"
-        ]);
+        /*
+        var imageEyeball = new ImageFromStrings
+        (
+            "ImageEyeball",
+            [
+                "k","b","w","w","w","w","w","w","w","w"
+            ]
+        );
+        */
+        var imageEyeball = new ImageFromDataUrl("ImageEyeball", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAICAYAAAA4GpVBAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAAAZSURBVBhXYwCC/0wMi14AKSBgAvExCQYGAMRUBpJwU7r/AAAAAElFTkSuQmCC");
         var materialEyeball = new Material("MaterialEyeball", Color.Instances().White, 1, // diffuse
         1, // specular
         .2, // shininess

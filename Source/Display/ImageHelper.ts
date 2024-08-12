@@ -1,6 +1,0 @@
-
-class ImageHelper
-{
-	// static methods
-
-}

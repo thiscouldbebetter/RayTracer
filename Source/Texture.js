@@ -41,8 +41,7 @@ class Texture {
         throw new Error("To be implemented!");
     }
     prototypesSet() {
-        var typeSetOnObject = SerializableHelper.typeSetOnObject;
-        typeSetOnObject(ImageFromStrings, this.image);
+        ImageHelper.imageTypeSet(this.image);
         return this;
     }
 }

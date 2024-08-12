@@ -1,6 +1,19 @@
 "use strict";
+class ImageHelper {
+    static imageTypeSet(imageAsObject) {
+        var typeName = imageAsObject.typeName;
+        var typeSetOnObject = SerializableHelper.typeSetOnObject;
+        var typeToSet = typeName == ImageFromStrings.name
+            ? ImageFromStrings
+            : typeName == ImageFromDataUrl.name
+                ? ImageFromDataUrl
+                : null;
+        typeSetOnObject(typeToSet, imageAsObject);
+    }
+}
 class ImageFromStrings {
     constructor(name, imageDataAsStrings) {
+        this.typeName = ImageFromStrings.name;
         this.name = name;
         this.imageDataAsStrings = imageDataAsStrings;
     }
@@ -67,6 +80,54 @@ class ImageFromStrings {
         return this._sizeInPixels;
     }
     // Serializable.
+    fromJson(objectAsJson) {
+        throw new Error("To be implemented!");
+    }
+    toJson() {
+        throw new Error("To be implemented!");
+    }
+    prototypesSet() {
+        Object.setPrototypeOf(this.imageData, ImageData.prototype);
+        return this;
+    }
+}
+class ImageFromDataUrl {
+    constructor(name, dataUrl) {
+        this.typeName = ImageFromDataUrl.name;
+        this.name = name;
+        this.dataUrl = dataUrl;
+    }
+    imageData() {
+        if (this._imageData == null) {
+            this._imageData = null;
+            throw new Error("todo");
+        }
+        return this._imageData;
+    }
+    sizeInPixels() {
+        if (this._sizeInPixels == null) {
+            this._sizeInPixels =
+                Coords.fromXY(this._systemImage.width, this._systemImage.height);
+        }
+        return this._sizeInPixels;
+    }
+    systemImageSendToCallback(callback) {
+        if (this._systemImage != null) {
+            callback(this._systemImage);
+        }
+        else {
+            var systemImage = document.createElement("img");
+            systemImage.onload = (event) => {
+                var imgElement = event.target;
+                this._systemImage = imgElement;
+                imgElement.isLoaded = true;
+                callback(imgElement);
+            };
+            systemImage.src = this.dataUrl;
+            this._systemImage = systemImage;
+        }
+    }
+    // Serializable implementation.
     fromJson(objectAsJson) {
         throw new Error("To be implemented!");
     }

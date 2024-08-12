@@ -1,12 +1,31 @@
 
+class ImageHelper
+{
+	static imageTypeSet(imageAsObject: Image2): void
+	{
+		var typeName = imageAsObject.typeName;
+		var typeSetOnObject = SerializableHelper.typeSetOnObject;
+		var typeToSet =
+			typeName == ImageFromStrings.name
+			? ImageFromStrings
+			: typeName == ImageFromDataUrl.name
+			? ImageFromDataUrl
+			: null;
+		typeSetOnObject(typeToSet, imageAsObject);
+	}
+}
+
 interface Image2 extends Serializable<Image2>
 {
 	sizeInPixels(): Coords;
 	systemImageSendToCallback(callback: any): void
+	typeName: string;
 }
 
 class ImageFromStrings implements Image2
 {
+	typeName: string;
+
 	name: string;
 	imageDataAsStrings: string[];
 
@@ -22,6 +41,8 @@ class ImageFromStrings implements Image2
 		imageDataAsStrings: string[]
 	)
 	{
+		this.typeName = ImageFromStrings.name;
+
 		this.name = name;
 		this.imageDataAsStrings = imageDataAsStrings;
 	}
@@ -149,5 +170,87 @@ class ImageFromStrings implements Image2
 		Object.setPrototypeOf(this.imageData, ImageData.prototype);
 		return this;
 	}
+}
+
+class ImageFromDataUrl implements Image2
+{
+	name: string;
+	dataUrl: string;
+
+	_imageData: ImageData;
+	_systemImage: any;
+
+	constructor(name: string, dataUrl: string)
+	{
+		this.typeName = ImageFromDataUrl.name;
+
+		this.name = name;
+		this.dataUrl = dataUrl;
+	}
+
+	imageData(): ImageData
+	{
+		if (this._imageData == null)
+		{
+			this._imageData = null;
+			throw new Error("todo");
+		}
+		return this._imageData;
+	}
+
+	// Image2 implementation.
+
+	typeName: string;
+	sizeInPixels(): Coords
+	{
+		if (this._sizeInPixels == null)
+		{
+			this._sizeInPixels =
+				Coords.fromXY(this._systemImage.width, this._systemImage.height);
+		}
+		return this._sizeInPixels;
+	}
+	_sizeInPixels: Coords;
+
+	systemImageSendToCallback(callback: any): void
+	{
+		if (this._systemImage != null)
+		{
+			callback(this._systemImage);
+		}
+		else
+		{
+			var systemImage = document.createElement("img");
+			systemImage.onload = (event: any) =>
+			{
+				var imgElement = event.target;
+				this._systemImage = imgElement;
+				imgElement.isLoaded = true;
+				callback(imgElement);
+			}
+			systemImage.src = this.dataUrl;
+
+			this._systemImage = systemImage;
+		}
+	} 
+
+	// Serializable implementation.
+
+	fromJson(objectAsJson: string): Image2
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	prototypesSet(): Image2
+	{
+		Object.setPrototypeOf(this.imageData, ImageData.prototype);
+		return this;
+	}
 
 }
+
