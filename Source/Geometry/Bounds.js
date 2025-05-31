@@ -1,5 +1,4 @@
 "use strict";
-// classes
 class Bounds {
     constructor(min, max) {
         this.min = min;

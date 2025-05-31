@@ -11,14 +11,22 @@
 
 	<div>
 		<label>Scene as JSON:</label>
-		<button onclick="buttonClear_Clicked();">Clear</button>
-		<button onclick="buttonDemoLoad_Clicked();">Demo</button>
+		<button onclick="UiEventHandler.buttonClear_Clicked();">
+			Clear
+		</button>
+		<button onclick="UiEventHandler.buttonDemoLoad_Clicked();">
+			Demo
+		</button>
 		<br />
-		<textarea id="textareaSceneAsJson" cols="80" rows="25" spellcheck="false"></textarea>
+		<textarea
+			id="textareaSceneAsJson"
+			cols="80" rows="25"
+			spellcheck="false"
+		></textarea>
 		<br />
 	</div>
 
-	<button onclick="buttonRender_Clicked();">Render</button>
+	<button onclick="UiEventHandler.buttonRender_Clicked();">Render</button>
 
 	<div>
 		<label>Rendered Image:</label>
@@ -27,57 +35,11 @@
 
 </div>
 
-<script type="text/javascript">
-
-// UI event handlers.
-
-function buttonClear_Clicked()
-{
-	var d = document;
-	var textareaSceneAsJson =
-		d.getElementById("textareaSceneAsJson");
-	textareaSceneAsJson.value = "";
-}
-
-function buttonDemoLoad_Clicked()
-{
-	var d = document;
-	var textareaSceneAsJson =
-		d.getElementById("textareaSceneAsJson");
-
-	var scene = Scene.demo();
-	var sceneAsJson = scene.toJson();
-
-	textareaSceneAsJson.value = sceneAsJson;
-}
-
-function buttonRender_Clicked()
-{
-	var d = document;
-	var textareaSceneAsJson =
-		d.getElementById("textareaSceneAsJson");
-
-	var sceneAsJson = textareaSceneAsJson.value;
-
-	var scene = Scene.fromJson(sceneAsJson);
-
-	if (scene == null)
-	{
-		var errorMessage =
-			"The specified JSON for the scene did not have the expected format.";
-		alert(errorMessage);
-	}
-	else
-	{
-		var rayTracer = new RayTracer();
-		rayTracer.sceneRender(scene);
-	}
-}
-
-</script>
+<script type="text/javascript" src="UiEventHandler.js"></script>
 
 <script type="text/javascript" src="Display/Color.js"></script>
-<script type="text/javascript" src="Display/Display.js"></script>
+<script type="text/javascript" src="Display/DisplayBuffer.js"></script>
+<script type="text/javascript" src="Display/DisplayGraphics.js"></script>
 <script type="text/javascript" src="Display/Image.js"></script>
 <script type="text/javascript" src="Display/Pane.js"></script>
 

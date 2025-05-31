@@ -61,17 +61,40 @@ class Color
 				this.componentsRGBA[0],
 				this.componentsRGBA[1],
 				this.componentsRGBA[2],
-				this.componentsRGBA[3],
+				this.componentsRGBA[3]
 			]
 		);
 	}
 
-	components(red: number, green: number, blue: number, alpha: number): void
+	componentAtIndex(componentIndex: number): number
+	{
+		return this.componentsRGBA[componentIndex];
+	}
+
+	componentAtIndexSetTo
+	(
+		componentIndex: number,
+		value: number
+	): Color
+	{
+		this.componentsRGBA[componentIndex] = value;
+		return this;
+	}
+
+	componentsRGBASet
+	(
+		red: number,
+		green: number,
+		blue: number,
+		alpha: number
+	): Color
 	{
 		this.componentsRGBA[0] = red;
 		this.componentsRGBA[1] = green;
 		this.componentsRGBA[2] = blue;
 		this.componentsRGBA[3] = alpha;
+
+		return this;
 	}
 
 	multiply(scalar: number): Color
@@ -90,7 +113,8 @@ class Color
 		this.codeChar = other.codeChar;
 		for (var i = 0; i < this.componentsRGBA.length; i++)
 		{
-			this.componentsRGBA[i] = other.componentsRGBA[i];
+			this.componentsRGBA[i] =
+				other.componentsRGBA[i];
 		}
 
 		return this;

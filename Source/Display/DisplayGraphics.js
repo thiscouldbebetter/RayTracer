@@ -1,5 +1,5 @@
 "use strict";
-class Display {
+class DisplayGraphics {
     initialize(sizeInPixels) {
         this.sizeInPixels = sizeInPixels;
         this.sizeInPixelsHalf =

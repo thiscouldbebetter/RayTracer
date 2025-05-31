@@ -11,6 +11,9 @@ class Coords {
     static fromXY(x, y) {
         return new Coords(x, y, 0);
     }
+    static zeroes() {
+        return new Coords(0, 0, 0);
+    }
     // instance methods
     add(other) {
         this.x += other.x;

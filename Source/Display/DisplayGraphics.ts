@@ -1,5 +1,13 @@
 
-class Display
+interface Display
+{
+	fillWithColor(color: Color): void;
+	initialize(sizeInPixels: Coords): void;
+	pixelAtPosSetToColor(pixelPos: Coords, pixelColor: Color): void;
+	sizeInPixels: Coords;
+}
+
+class DisplayGraphics implements Display
 {
 	sizeInPixels: Coords;
 	sizeInPixelsHalf: Coords;

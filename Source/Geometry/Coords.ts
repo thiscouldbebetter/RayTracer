@@ -22,6 +22,11 @@ class Coords implements Serializable<Coords>
 		return new Coords(x, y, 0);
 	}
 
+	static zeroes(): Coords
+	{
+		return new Coords(0, 0, 0);
+	}
+
 	// constants
 
 	static NumberOfDimensions: number = 3;

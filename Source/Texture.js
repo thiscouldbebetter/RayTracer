@@ -9,7 +9,7 @@ class Texture {
         var imageSizeInPixels = this.image.sizeInPixels();
         var g = this.graphics();
         var texelColorComponents = g.getImageData(texelUV.x * imageSizeInPixels.x, texelUV.y * imageSizeInPixels.y, 1, 1).data;
-        texelColor.components(texelColorComponents[0] / Color.ComponentMax, texelColorComponents[1] / Color.ComponentMax, texelColorComponents[2] / Color.ComponentMax, 1 // alpha
+        texelColor.componentsRGBASet(texelColorComponents[0] / Color.ComponentMax, texelColorComponents[1] / Color.ComponentMax, texelColorComponents[2] / Color.ComponentMax, 1 // alpha
         );
         return texelColor;
     }

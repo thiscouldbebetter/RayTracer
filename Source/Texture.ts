@@ -33,7 +33,7 @@ class Texture implements Serializable<Texture>
 			1, 1
 		).data;
 
-		texelColor.components
+		texelColor.componentsRGBASet
 		(
 			texelColorComponents[0] / Color.ComponentMax, 
 			texelColorComponents[1] / Color.ComponentMax, 

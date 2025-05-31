@@ -9,7 +9,7 @@ class RayTracer
 		this.scene = scene;
 
 		var displaySize = this.scene.camera.viewSize;
-		this.display = new Display();
+		this.display = new DisplayGraphics();
 		this.display.initialize(displaySize);
 
 		var timeBeforeRender = new Date();
@@ -21,15 +21,29 @@ class RayTracer
 			sceneRenderer,
 			(sceneLoaded: Scene) =>
 			{
-				this.scene = sceneLoaded;
-				sceneRenderer.drawSceneToDisplay(this.scene, this.display);
-				var timeAfterRender = new Date();
-				var renderTimeInMilliseconds =
-					timeAfterRender.valueOf()
-					- timeBeforeRender.valueOf();
-				console.log("Scene rendered in " + renderTimeInMilliseconds + " ms.");
+				this.sceneRender_SceneLoaded
+				(
+					sceneLoaded,
+					sceneRenderer,
+					timeBeforeRender
+				);
 			}
 		)
+	}
 
+	sceneRender_SceneLoaded
+	(
+		sceneLoaded: Scene,
+		sceneRenderer: SceneRenderer,
+		timeBeforeRender: Date
+	): void
+	{
+		this.scene = sceneLoaded;
+		sceneRenderer.drawSceneToDisplay(this.scene, this.display);
+		var timeAfterRender = new Date();
+		var renderTimeInMilliseconds =
+			timeAfterRender.valueOf()
+			- timeBeforeRender.valueOf();
+		console.log("Scene rendered in " + renderTimeInMilliseconds + " ms.");
 	}
 }

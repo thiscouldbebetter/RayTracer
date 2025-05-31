@@ -1,6 +1,4 @@
 
-// classes
-
 class Bounds
 {
 	min: Coords;

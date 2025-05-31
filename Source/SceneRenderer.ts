@@ -127,12 +127,15 @@ class SceneRenderer
 
 		var pane = new Pane(boundsMin, boundsMax);
 
-		this.drawSceneToDisplay_PaneRender(scene, display, pane);
+		this.drawSceneToDisplay_PaneRender(scene, pane);
 
 		pane.drawToDisplay(display);
 	}
 
-	drawSceneToDisplay_PaneRender(scene: Scene, display: Display, pane: Pane)
+	drawSceneToDisplay_PaneRender
+	(
+		scene: Scene, pane: Pane
+	): void
 	{
 		var pixelColor = this._pixelColor;
 
@@ -169,10 +172,8 @@ class SceneRenderer
 						pixelPosRelative, pixelColor
 					);
 				}
-
 			}
 		}
-
 	}
 
 	drawSceneToDisplay_ColorSetFromPixelAtPos
@@ -316,7 +317,12 @@ class SceneRenderer
 			for (var c = 1; c < collisions.length; c++)
 			{
 				var collision = collisions[c];
-				if (collision.distanceToCollision < collisionClosest.distanceToCollision)
+
+				var collisionIsClosestSoFar =
+					collision.distanceToCollision
+					< collisionClosest.distanceToCollision;
+
+				if (collisionIsClosestSoFar)
 				{
 					collisionClosest = collision;
 				}

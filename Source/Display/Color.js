@@ -26,14 +26,22 @@ class Color {
             this.componentsRGBA[0],
             this.componentsRGBA[1],
             this.componentsRGBA[2],
-            this.componentsRGBA[3],
+            this.componentsRGBA[3]
         ]);
     }
-    components(red, green, blue, alpha) {
+    componentAtIndex(componentIndex) {
+        return this.componentsRGBA[componentIndex];
+    }
+    componentAtIndexSetTo(componentIndex, value) {
+        this.componentsRGBA[componentIndex] = value;
+        return this;
+    }
+    componentsRGBASet(red, green, blue, alpha) {
         this.componentsRGBA[0] = red;
         this.componentsRGBA[1] = green;
         this.componentsRGBA[2] = blue;
         this.componentsRGBA[3] = alpha;
+        return this;
     }
     multiply(scalar) {
         for (var i = 0; i < 3; i++) {
@@ -45,7 +53,8 @@ class Color {
         this.name = other.name;
         this.codeChar = other.codeChar;
         for (var i = 0; i < this.componentsRGBA.length; i++) {
-            this.componentsRGBA[i] = other.componentsRGBA[i];
+            this.componentsRGBA[i] =
+                other.componentsRGBA[i];
         }
         return this;
     }

@@ -47,10 +47,10 @@ class SceneRenderer {
         var boundsMin = bounds.min;
         var boundsMax = bounds.max;
         var pane = new Pane(boundsMin, boundsMax);
-        this.drawSceneToDisplay_PaneRender(scene, display, pane);
+        this.drawSceneToDisplay_PaneRender(scene, pane);
         pane.drawToDisplay(display);
     }
-    drawSceneToDisplay_PaneRender(scene, display, pane) {
+    drawSceneToDisplay_PaneRender(scene, pane) {
         var pixelColor = this._pixelColor;
         var paneSize = pane.sizeInPixels;
         var boundsMin = pane.boundsMin;
@@ -115,7 +115,9 @@ class SceneRenderer {
             collisionClosest = collisions[0];
             for (var c = 1; c < collisions.length; c++) {
                 var collision = collisions[c];
-                if (collision.distanceToCollision < collisionClosest.distanceToCollision) {
+                var collisionIsClosestSoFar = collision.distanceToCollision
+                    < collisionClosest.distanceToCollision;
+                if (collisionIsClosestSoFar) {
                     collisionClosest = collision;
                 }
             }
