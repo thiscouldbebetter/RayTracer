@@ -1,22 +1,19 @@
 
 class RayTracer
 {
-	display: Display;
-	scene: Scene;
-
 	sceneRender(scene: Scene): void
 	{
-		this.scene = scene;
+		var displaySize = scene.camera.viewSize;
 
-		var displaySize = this.scene.camera.viewSize;
-		this.display = new DisplayGraphics();
-		this.display.initialize(displaySize);
+		var displayToRenderToFirst = new DisplayGraphics();
+		displayToRenderToFirst.initialize(displaySize);
 
 		var timeBeforeRender = new Date();
 
-		var sceneRenderer = SceneRenderer.maximal(); // todo - Make configurable through UI.
+		var sceneRenderer =
+			SceneRenderer.maximal(); // todo - Make configurable through UI.
 
-		this.scene.loadForRendererAndSendToCallback
+		scene.loadForRendererAndSendToCallback
 		(
 			sceneRenderer,
 			(sceneLoaded: Scene) =>
@@ -25,6 +22,7 @@ class RayTracer
 				(
 					sceneLoaded,
 					sceneRenderer,
+					displayToRenderToFirst,
 					timeBeforeRender
 				);
 			}
@@ -35,11 +33,16 @@ class RayTracer
 	(
 		sceneLoaded: Scene,
 		sceneRenderer: SceneRenderer,
+		displayToRenderToFirst: Display,
 		timeBeforeRender: Date
 	): void
 	{
-		this.scene = sceneLoaded;
-		sceneRenderer.drawSceneToDisplay(this.scene, this.display);
+		sceneRenderer.drawSceneToDisplay
+		(
+			sceneLoaded,
+			displayToRenderToFirst
+		);
+
 		var timeAfterRender = new Date();
 		var renderTimeInMilliseconds =
 			timeAfterRender.valueOf()

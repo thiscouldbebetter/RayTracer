@@ -5,7 +5,7 @@ class LightDirectional {
         this.intensity = intensity;
         this.direction = direction.normalize();
     }
-    intensityForCollisionMaterialNormalAndCamera(collision, material, normal, camera, sceneRenderer) {
+    intensityForCollisionMaterialNormalAndCamera(collision, material, normal, camera, sceneRenderer, scene) {
         this.temporaryVariablesInitializeIfNecessary();
         var surfaceNormal = this._surfaceNormal.overwriteWith(normal);
         var directionFromObjectToLight = this._directionInverted.overwriteWith(this.direction).invert();
@@ -15,7 +15,6 @@ class LightDirectional {
             var objectIsLitByThisLight = false;
             if (sceneRenderer.shadowsAreEnabled) {
                 var rayFromObjectToBeLitToLight = new Ray(collision.pos, directionFromObjectToLight);
-                var scene = sceneRenderer.scene;
                 var collisionsBlockingLight = scene.collisionsOfRayWithObjectsMinusExceptionAddToList(rayFromObjectToBeLitToLight, collision.colliderFirst(), // objectToExcept
                 []);
                 objectIsLitByThisLight = (collisionsBlockingLight.length == 0);

@@ -18,7 +18,8 @@ class LightAmbient
 		material: Material,
 		normal: Coords,
 		camera: Camera,
-		sceneRenderer: SceneRenderer
+		sceneRenderer: SceneRenderer,
+		scene: Scene
 	): number
 	{
 		return this.intensity;

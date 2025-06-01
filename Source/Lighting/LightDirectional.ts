@@ -24,7 +24,8 @@ class LightDirectional
 		material: Material,
 		normal: Coords,
 		camera: Camera,
-		sceneRenderer: SceneRenderer
+		sceneRenderer: SceneRenderer,
+		scene: Scene
 	): number
 	{
 		this.temporaryVariablesInitializeIfNecessary();
@@ -53,8 +54,6 @@ class LightDirectional
 					collision.pos,
 					directionFromObjectToLight
 				);
-
-				var scene = sceneRenderer.scene;
 
 				var collisionsBlockingLight = 
 					scene.collisionsOfRayWithObjectsMinusExceptionAddToList

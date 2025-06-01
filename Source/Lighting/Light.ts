@@ -7,7 +7,8 @@ interface Light
 		material: Material,
 		normal: Coords,
 		camera: Camera,
-		sceneRenderer: SceneRenderer
+		sceneRenderer: SceneRenderer,
+		scene: Scene
 	): number;
 
 	typeName: string;

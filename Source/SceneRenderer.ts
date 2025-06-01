@@ -5,8 +5,6 @@ class SceneRenderer
 	shadowsAreEnabled: boolean; // todo
 	texturesAreEnabled: boolean;
 
-	scene: Scene;
-
 	constructor
 	(
 		lightingIsEnabled: boolean,
@@ -43,8 +41,6 @@ class SceneRenderer
 
 	drawSceneToDisplay(scene: Scene, display: Display): void
 	{
-		this.scene = scene;
-
 		this.drawSceneToDisplay_InitializeTemporaryVariables();
 
 		this.drawSceneToDisplay_Background(scene, display);
@@ -220,14 +216,16 @@ class SceneRenderer
 				{
 					var light = lights[i];
 
-					var intensity = light.intensityForCollisionMaterialNormalAndCamera
-					(
-						collisionClosest,
-						surfaceMaterial,
-						surfaceNormal,
-						scene.camera,
-						this
-					);
+					var intensity =
+						light.intensityForCollisionMaterialNormalAndCamera
+						(
+							collisionClosest,
+							surfaceMaterial,
+							surfaceNormal,
+							scene.camera,
+							this,
+							scene
+						);
 
 					intensityFromLightsAll += intensity;
 				}

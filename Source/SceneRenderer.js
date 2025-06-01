@@ -12,7 +12,6 @@ class SceneRenderer {
         return new SceneRenderer(true, true, true);
     }
     drawSceneToDisplay(scene, display) {
-        this.scene = scene;
         this.drawSceneToDisplay_InitializeTemporaryVariables();
         this.drawSceneToDisplay_Background(scene, display);
         var sizeInTiles = Coords.fromXY(1, 1);
@@ -85,7 +84,7 @@ class SceneRenderer {
                 var lights = scene.lighting.lights;
                 for (var i = 0; i < lights.length; i++) {
                     var light = lights[i];
-                    var intensity = light.intensityForCollisionMaterialNormalAndCamera(collisionClosest, surfaceMaterial, surfaceNormal, scene.camera, this);
+                    var intensity = light.intensityForCollisionMaterialNormalAndCamera(collisionClosest, surfaceMaterial, surfaceNormal, scene.camera, this, scene);
                     intensityFromLightsAll += intensity;
                 }
             }

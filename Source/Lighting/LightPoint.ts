@@ -24,7 +24,8 @@ class LightPoint
 		material: Material,
 		normal: Coords,
 		camera: Camera,
-		sceneRenderer: SceneRenderer
+		sceneRenderer: SceneRenderer,
+		scene: Scene
 	): number
 	{
 		this.temporaryVariablesInitializeIfNecessary();
@@ -71,8 +72,6 @@ class LightPoint
 					collision.pos,
 					directionFromObjectToLight
 				);
-
-				var scene = sceneRenderer.scene;
 
 				var collisionsBlockingLight = 
 					scene.collisionsOfRayWithObjectsMinusExceptionAddToList

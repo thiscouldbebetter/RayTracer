@@ -5,7 +5,7 @@ class LightPoint {
         this.intensity = intensity;
         this.pos = pos;
     }
-    intensityForCollisionMaterialNormalAndCamera(collision, material, normal, camera, sceneRenderer) {
+    intensityForCollisionMaterialNormalAndCamera(collision, material, normal, camera, sceneRenderer, scene) {
         this.temporaryVariablesInitializeIfNecessary();
         var displacementFromObjectToLight = this._displacementFromObjectToLight;
         displacementFromObjectToLight.overwriteWith(this.pos).subtract(collision.pos);
@@ -19,7 +19,6 @@ class LightPoint {
             var objectIsLitByThisLight = false;
             if (sceneRenderer.shadowsAreEnabled) {
                 var rayFromObjectToBeLitToLight = new Ray(collision.pos, directionFromObjectToLight);
-                var scene = sceneRenderer.scene;
                 var collisionsBlockingLight = scene.collisionsOfRayWithObjectsMinusExceptionAddToList(rayFromObjectToBeLitToLight, collision.colliderFirst(), // objectToExcept
                 []);
                 objectIsLitByThisLight = (collisionsBlockingLight.length == 0);
