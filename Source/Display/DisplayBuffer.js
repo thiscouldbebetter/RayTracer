@@ -1,6 +1,6 @@
 "use strict";
 class DisplayBuffer {
-    initialize(sizeInPixels) {
+    constructor(sizeInPixels) {
         this.sizeInPixels = sizeInPixels;
         this.pixelsAsComponentsRgb = [];
     }

@@ -1,6 +1,6 @@
 "use strict";
 class DisplayGraphics {
-    initialize(sizeInPixels) {
+    constructor(sizeInPixels) {
         this.sizeInPixels = sizeInPixels;
         this.sizeInPixelsHalf =
             this.sizeInPixels.clone().divideScalar(2);

@@ -2,7 +2,6 @@
 interface Display
 {
 	fillWithColor(color: Color): void;
-	initialize(sizeInPixels: Coords): void;
 	pixelAtPosSetToColor(pixelPos: Coords, pixelColor: Color): void;
 	sizeInPixels: Coords;
 }
@@ -14,7 +13,7 @@ class DisplayGraphics implements Display
 
 	graphics: any;
 
-	initialize(sizeInPixels: Coords): void
+	constructor(sizeInPixels: Coords)
 	{
 		this.sizeInPixels = sizeInPixels;
 		this.sizeInPixelsHalf =

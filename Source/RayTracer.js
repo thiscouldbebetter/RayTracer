@@ -2,8 +2,7 @@
 class RayTracer {
     sceneRender(scene) {
         var displaySize = scene.camera.viewSize;
-        var displayToRenderToFirst = new DisplayGraphics();
-        displayToRenderToFirst.initialize(displaySize);
+        var displayToRenderToFirst = new DisplayGraphics(displaySize);
         var timeBeforeRender = new Date();
         var sceneRenderer = SceneRenderer.maximal(); // todo - Make configurable through UI.
         scene.loadForRendererAndSendToCallback(sceneRenderer, (sceneLoaded) => {

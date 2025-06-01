@@ -5,8 +5,8 @@ class RayTracer
 	{
 		var displaySize = scene.camera.viewSize;
 
-		var displayToRenderToFirst = new DisplayGraphics();
-		displayToRenderToFirst.initialize(displaySize);
+		var displayToRenderToFirst =
+			new DisplayGraphics(displaySize);
 
 		var timeBeforeRender = new Date();
 

@@ -5,7 +5,7 @@ class DisplayBuffer implements Display
 
 	pixelsAsComponentsRgb: number[];
 
-	initialize(sizeInPixels: Coords): void
+	constructor(sizeInPixels: Coords)
 	{
 		this.sizeInPixels = sizeInPixels;
 
