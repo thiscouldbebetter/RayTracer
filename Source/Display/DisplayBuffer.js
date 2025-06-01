@@ -5,6 +5,19 @@ class DisplayBuffer {
         this.pixelsAsComponentsRgb = [];
     }
     // Drawing.
+    drawToOther(other) {
+        var pixelPos = Coords.zeroes();
+        var pixelColor = Color.create();
+        var sizeInPixels = this.sizeInPixels;
+        for (var y = 0; y < sizeInPixels.y; y++) {
+            pixelPos.y = y;
+            for (var x = 0; x < sizeInPixels.x; x++) {
+                pixelPos.x = x;
+                var pixelColor = this.pixelAtPosWriteToColor(pixelPos, pixelColor);
+                other.pixelAtPosSetToColor(pixelPos, pixelColor);
+            }
+        }
+    }
     fillWithColor(color) {
         var pixelPos = Coords.zeroes();
         for (var y = 0; y < this.sizeInPixels.y; y++) {
@@ -35,18 +48,5 @@ class DisplayBuffer {
             colorToOverwrite.componentAtIndexSetTo(i, componentRead);
         }
         return colorToOverwrite;
-    }
-    renderToDisplayOther(displayToRenderTo) {
-        var pixelPos = Coords.zeroes();
-        var pixelColor = Color.create();
-        var sizeInPixels = this.sizeInPixels;
-        for (var y = 0; y < sizeInPixels.y; y++) {
-            pixelPos.y = y;
-            for (var x = 0; x < sizeInPixels.x; x++) {
-                pixelPos.x = x;
-                var pixelColor = this.pixelAtPosWriteToColor(pixelPos, pixelColor);
-                displayToRenderTo.pixelAtPosSetToColor(pixelPos, pixelColor);
-            }
-        }
     }
 }

@@ -14,6 +14,9 @@ class DisplayGraphics {
         this.graphics = canvas.getContext("2d");
     }
     // Drawing.
+    drawToOther(other) {
+        throw new Error("Not yet implemented!");
+    }
     fillWithColor(color) {
         var g = this.graphics;
         g.fillStyle = color.systemColor();

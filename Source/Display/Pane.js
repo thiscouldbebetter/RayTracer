@@ -34,6 +34,7 @@ class Pane {
         }
     }
     pixelAtPosRelativeSetToColor(posRelative, color) {
-        this.pixelRows[posRelative.y][posRelative.x].overwriteWith(color);
+        var pixelAsColor = this.pixelRows[posRelative.y][posRelative.x];
+        pixelAsColor.overwriteWith(color);
     }
 }

@@ -1,19 +1,22 @@
 "use strict";
 class SceneRenderer {
-    constructor(lightingIsEnabled, shadowsAreEnabled, texturesAreEnabled) {
+    constructor(lightingIsEnabled, shadowsAreEnabled, texturesAreEnabled, renderToBufferFirst) {
         this.lightingIsEnabled = lightingIsEnabled;
         this.shadowsAreEnabled = shadowsAreEnabled;
         this.texturesAreEnabled = texturesAreEnabled;
+        this.renderToBufferFirst = renderToBufferFirst;
     }
     static minimal() {
-        return new SceneRenderer(false, false, false);
+        return new SceneRenderer(false, false, false, false);
     }
     static maximal() {
-        return new SceneRenderer(true, true, true);
+        return new SceneRenderer(true, true, true, false); // todo - Enable renderToBufferFirst.
     }
     sceneRender(scene) {
         var displaySize = scene.camera.viewSize;
-        var displayToRenderToFirst = new DisplayGraphics(displaySize);
+        var displayToRenderToFirst = this.renderToBufferFirst
+            ? new DisplayBuffer(displaySize)
+            : new DisplayGraphics(displaySize);
         var timeBeforeRender = new Date();
         scene.loadForRendererAndSendToCallback(this, (sceneLoaded) => {
             this.sceneRender_SceneLoaded(sceneLoaded, this, // sceneRender
@@ -22,6 +25,10 @@ class SceneRenderer {
     }
     sceneRender_SceneLoaded(sceneLoaded, sceneRenderer, displayToRenderToFirst, timeBeforeRender) {
         sceneRenderer.drawSceneToDisplay(sceneLoaded, displayToRenderToFirst);
+        if (this.renderToBufferFirst) {
+            var displayFinal = new DisplayGraphics(sceneLoaded.camera.viewSize);
+            displayToRenderToFirst.drawToOther(displayFinal);
+        }
         var timeAfterRender = new Date();
         var renderTimeInMilliseconds = timeAfterRender.valueOf()
             - timeBeforeRender.valueOf();

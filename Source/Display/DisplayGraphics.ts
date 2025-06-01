@@ -1,6 +1,7 @@
 
 interface Display
 {
+	drawToOther(other: Display): void;
 	fillWithColor(color: Color): void;
 	pixelAtPosSetToColor(pixelPos: Coords, pixelColor: Color): void;
 	sizeInPixels: Coords;
@@ -32,6 +33,11 @@ class DisplayGraphics implements Display
 	}
 
 	// Drawing.
+
+	drawToOther(other: Display): void
+	{
+		throw new Error("Not yet implemented!");
+	}
 
 	fillWithColor(color: Color): void
 	{

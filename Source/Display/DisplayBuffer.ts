@@ -14,6 +14,29 @@ class DisplayBuffer implements Display
 
 	// Drawing.
 
+	drawToOther(other: Display): void
+	{
+		var pixelPos = Coords.zeroes();
+		var pixelColor = Color.create();
+
+		var sizeInPixels = this.sizeInPixels;
+
+		for (var y = 0; y < sizeInPixels.y; y++)
+		{
+			pixelPos.y = y;
+
+			for (var x = 0; x < sizeInPixels.x; x++)
+			{
+				pixelPos.x = x;
+
+				var pixelColor =
+					this.pixelAtPosWriteToColor(pixelPos, pixelColor);
+
+				other.pixelAtPosSetToColor(pixelPos, pixelColor);
+			}
+		}
+	}
+
 	fillWithColor(color: Color): void
 	{
 		var pixelPos = Coords.zeroes();
@@ -69,28 +92,5 @@ class DisplayBuffer implements Display
 		}
 
 		return colorToOverwrite;
-	}
-
-	renderToDisplayOther(displayToRenderTo: Display): void
-	{
-		var pixelPos = Coords.zeroes();
-		var pixelColor = Color.create();
-
-		var sizeInPixels = this.sizeInPixels;
-
-		for (var y = 0; y < sizeInPixels.y; y++)
-		{
-			pixelPos.y = y;
-
-			for (var x = 0; x < sizeInPixels.x; x++)
-			{
-				pixelPos.x = x;
-
-				var pixelColor =
-					this.pixelAtPosWriteToColor(pixelPos, pixelColor);
-
-				displayToRenderTo.pixelAtPosSetToColor(pixelPos, pixelColor);
-			}
-		}
 	}
 }

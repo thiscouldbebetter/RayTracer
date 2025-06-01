@@ -66,6 +66,8 @@ class Pane
 
 	pixelAtPosRelativeSetToColor(posRelative: Coords, color: Color): void
 	{
-		this.pixelRows[posRelative.y][posRelative.x].overwriteWith(color);
+		var pixelAsColor =
+			this.pixelRows[posRelative.y][posRelative.x];
+		pixelAsColor.overwriteWith(color);
 	}
 }

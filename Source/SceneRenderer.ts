@@ -4,27 +4,30 @@ class SceneRenderer
 	lightingIsEnabled: boolean;
 	shadowsAreEnabled: boolean; // todo
 	texturesAreEnabled: boolean;
+	renderToBufferFirst: boolean;
 
 	constructor
 	(
 		lightingIsEnabled: boolean,
 		shadowsAreEnabled: boolean,
-		texturesAreEnabled: boolean
+		texturesAreEnabled: boolean,
+		renderToBufferFirst: boolean
 	)
 	{
 		this.lightingIsEnabled = lightingIsEnabled;
 		this.shadowsAreEnabled = shadowsAreEnabled;
 		this.texturesAreEnabled = texturesAreEnabled;
+		this.renderToBufferFirst = renderToBufferFirst;
 	}
 
 	static minimal(): SceneRenderer
 	{
-		return new SceneRenderer(false, false, false);
+		return new SceneRenderer(false, false, false, false);
 	}
 
 	static maximal(): SceneRenderer
 	{
-		return new SceneRenderer(true, true, true);
+		return new SceneRenderer(true, true, true, false); // todo - Enable renderToBufferFirst.
 	}
 
 	// Drawing.
@@ -44,7 +47,9 @@ class SceneRenderer
 		var displaySize = scene.camera.viewSize;
 
 		var displayToRenderToFirst =
-			new DisplayGraphics(displaySize);
+			this.renderToBufferFirst
+			? new DisplayBuffer(displaySize)
+			: new DisplayGraphics(displaySize);
 
 		var timeBeforeRender = new Date();
 
@@ -77,6 +82,14 @@ class SceneRenderer
 			sceneLoaded,
 			displayToRenderToFirst
 		);
+
+		if (this.renderToBufferFirst)
+		{
+			var displayFinal =
+				new DisplayGraphics(sceneLoaded.camera.viewSize);
+
+			displayToRenderToFirst.drawToOther(displayFinal);
+		}
 
 		var timeAfterRender = new Date();
 		var renderTimeInMilliseconds =
