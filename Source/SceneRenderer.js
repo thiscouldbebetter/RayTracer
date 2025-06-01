@@ -11,6 +11,22 @@ class SceneRenderer {
     static maximal() {
         return new SceneRenderer(true, true, true);
     }
+    sceneRender(scene) {
+        var displaySize = scene.camera.viewSize;
+        var displayToRenderToFirst = new DisplayGraphics(displaySize);
+        var timeBeforeRender = new Date();
+        scene.loadForRendererAndSendToCallback(this, (sceneLoaded) => {
+            this.sceneRender_SceneLoaded(sceneLoaded, this, // sceneRender
+            displayToRenderToFirst, timeBeforeRender);
+        });
+    }
+    sceneRender_SceneLoaded(sceneLoaded, sceneRenderer, displayToRenderToFirst, timeBeforeRender) {
+        sceneRenderer.drawSceneToDisplay(sceneLoaded, displayToRenderToFirst);
+        var timeAfterRender = new Date();
+        var renderTimeInMilliseconds = timeAfterRender.valueOf()
+            - timeBeforeRender.valueOf();
+        console.log("Scene rendered in " + renderTimeInMilliseconds + " ms.");
+    }
     drawSceneToDisplay(scene, display) {
         this.drawSceneToDisplay_InitializeTemporaryVariables();
         this.drawSceneToDisplay_Background(scene, display);

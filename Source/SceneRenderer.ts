@@ -39,6 +39,52 @@ class SceneRenderer
 	_texelUV: Coords;
 	_vertexWeightsAtSurfacePos: any[];
 
+	sceneRender(scene: Scene): void
+	{
+		var displaySize = scene.camera.viewSize;
+
+		var displayToRenderToFirst =
+			new DisplayGraphics(displaySize);
+
+		var timeBeforeRender = new Date();
+
+		scene.loadForRendererAndSendToCallback
+		(
+			this,
+			(sceneLoaded: Scene) =>
+			{
+				this.sceneRender_SceneLoaded
+				(
+					sceneLoaded,
+					this, // sceneRender
+					displayToRenderToFirst,
+					timeBeforeRender
+				);
+			}
+		)
+	}
+
+	sceneRender_SceneLoaded
+	(
+		sceneLoaded: Scene,
+		sceneRenderer: SceneRenderer,
+		displayToRenderToFirst: Display,
+		timeBeforeRender: Date
+	): void
+	{
+		sceneRenderer.drawSceneToDisplay
+		(
+			sceneLoaded,
+			displayToRenderToFirst
+		);
+
+		var timeAfterRender = new Date();
+		var renderTimeInMilliseconds =
+			timeAfterRender.valueOf()
+			- timeBeforeRender.valueOf();
+		console.log("Scene rendered in " + renderTimeInMilliseconds + " ms.");
+	}
+
 	drawSceneToDisplay(scene: Scene, display: Display): void
 	{
 		this.drawSceneToDisplay_InitializeTemporaryVariables();
