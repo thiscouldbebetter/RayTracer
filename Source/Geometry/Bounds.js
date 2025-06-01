@@ -1,11 +1,14 @@
 "use strict";
 class Bounds {
     constructor(min, max) {
-        this.min = min;
-        this.max = max;
+        this.min = min || Coords.create();
+        this.max = max || Coords.create();
         this.minAndMax = [this.min, this.max];
         this.size = Coords.create();
         this.recalculateDerivedValues();
+    }
+    static create() {
+        return new Bounds(null, null);
     }
     overlapsWith(other) {
         var returnValue = false;

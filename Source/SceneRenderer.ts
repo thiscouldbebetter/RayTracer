@@ -52,12 +52,8 @@ class SceneRenderer
 		);
 
 		var tilePosInTiles = Coords.create();
-	 	var tileBounds = new Bounds
-		(
-			Coords.create(),
-			Coords.create()
-		);
-		
+	 	var tileBounds = Bounds.create();
+
 		for (var y = 0; y < sizeInTiles.y; y++)
 		{
 			tilePosInTiles.y = y;

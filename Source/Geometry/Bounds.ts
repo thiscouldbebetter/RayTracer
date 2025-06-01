@@ -9,12 +9,18 @@ class Bounds
 
 	constructor(min: Coords, max: Coords)
 	{
-		this.min = min;
-		this.max = max;
+		this.min = min || Coords.create();
+		this.max = max || Coords.create();
+
 		this.minAndMax = [ this.min, this.max ];
 		this.size = Coords.create();
 
 		this.recalculateDerivedValues();
+	}
+
+	static create(): Bounds
+	{
+		return new Bounds(null, null);
 	}
 
 	overlapsWith(other: Bounds): boolean

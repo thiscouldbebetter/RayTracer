@@ -17,7 +17,7 @@ class SceneRenderer {
         var sizeInTiles = Coords.fromXY(1, 1);
         var tileSizeInPixels = display.sizeInPixels.clone().divide(sizeInTiles);
         var tilePosInTiles = Coords.create();
-        var tileBounds = new Bounds(Coords.create(), Coords.create());
+        var tileBounds = Bounds.create();
         for (var y = 0; y < sizeInTiles.y; y++) {
             tilePosInTiles.y = y;
             for (var x = 0; x < sizeInTiles.x; x++) {
