@@ -6,6 +6,8 @@ class SceneRenderer
 	texturesAreEnabled: boolean;
 	renderToBufferFirst: boolean;
 
+	_rayFromCameraToPixelAtPos: Ray;
+
 	constructor
 	(
 		lightingIsEnabled: boolean,
@@ -215,34 +217,14 @@ class SceneRenderer
 				surfaceNormal
 			);
 
-			var intensityFromLightsAll = 0;
-
-			if (this.lightingIsEnabled == false)
-			{
-				intensityFromLightsAll = 1;
-			}
-			else
-			{
-				var lights = scene.lighting.lights;
-
-				for (var i = 0; i < lights.length; i++)
-				{
-					var light = lights[i];
-
-					var intensity =
-						light.intensityForCollisionMaterialNormalAndCamera
-						(
-							collisionClosest,
-							surfaceMaterial,
-							surfaceNormal,
-							scene.camera,
-							this,
-							scene
-						);
-
-					intensityFromLightsAll += intensity;
-				}
-			}
+			var intensityFromLightsAll =
+				this.intensityFromLightsAll
+				(
+					collisionClosest,
+					surfaceMaterial,
+					surfaceNormal,
+					scene
+				);
 
 			surfaceColor.multiply
 			(
@@ -260,47 +242,80 @@ class SceneRenderer
 	{
 		var camera = scene.camera;
 
-		var directionFromEyeToPixel =
-			camera.directionToPixelPos(pixelPos);
-
-		var rayFromEyeToPixel = new Ray
-		(
-			camera.pos,
-			directionFromEyeToPixel
-		);
+		var rayFromCameraToPixel =
+			this.rayFromCameraToPixelAtPos(camera, pixelPos);
 
 		var collisions = this._collisions;
 		collisions.length = 0;
 
 		collisions = scene.collisionsOfRayWithObjectsMinusExceptionAddToList
 		(
-			rayFromEyeToPixel,
+			rayFromCameraToPixel,
 			null, // objectToExcept
 			collisions
 		);
 
-		var collisionClosest = null;
-
-		if (collisions.length > 0)
-		{
-			collisionClosest = collisions[0];
-
-			for (var c = 1; c < collisions.length; c++)
-			{
-				var collision = collisions[c];
-
-				var collisionIsClosestSoFar =
-					collision.distanceToCollision
-					< collisionClosest.distanceToCollision;
-
-				if (collisionIsClosestSoFar)
-				{
-					collisionClosest = collision;
-				}
-			}
-		}
+		var collisionClosest = Collision.closestOf(collisions);
 
 		return collisionClosest;
 	}
 
+	intensityFromLightsAll
+	(
+		collisionClosest: Collision,
+		surfaceMaterial: Material,
+		surfaceNormal: Coords,
+		scene: Scene
+	): number
+	{
+		var intensityFromLightsAll = 0;
+
+		if (this.lightingIsEnabled == false)
+		{
+			intensityFromLightsAll = 1;
+		}
+		else
+		{
+			var lights = scene.lighting.lights;
+
+			for (var i = 0; i < lights.length; i++)
+			{
+				var light = lights[i];
+
+				var intensity =
+					light.intensityForCollisionMaterialNormalAndCamera
+					(
+						collisionClosest,
+						surfaceMaterial,
+						surfaceNormal,
+						scene.camera,
+						this,
+						scene
+					);
+
+				intensityFromLightsAll += intensity;
+			}
+		}
+
+		return intensityFromLightsAll;
+	}
+
+	rayFromCameraToPixelAtPos(camera: Camera, pixelPos: Coords): Ray
+	{
+		if (this._rayFromCameraToPixelAtPos == null)
+		{
+			this._rayFromCameraToPixelAtPos = Ray.create();
+		}
+
+		var directionFromEyeToPixel =
+			camera.directionToPixelPos(pixelPos);
+
+		this._rayFromCameraToPixelAtPos.startPosAndDirectionSet
+		(
+			camera.pos,
+			directionFromEyeToPixel
+		);
+
+		return this._rayFromCameraToPixelAtPos;
+	}
 }

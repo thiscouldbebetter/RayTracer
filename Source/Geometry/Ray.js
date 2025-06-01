@@ -4,4 +4,12 @@ class Ray {
         this.startPos = startPos;
         this.direction = direction;
     }
+    static create() {
+        return new Ray(Coords.create(), Coords.create());
+    }
+    startPosAndDirectionSet(startPos, direction) {
+        this.startPos.overwriteWith(startPos);
+        this.direction.overwriteWith(direction);
+        return this;
+    }
 }

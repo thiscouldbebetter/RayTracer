@@ -7,6 +7,21 @@ class Collision {
         this._collidersByName = new Map();
     }
     // instance methods
+    static closestOf(collisions) {
+        var collisionClosest = null;
+        if (collisions.length > 0) {
+            collisionClosest = collisions[0];
+            for (var c = 1; c < collisions.length; c++) {
+                var collision = collisions[c];
+                var collisionIsClosestSoFar = collision.distanceToCollision
+                    < collisionClosest.distanceToCollision;
+                if (collisionIsClosestSoFar) {
+                    collisionClosest = collision;
+                }
+            }
+        }
+        return collisionClosest;
+    }
     colliderByName(name) {
         return this._collidersByName.get(name);
     }
