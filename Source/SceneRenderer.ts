@@ -107,10 +107,10 @@ class SceneRenderer
 		this.drawSceneToDisplay_Background(scene, display);
 
 		var sizeInTiles = Coords.fromXY(1, 1);
-		var tileSizeInPixels = display.sizeInPixels.clone().divide
-		(
-			sizeInTiles
-		);
+		var tileSizeInPixels =
+			display.sizeInPixels
+				.clone()
+				.divide(sizeInTiles);
 
 		var tilePosInTiles = Coords.create();
 	 	var tileBounds = Bounds.create();
@@ -123,28 +123,39 @@ class SceneRenderer
 			{
 				tilePosInTiles.x = x;
 
-				tileBounds.min.overwriteWith
+				this.drawSceneToDisplay_ForTilePosAndBounds
 				(
-					tilePosInTiles
-				).multiply
-				(
-					tileSizeInPixels
-				);
-
-				tileBounds.max.overwriteWith
-				(
-					tileBounds.min
-				).add
-				(
-					tileSizeInPixels
-				);
-
-				this.drawSceneToDisplay_PixelsGetAndDrawForBounds
-				(
-					scene, display, tileBounds
+					scene,
+					display,
+					tileSizeInPixels,
+					tilePosInTiles,
+					tileBounds
 				);
 			}
 		}
+	}
+
+	drawSceneToDisplay_ForTilePosAndBounds
+	(
+		scene: Scene,
+		display: Display,
+		tileSizeInPixels: Coords,
+		tilePosInTiles: Coords,
+		tileBounds: Bounds
+	): void
+	{
+		tileBounds.min
+			.overwriteWith(tilePosInTiles)
+			.multiply(tileSizeInPixels);
+
+		tileBounds.max
+			.overwriteWith(tileBounds.min)
+			.add(tileSizeInPixels);
+
+		this.drawSceneToDisplay_PixelsGetAndDrawForBounds
+		(
+			scene, display, tileBounds
+		);
 	}
 
 	drawSceneToDisplay_InitializeTemporaryVariables(): void
