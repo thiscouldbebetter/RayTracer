@@ -69,28 +69,8 @@ class SceneRenderer {
         var boundsMin = bounds.min;
         var boundsMax = bounds.max;
         var pane = new Pane(boundsMin, boundsMax);
-        this.drawSceneToDisplay_PaneRender(scene, pane);
+        pane.drawSceneForRenderer(scene, this);
         pane.drawToDisplay(display);
-    }
-    drawSceneToDisplay_PaneRender(scene, pane) {
-        var pixelColor = this._pixelColor;
-        var paneSize = pane.sizeInPixels;
-        var boundsMin = pane.boundsMin;
-        var pixelPosAbsolute = Coords.create();
-        var pixelPosRelative = Coords.create();
-        for (var y = 0; y < paneSize.y; y++) {
-            pixelPosRelative.y = y;
-            for (var x = 0; x < paneSize.x; x++) {
-                pixelPosRelative.x = x;
-                pixelPosAbsolute
-                    .overwriteWith(pixelPosRelative)
-                    .add(boundsMin);
-                var collisionForRayFromCameraToPixel = this.drawSceneToDisplay_ColorSetFromPixelAtPos(scene, pixelColor, pixelPosAbsolute);
-                if (collisionForRayFromCameraToPixel != null) {
-                    pane.pixelAtPosRelativeSetToColor(pixelPosRelative, pixelColor);
-                }
-            }
-        }
     }
     drawSceneToDisplay_ColorSetFromPixelAtPos(scene, surfaceColor, pixelPos) {
         var collisionClosest = this.drawSceneToDisplay_Pixel_FindClosestCollision(scene, pixelPos);
@@ -117,16 +97,7 @@ class SceneRenderer {
     }
     drawSceneToDisplay_Pixel_FindClosestCollision(scene, pixelPos) {
         var camera = scene.camera;
-        var cameraOrientation = camera.orientation;
-        var displacementFromEyeToPixel = this._displacementFromEyeToPixel;
-        var cameraOrientationTemp = Orientation.Instances().Camera;
-        var cameraForward = cameraOrientationTemp.forward;
-        var cameraRight = cameraOrientationTemp.right;
-        var cameraDown = cameraOrientationTemp.down;
-        var displaySizeInPixelsHalf = camera.viewSizeHalf();
-        displacementFromEyeToPixel.overwriteWith(cameraForward.overwriteWith(cameraOrientation.forward).multiplyScalar(camera.focalLength)).add(cameraRight.overwriteWith(cameraOrientation.right).multiplyScalar(pixelPos.x - displaySizeInPixelsHalf.x)).add(cameraDown.overwriteWith(cameraOrientation.down).multiplyScalar(pixelPos.y - displaySizeInPixelsHalf.y));
-        var directionFromEyeToPixel = this._directionFromEyeToPixel;
-        directionFromEyeToPixel.overwriteWith(displacementFromEyeToPixel).normalize();
+        var directionFromEyeToPixel = camera.directionToPixelPos(pixelPos);
         var rayFromEyeToPixel = new Ray(camera.pos, directionFromEyeToPixel);
         var collisions = this._collisions;
         collisions.length = 0;
