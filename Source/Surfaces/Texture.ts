@@ -29,7 +29,7 @@ class Texture implements Serializable<Texture>
 		return new Texture(name, image);
 	}
 
-	colorSetFromUV(texelColor: Color, texelUV: Coords): Color
+	colorSetFromUv(texelColor: Color, texelUV: Coords): Color
 	{
 		var imageSizeInPixels = this.image.sizeInPixels();
 
@@ -82,6 +82,24 @@ class Texture implements Serializable<Texture>
 	loaded(): boolean
 	{
 		return this._loaded;
+	}
+
+	// Clonable.
+
+	clone(): Texture
+	{
+		return Texture.fromNameAndImage
+		(
+			this.name,
+			this.image
+		);
+	}
+
+	overwriteWith(other: Texture): Texture
+	{
+		this.name = other.name;
+		this.image = other.image;
+		return this;
 	}
 
 	// Serializable.

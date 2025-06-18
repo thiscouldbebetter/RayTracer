@@ -118,7 +118,10 @@ class Face implements Serializable<Face>
 				var vertexIndex = this.vertexIndices[i];
 				var vertexIndexNext = this.vertexIndices[iNext];
 
-				var edge = new Edge([vertexIndex, vertexIndexNext]);
+				var edge = Edge.fromVertexIndexPair
+				(
+					vertexIndex, vertexIndexNext
+				);
 
 				edges.push(edge);
 			}
@@ -245,7 +248,7 @@ class Face implements Serializable<Face>
 
 		var texelColor = this.texelColor();
 
-		texture.colorSetFromUV(texelColor, texelUV);
+		texture.colorSetFromUv(texelColor, texelUV);
 
 		return texelColor;
 	}

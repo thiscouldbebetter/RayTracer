@@ -1,16 +1,16 @@
 "use strict";
 class Material {
-    constructor(name, color, ambient, diffuse, specular, shininess, texture) {
+    constructor(name, color, ambient, diffuse, specular, shininess, textures) {
         this.name = name;
         this.color = color;
         this.ambient = ambient;
         this.diffuse = diffuse;
         this.specular = specular;
         this.shininess = shininess;
-        this.texture = texture;
+        this.textures = textures;
     }
     static fromNameAndColor(name, color) {
-        return new Material(name, color, 0, 0, 0, 0, null);
+        return new Material(name, color, 0, 0, 0, 0, []);
     }
     static Instances() {
         if (Material._instances == null) {
@@ -19,21 +19,38 @@ class Material {
         return Material._instances;
     }
     // methods
+    colorSetFromUv(color, textureUv) {
+        color.overwriteWith(this.color);
+        for (var t = 0; t < this.textures.length; t++) {
+            var texture = this.textures[t];
+            texture.colorSetFromUv(color, textureUv);
+            break; // todo
+        }
+        return color;
+    }
     loadAndSendToCallback(callback) {
         var material = this;
-        if (this.texture == null) {
-            callback(this);
+        if (this.textures.length == 0) {
+            callback(material);
         }
         else {
-            this.texture.loadAndSendToCallback((textureLoaded) => callback(material));
+            this.textures.forEach(textureToLoad => {
+                textureToLoad.loadAndSendToCallback(() => {
+                    if (material.texturesAreAllLoaded()) {
+                        callback(material);
+                    }
+                });
+            });
         }
     }
-    textureIsSetAndLoaded() {
-        return (this.texture != null && this.texture.loaded());
+    texturesAreAllLoaded() {
+        var someTextureIsNotLoaded = this.textures.some(x => x.loaded() == false);
+        var allTexturesAreLoaded = (someTextureIsNotLoaded == false);
+        return allTexturesAreLoaded;
     }
     // cloneable
     clone() {
-        return new Material(this.name, this.color.clone(), this.ambient, this.diffuse, this.specular, this.shininess, this.texture);
+        return new Material(this.name, this.color.clone(), this.ambient, this.diffuse, this.specular, this.shininess, this.textures.map(x => x.clone()));
     }
     overwriteWith(other) {
         this.name = other.name;
@@ -42,7 +59,10 @@ class Material {
         this.diffuse = other.diffuse;
         this.specular = other.specular;
         this.shininess = other.shininess;
-        this.texture = other.texture;
+        this.textures.length = other.textures.length;
+        for (var i = 0; i < this.textures.length; i++) {
+            this.textures[i] = other.textures[i];
+        }
         return this;
     }
     // Serializable.
@@ -55,16 +75,14 @@ class Material {
     prototypesSet() {
         var typeSetOnObject = SerializableHelper.typeSetOnObject;
         typeSetOnObject(Color, this.color);
-        if (this.texture != null) {
-            typeSetOnObject(Texture, this.texture);
-        }
+        this.textures.forEach(x => typeSetOnObject(Texture, x));
         return this;
     }
 }
 class Material_Instances {
     constructor() {
         var colors = Color.Instances();
-        this.Green = new Material("Green", colors.Green, 1, 1, .2, 0, null);
-        this.White = new Material("White", colors.White, 1, 1, .2, 0, null);
+        this.Green = new Material("Green", colors.Green, 1, 1, .2, 0, []);
+        this.White = new Material("White", colors.White, 1, 1, .2, 0, []);
     }
 }

@@ -8,6 +8,19 @@ class Edge implements Serializable<Edge>
 		this.vertexIndices = vertexIndices;
 	}
 
+	static fromVertexIndices(vertexIndices: number[]): Edge
+	{
+		return new Edge(vertexIndices);
+	}
+
+	static fromVertexIndexPair
+	(
+		vertexIndex0: number, vertexIndex1: number
+	): Edge
+	{
+		return new Edge( [vertexIndex0, vertexIndex1] );
+	}
+
 	recalculateDerivedValues(): void
 	{
 		this._vertices = null;

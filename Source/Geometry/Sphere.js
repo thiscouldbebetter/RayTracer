@@ -23,19 +23,14 @@ class Sphere {
     surfaceMaterialColorAndNormalForCollision(scene, collisionClosest, surfaceMaterial, surfaceColor, surfaceNormal) {
         var sphere = collisionClosest.colliderByName(Sphere.name);
         var surfacePos = collisionClosest.pos;
-        surfaceMaterial.overwriteWith(sphere.material(scene));
+        var sphereMaterial = sphere.material(scene);
+        surfaceMaterial.overwriteWith(sphereMaterial);
         surfaceNormal.overwriteWith(surfacePos).subtract(sphere.centerPos).normalize();
-        var textureShouldBeUsed = surfaceMaterial.textureIsSetAndLoaded();
-        if (textureShouldBeUsed == false) {
-            surfaceColor.overwriteWith(surfaceMaterial.color);
-        }
-        else {
-            var surfaceNormalInLocalCoords = new TransformOrient(this.orientation).transformCoords(surfaceNormal.clone());
-            var surfaceNormalInLocalCoordsAsPolar = Polar.create().fromCoords(surfaceNormalInLocalCoords);
-            var texelUv = this.texelUv();
-            texelUv.overwriteWithXYZ(surfaceNormalInLocalCoordsAsPolar.azimuth, (1 + surfaceNormalInLocalCoordsAsPolar.elevation) / 2, 0); // todo
-            surfaceMaterial.texture.colorSetFromUV(surfaceColor, texelUv);
-        }
+        var surfaceNormalInLocalCoords = new TransformOrient(this.orientation).transformCoords(surfaceNormal.clone());
+        var surfaceNormalInLocalCoordsAsPolar = Polar.create().fromCoords(surfaceNormalInLocalCoords);
+        var texelUv = this.texelUv();
+        texelUv.overwriteWithXYZ(surfaceNormalInLocalCoordsAsPolar.azimuth, (1 + surfaceNormalInLocalCoordsAsPolar.elevation) / 2, 0); // todo
+        surfaceMaterial.colorSetFromUv(surfaceColor, texelUv);
         return surfaceColor;
     }
     // Clonable.

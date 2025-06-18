@@ -59,7 +59,7 @@ class Face {
                 var iNext = NumberHelper.wrapValueToRange(i + 1, this.vertexIndices.length);
                 var vertexIndex = this.vertexIndices[i];
                 var vertexIndexNext = this.vertexIndices[iNext];
-                var edge = new Edge([vertexIndex, vertexIndexNext]);
+                var edge = Edge.fromVertexIndexPair(vertexIndex, vertexIndexNext);
                 edges.push(edge);
             }
             this._edges = edges;
@@ -120,7 +120,7 @@ class Face {
     texelColorForVertexWeights(texture, vertexWeights) {
         var texelUV = this.interpolateVertexValuesForWeights(this.textureUVsForVertices, vertexWeights);
         var texelColor = this.texelColor();
-        texture.colorSetFromUV(texelColor, texelUV);
+        texture.colorSetFromUv(texelColor, texelUV);
         return texelColor;
     }
     triangles(mesh) {

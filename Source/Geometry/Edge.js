@@ -3,6 +3,12 @@ class Edge {
     constructor(vertexIndices) {
         this.vertexIndices = vertexIndices;
     }
+    static fromVertexIndices(vertexIndices) {
+        return new Edge(vertexIndices);
+    }
+    static fromVertexIndexPair(vertexIndex0, vertexIndex1) {
+        return new Edge([vertexIndex0, vertexIndex1]);
+    }
     recalculateDerivedValues() {
         this._vertices = null;
         this._displacement = null;

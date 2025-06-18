@@ -117,20 +117,18 @@ class Mesh implements Shape
 
 		surfaceMaterial.overwriteWith(faceMaterial);
 
-		var textureShouldBeUsed = surfaceMaterial.textureIsSetAndLoaded();
+		surfaceColor
+			.overwriteWith(surfaceMaterial.color);
 
-		if (textureShouldBeUsed == false)
+		var textures = surfaceMaterial.textures; 
+
+		for (var t = 0; t < textures.length; t++)
 		{
-			surfaceColor.overwriteWith
-			(
-				surfaceMaterial.color
-			);
-		}
-		else
-		{
+			var texture = textures[t];
+
 			var texelColor = face.texelColorForVertexWeights
 			(
-				surfaceMaterial.texture, 
+				texture, 
 				_vertexWeightsAtSurfacePos
 			);
 
@@ -138,6 +136,8 @@ class Mesh implements Shape
 			{
 				surfaceColor.overwriteWith(texelColor);
 			}
+
+			break; // todo
 		}
 
 		surfaceNormal.overwriteWith

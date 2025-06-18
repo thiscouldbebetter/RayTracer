@@ -7,7 +7,7 @@ class Material implements Serializable<Material>
 	diffuse: number;
 	specular: number;
 	shininess: number;
-	texture: Texture;
+	textures: Texture[];
 
 	constructor
 	(
@@ -17,7 +17,7 @@ class Material implements Serializable<Material>
 		diffuse: number,
 		specular: number,
 		shininess: number,
-		texture: Texture
+		textures: Texture[]
 	)
 	{
 		this.name = name;
@@ -26,12 +26,12 @@ class Material implements Serializable<Material>
 		this.diffuse = diffuse;
 		this.specular = specular;
 		this.shininess = shininess;
-		this.texture = texture;
+		this.textures = textures;
 	}
 
 	static fromNameAndColor(name: string, color: Color): Material
 	{
-		return new Material(name, color, 0, 0, 0, 0, null);
+		return new Material(name, color, 0, 0, 0, 0, []);
 	}
 
 	// instances
@@ -48,25 +48,54 @@ class Material implements Serializable<Material>
 
 	// methods
 
+	colorSetFromUv(color: Color, textureUv: Coords): Color
+	{
+		color.overwriteWith(this.color);
+		for (var t = 0; t < this.textures.length; t++)
+		{
+			var texture = this.textures[t];
+			texture.colorSetFromUv(color, textureUv);
+			break; // todo
+		}
+		return color;
+	}
+
 	loadAndSendToCallback(callback: (m: Material) => void): void
 	{
 		var material = this;
-		if (this.texture == null)
+
+		if (this.textures.length == 0)
 		{
-			callback(this);
+			callback(material);
 		}
 		else
 		{
-			this.texture.loadAndSendToCallback
+			this.textures.forEach
 			(
-				(textureLoaded: Texture) => callback(material)
+				textureToLoad =>
+				{
+					textureToLoad.loadAndSendToCallback
+					(
+						() =>
+						{
+							if (material.texturesAreAllLoaded() )
+							{
+								callback(material);
+							}
+						}
+					);
+				}
 			);
 		}
 	}
 
-	textureIsSetAndLoaded(): boolean
+	texturesAreAllLoaded(): boolean
 	{
-		return (this.texture != null && this.texture.loaded() );
+		var someTextureIsNotLoaded =
+			this.textures.some(x => x.loaded() == false);
+		var allTexturesAreLoaded =
+			(someTextureIsNotLoaded == false);
+		return allTexturesAreLoaded;
 	}
 
 	// cloneable
@@ -81,7 +110,7 @@ class Material implements Serializable<Material>
 			this.diffuse,
 			this.specular,
 			this.shininess,
-			this.texture
+			this.textures.map(x => x.clone())
 		);
 	}
 
@@ -93,7 +122,12 @@ class Material implements Serializable<Material>
 		this.diffuse = other.diffuse;
 		this.specular = other.specular;
 		this.shininess = other.shininess;
-		this.texture = other.texture;
+
+		this.textures.length = other.textures.length;
+		for (var i = 0; i < this.textures.length; i++)
+		{
+			this.textures[i] = other.textures[i];
+		}
 
 		return this;
 	}
@@ -114,10 +148,7 @@ class Material implements Serializable<Material>
 	{
 		var typeSetOnObject = SerializableHelper.typeSetOnObject;
 		typeSetOnObject(Color, this.color);
-		if (this.texture != null)
-		{
-			typeSetOnObject(Texture, this.texture);
-		}
+		this.textures.forEach(x => typeSetOnObject(Texture, x) );
 		return this;
 	}
 }
@@ -130,7 +161,7 @@ class Material_Instances
 	constructor()
 	{
 		var colors = Color.Instances();
-		this.Green = new Material("Green", colors.Green, 1, 1, .2, 0, null);
-		this.White = new Material("White", colors.White, 1, 1, .2, 0, null);
+		this.Green = new Material("Green", colors.Green, 1, 1, .2, 0, []);
+		this.White = new Material("White", colors.White, 1, 1, .2, 0, []);
 	}
 }

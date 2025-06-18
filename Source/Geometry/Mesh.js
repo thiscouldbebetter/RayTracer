@@ -49,15 +49,16 @@ class Mesh {
         surfacePos, this._vertexWeightsAtSurfacePos);
         var faceMaterial = face.material(scene);
         surfaceMaterial.overwriteWith(faceMaterial);
-        var textureShouldBeUsed = surfaceMaterial.textureIsSetAndLoaded();
-        if (textureShouldBeUsed == false) {
-            surfaceColor.overwriteWith(surfaceMaterial.color);
-        }
-        else {
-            var texelColor = face.texelColorForVertexWeights(surfaceMaterial.texture, _vertexWeightsAtSurfacePos);
+        surfaceColor
+            .overwriteWith(surfaceMaterial.color);
+        var textures = surfaceMaterial.textures;
+        for (var t = 0; t < textures.length; t++) {
+            var texture = textures[t];
+            var texelColor = face.texelColorForVertexWeights(texture, _vertexWeightsAtSurfacePos);
             if (texelColor != null) {
                 surfaceColor.overwriteWith(texelColor);
             }
+            break; // todo
         }
         surfaceNormal.overwriteWith(face.normalForVertexWeights(_vertexWeightsAtSurfacePos));
         return surfaceColor;

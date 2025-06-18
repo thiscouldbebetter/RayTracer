@@ -62,7 +62,8 @@ class Sphere implements Shape
 	{
 		var sphere = collisionClosest.colliderByName(Sphere.name);
 		var surfacePos = collisionClosest.pos;
-		surfaceMaterial.overwriteWith(sphere.material(scene));
+		var sphereMaterial = sphere.material(scene);
+		surfaceMaterial.overwriteWith(sphereMaterial);
 
 		surfaceNormal.overwriteWith
 		(
@@ -72,45 +73,33 @@ class Sphere implements Shape
 			sphere.centerPos
 		).normalize();
 
-		var textureShouldBeUsed =
-			surfaceMaterial.textureIsSetAndLoaded();
 
-		if (textureShouldBeUsed == false)
-		{
-			surfaceColor.overwriteWith
-			(
-				surfaceMaterial.color
-			);
-		}
-		else
-		{
-			var surfaceNormalInLocalCoords = new TransformOrient
-			(
-				this.orientation
-			).transformCoords
-			(
-				surfaceNormal.clone()
-			);
+		var surfaceNormalInLocalCoords = new TransformOrient
+		(
+			this.orientation
+		).transformCoords
+		(
+			surfaceNormal.clone()
+		);
 
-			var surfaceNormalInLocalCoordsAsPolar = Polar.create().fromCoords
-			(
-				surfaceNormalInLocalCoords
-			);
+		var surfaceNormalInLocalCoordsAsPolar = Polar.create().fromCoords
+		(
+			surfaceNormalInLocalCoords
+		);
 
-			var texelUv = this.texelUv();
-			texelUv.overwriteWithXYZ
-			(
-				surfaceNormalInLocalCoordsAsPolar.azimuth,
-				(1 + surfaceNormalInLocalCoordsAsPolar.elevation) / 2,
-				0
-			); // todo
+		var texelUv = this.texelUv();
+		texelUv.overwriteWithXYZ
+		(
+			surfaceNormalInLocalCoordsAsPolar.azimuth,
+			(1 + surfaceNormalInLocalCoordsAsPolar.elevation) / 2,
+			0
+		); // todo
 
-			surfaceMaterial.texture.colorSetFromUV
-			(
-				surfaceColor,
-				texelUv
-			);
-		}
+		surfaceMaterial.colorSetFromUv
+		(
+			surfaceColor,
+			texelUv
+		);
 
 		return surfaceColor;
 	}

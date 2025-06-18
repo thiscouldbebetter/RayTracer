@@ -8,7 +8,7 @@ class Texture {
     static fromNameAndImage(name, image) {
         return new Texture(name, image);
     }
-    colorSetFromUV(texelColor, texelUV) {
+    colorSetFromUv(texelColor, texelUV) {
         var imageSizeInPixels = this.image.sizeInPixels();
         var g = this.graphics();
         var texelColorComponents = g.getImageData(texelUV.x * imageSizeInPixels.x, texelUV.y * imageSizeInPixels.y, 1, 1).data;
@@ -35,6 +35,15 @@ class Texture {
     }
     loaded() {
         return this._loaded;
+    }
+    // Clonable.
+    clone() {
+        return Texture.fromNameAndImage(this.name, this.image);
+    }
+    overwriteWith(other) {
+        this.name = other.name;
+        this.image = other.image;
+        return this;
     }
     // Serializable.
     fromJson(objectAsJson) {

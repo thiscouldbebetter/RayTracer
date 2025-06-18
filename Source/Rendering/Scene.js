@@ -68,7 +68,9 @@ class Scene {
         1, // specular
         .2, // shininess
         10, // diffuse
-        new Texture("TextureEyeball", imageEyeball));
+        [
+            new Texture("TextureEyeball", imageEyeball)
+        ]);
         return materialEyeball;
     }
     static demo_MaterialRTBang() {
@@ -86,7 +88,9 @@ class Scene {
         1, // diffuse
         .2, // specular
         10, // shininess
-        Texture.fromNameAndImage("RTBang", imageRTBang));
+        [
+            Texture.fromNameAndImage("RTBang", imageRTBang)
+        ]);
         return materialRTBang;
     }
     static demo_MeshGround(materialGround) {
@@ -138,15 +142,19 @@ class Scene {
     }
     loadForRendererAndSendToCallback(sceneRenderer, callback) {
         if (sceneRenderer.texturesAreEnabled) {
-            var materialsCount = this.materials.length;
+            var materialsToLoad = this.materials;
+            var materialsCount = materialsToLoad.length;
             var materialsLoadedSoFarCount = 0;
             var scene = this;
-            this.materials.forEach(m => m.loadAndSendToCallback((materialLoaded) => {
-                materialsLoadedSoFarCount++;
-                if (materialsLoadedSoFarCount >= materialsCount) {
-                    callback(scene);
-                }
-            }));
+            for (var m = 0; m < materialsToLoad.length; m++) {
+                var materialToLoad = materialsToLoad[m];
+                materialToLoad.loadAndSendToCallback((materialLoaded) => {
+                    materialsLoadedSoFarCount++;
+                    if (materialsLoadedSoFarCount >= materialsCount) {
+                        callback(scene);
+                    }
+                });
+            }
         }
         else {
             callback(this);
