@@ -188,6 +188,14 @@ class ImageFromDataUrl implements Image2
 		this.dataUrl = dataUrl;
 	}
 
+	static fromNameAndDataUrl
+	(
+		name: string, dataUrl: string
+	): ImageFromDataUrl
+	{
+		return new ImageFromDataUrl(name, dataUrl);
+	}
+
 	imageData(): ImageData
 	{
 		if (this._imageData == null)

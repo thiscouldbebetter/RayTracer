@@ -122,7 +122,7 @@ class SceneRenderer {
         if (this._rayFromCameraToPixelAtPos == null) {
             this._rayFromCameraToPixelAtPos = Ray.create();
         }
-        var directionFromEyeToPixel = camera.directionToPixelPos(pixelPos);
+        var directionFromEyeToPixel = camera.directionToPixelAtPos(pixelPos);
         this._rayFromCameraToPixelAtPos.startPosAndDirectionSet(camera.pos, directionFromEyeToPixel);
         return this._rayFromCameraToPixelAtPos;
     }

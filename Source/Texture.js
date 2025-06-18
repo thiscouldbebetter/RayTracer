@@ -5,6 +5,9 @@ class Texture {
         this.image = image;
         this._loaded = false;
     }
+    static fromNameAndImage(name, image) {
+        return new Texture(name, image);
+    }
     colorSetFromUV(texelColor, texelUV) {
         var imageSizeInPixels = this.image.sizeInPixels();
         var g = this.graphics();

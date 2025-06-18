@@ -6,6 +6,9 @@ class Orientation {
         this.down = Coords.create();
         this.overwriteWithForwardDown(forward, down);
     }
+    static fromForwardAndDown(forward, down) {
+        return new Orientation(forward, down);
+    }
     // instance methods
     clone() {
         return new Orientation(this.forward.clone(), this.down.clone());

@@ -18,6 +18,11 @@ class LightPoint
 		this.pos = pos;
 	}
 
+	static fromIntensityAndPos(intensity: number, pos: Coords): LightPoint
+	{
+		return new LightPoint(intensity, pos);
+	}
+
 	intensityForCollisionMaterialNormalAndCamera
 	(
 		collision: Collision,
@@ -101,13 +106,11 @@ class LightPoint
 						directionFromObjectToLight
 					);
 
-				var directionFromObjectToViewer = this._directionFromObjectToViewer.overwriteWith
-				(
-					camera.pos
-				).subtract
-				(
-					collision.pos
-				).normalize();
+				var directionFromObjectToViewer =
+					this._directionFromObjectToViewer
+						.overwriteWith(camera.pos)
+						.subtract(collision.pos)
+						.normalize();
 
 				var specularComponent = 
 					material.specular

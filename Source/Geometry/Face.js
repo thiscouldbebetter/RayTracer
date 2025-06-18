@@ -6,6 +6,9 @@ class Face {
         this.textureUVsForVertices = textureUVsForVertices;
         this.normalsForVertices = normalsForVertices;
     }
+    static fromMaterialNameAndVertexIndices(materialName, vertexIndices) {
+        return new Face(materialName, vertexIndices, null, null);
+    }
     buildTriangles(mesh) {
         var triangles = [];
         if (this.vertexIndices.length == 3) {

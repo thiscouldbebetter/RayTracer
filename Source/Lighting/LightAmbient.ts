@@ -12,6 +12,11 @@ class LightAmbient
 		this.intensity = intensity;
 	}
 
+	static fromIntensity(intensity: number): LightAmbient
+	{
+		return new LightAmbient(intensity);
+	}
+
 	intensityForCollisionMaterialNormalAndCamera
 	(
 		collision: Collision,

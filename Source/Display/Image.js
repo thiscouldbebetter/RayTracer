@@ -97,6 +97,9 @@ class ImageFromDataUrl {
         this.name = name;
         this.dataUrl = dataUrl;
     }
+    static fromNameAndDataUrl(name, dataUrl) {
+        return new ImageFromDataUrl(name, dataUrl);
+    }
     imageData() {
         if (this._imageData == null) {
             this._imageData = null;

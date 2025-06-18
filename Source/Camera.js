@@ -6,7 +6,7 @@ class Camera {
         this.pos = pos;
         this.orientation = orientation;
     }
-    displacementToPixelPos(pixelPos) {
+    displacementToPixelAtPos(pixelPos) {
         if (this._displacementToPixel == null) {
             this._displacementToPixel = Coords.create();
         }
@@ -17,16 +17,32 @@ class Camera {
         var cameraRight = cameraOrientationTemp.right;
         var cameraDown = cameraOrientationTemp.down;
         var displaySizeInPixelsHalf = this.viewSizeHalf();
-        displacementToPixel.overwriteWith(cameraForward.overwriteWith(cameraOrientation.forward).multiplyScalar(this.focalLength)).add(cameraRight.overwriteWith(cameraOrientation.right).multiplyScalar(pixelPos.x - displaySizeInPixelsHalf.x)).add(cameraDown.overwriteWith(cameraOrientation.down).multiplyScalar(pixelPos.y - displaySizeInPixelsHalf.y));
+        if (this.focalLength == null) {
+            // Parallel projection.
+            displacementToPixel
+                .overwriteWith(cameraOrientation.forward);
+        }
+        else {
+            // Perspective projection.
+            displacementToPixel.overwriteWith(cameraRight
+                .overwriteWith(cameraOrientation.right)
+                .multiplyScalar(pixelPos.x - displaySizeInPixelsHalf.x)).add(cameraDown
+                .overwriteWith(cameraOrientation.down)
+                .multiplyScalar(pixelPos.y - displaySizeInPixelsHalf.y)).add(cameraForward
+                .overwriteWith(cameraOrientation.forward)
+                .multiplyScalar(this.focalLength));
+        }
         return displacementToPixel;
     }
-    directionToPixelPos(pixelPos) {
+    directionToPixelAtPos(pixelPos) {
         if (this._directionToPixel == null) {
             this._directionToPixel = Coords.create();
         }
+        var displacementToPixel = this.displacementToPixelAtPos(pixelPos);
         var directionToPixel = this._directionToPixel;
-        var displacementToPixel = this.displacementToPixelPos(pixelPos);
-        directionToPixel.overwriteWith(displacementToPixel).normalize();
+        directionToPixel
+            .overwriteWith(displacementToPixel)
+            .normalize();
         return directionToPixel;
     }
     viewSizeHalf() {

@@ -18,6 +18,14 @@ class LightDirectional
 		this.direction = direction.normalize();
 	}
 
+	static fromIntensityAndDirection
+	(
+		intensity: number, direction: Coords
+	): LightDirectional
+	{
+		return new LightDirectional(intensity, direction);
+	}
+
 	intensityForCollisionMaterialNormalAndCamera
 	(
 		collision: Collision,

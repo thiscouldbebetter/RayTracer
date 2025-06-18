@@ -3,6 +3,9 @@ class Vertex {
     constructor(pos) {
         this.pos = pos;
     }
+    static fromPos(pos) {
+        return new Vertex(pos);
+    }
     clone() {
         return new Vertex(this.pos.clone());
     }

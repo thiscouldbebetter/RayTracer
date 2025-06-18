@@ -14,6 +14,11 @@ class Orientation implements Serializable<Orientation>
 		this.overwriteWithForwardDown(forward, down);
 	}
 
+	static fromForwardAndDown(forward: Coords, down: Coords): Orientation
+	{
+		return new Orientation(forward, down);
+	}
+
 	// instance methods
 
 	clone(): Orientation

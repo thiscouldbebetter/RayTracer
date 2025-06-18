@@ -5,6 +5,9 @@ class LightPoint {
         this.intensity = intensity;
         this.pos = pos;
     }
+    static fromIntensityAndPos(intensity, pos) {
+        return new LightPoint(intensity, pos);
+    }
     intensityForCollisionMaterialNormalAndCamera(collision, material, normal, camera, sceneRenderer, scene) {
         this.temporaryVariablesInitializeIfNecessary();
         var displacementFromObjectToLight = this._displacementFromObjectToLight;
@@ -29,7 +32,10 @@ class LightPoint {
                     * this.intensity
                     / distanceFromLightToObjectSquared;
                 var directionOfReflection = surfaceNormal.multiplyScalar(2 * directionFromObjectToLightDotSurfaceNormal).subtract(directionFromObjectToLight);
-                var directionFromObjectToViewer = this._directionFromObjectToViewer.overwriteWith(camera.pos).subtract(collision.pos).normalize();
+                var directionFromObjectToViewer = this._directionFromObjectToViewer
+                    .overwriteWith(camera.pos)
+                    .subtract(collision.pos)
+                    .normalize();
                 var specularComponent = material.specular
                     * Math.pow(directionOfReflection.dotProduct(directionFromObjectToViewer), material.shininess)
                     * this.intensity

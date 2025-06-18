@@ -8,6 +8,11 @@ class Lighting implements Serializable<Lighting>
 		this.lights = lights;
 	}
 
+	static fromLights(lights: Light[]): Lighting
+	{
+		return new Lighting(lights);
+	}
+
 	// Serializable.
 
 	fromJson(objectAsJson: string): Lighting

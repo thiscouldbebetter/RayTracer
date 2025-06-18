@@ -319,7 +319,7 @@ class SceneRenderer
 		}
 
 		var directionFromEyeToPixel =
-			camera.directionToPixelPos(pixelPos);
+			camera.directionToPixelAtPos(pixelPos);
 
 		this._rayFromCameraToPixelAtPos.startPosAndDirectionSet
 		(

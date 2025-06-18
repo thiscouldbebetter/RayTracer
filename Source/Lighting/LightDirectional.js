@@ -5,6 +5,9 @@ class LightDirectional {
         this.intensity = intensity;
         this.direction = direction.normalize();
     }
+    static fromIntensityAndDirection(intensity, direction) {
+        return new LightDirectional(intensity, direction);
+    }
     intensityForCollisionMaterialNormalAndCamera(collision, material, normal, camera, sceneRenderer, scene) {
         this.temporaryVariablesInitializeIfNecessary();
         var surfaceNormal = this._surfaceNormal.overwriteWith(normal);

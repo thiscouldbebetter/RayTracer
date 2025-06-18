@@ -13,69 +13,18 @@ class Scene {
         return new Scene(null, null, null, null, null, null, null);
     }
     static demo() {
-        var imageRTBang = new ImageFromStrings("RTBang", [
-            "RRRRRRRRRRRRRRRR",
-            "RRcccccRcccccRcR",
-            "RRcRRRcRRRcRRRcR",
-            "RRcRRRcRRRcRRRcR",
-            "RRcccccRRRcRRRcR",
-            "RRcRRcRRRRcRRRRR",
-            "RRcRRRcRRRcRRRcR",
-            "RRRRRRRRRRRRRRRR",
-        ]);
-        var materialRTBang = new Material("RTBang", Color.Instances().White, 1, // diffuse
-        1, // specular
-        .2, // shininess
-        10, // diffuse
-        new Texture("RTBang", imageRTBang));
-        var meshMonolith = MeshHelper.transformMeshVertexPositions(MeshHelper.buildCubeUnit("Monolith", materialRTBang), new TransformMultiple([
-            new TransformScale(new Coords(40, 10, 90)),
-            new TransformTranslate(new Coords(0, 0, -90)),
-        ]));
-        var meshGround = new Mesh("Ground", 
-        // vertices
-        [
-            new Vertex(new Coords(-1000, -1000, 0)),
-            new Vertex(new Coords(1000, -1000, 0)),
-            new Vertex(new Coords(1000, 1000, 0)),
-            new Vertex(new Coords(-1000, 1000, 0)),
-        ], 
-        // faces
-        [
-            new Face(Material.Instances().Green.name, [3, 2, 1, 0], null, null)
-        ]);
-        /*
-        var imageEyeball = new ImageFromStrings
-        (
-            "ImageEyeball",
-            [
-                "k","b","w","w","w","w","w","w","w","w"
-            ]
-        );
-        */
-        var imageEyeball = new ImageFromDataUrl("ImageEyeball", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAICAYAAAA4GpVBAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAAAZSURBVBhXYwCC/0wMi14AKSBgAvExCQYGAMRUBpJwU7r/AAAAAElFTkSuQmCC");
-        var materialEyeball = new Material("MaterialEyeball", Color.Instances().White, 1, // diffuse
-        1, // specular
-        .2, // shininess
-        10, // diffuse
-        new Texture("TextureEyeball", imageEyeball));
+        var materialEyeball = this.demo_MaterialEyeball();
+        var materialGround = Material.Instances().Green;
+        var materialRTBang = this.demo_MaterialRTBang();
         var materials = [
             materialEyeball,
-            materialRTBang,
-            Material.Instances().Green,
+            materialGround,
+            materialRTBang
         ];
-        var sphereEyeball = new Sphere("SphereEyeball", materialEyeball.name, 100, // radius
-        new Coords(200, 200, -270), new Orientation(new Coords(1, 0, 0), new Coords(1, 1, 0) // down = SE
-        ));
-        var lighting = new Lighting(
-        // lights
-        [
-            new LightAmbient(.05),
-            new LightDirectional(.5, new Coords(1, 1, 1)),
-            // new LightPoint(30000, new Coords(-200, -200, -300)),
-            new LightPoint(60000, new Coords(200, -200, -300)),
-            // new LightPoint(30000, new Coords(200, 200, -300)),
-        ]);
+        var meshMonolith = this.demo_MeshMonolith(materialRTBang);
+        var meshGround = this.demo_MeshGround(materialGround);
+        var sphereEyeball = this.demo_SphereEyeball(materialEyeball);
+        var lighting = this.demo_Lighting();
         var displaySize = new Coords(320, 240, 960);
         var camera = new Camera(displaySize.clone(), 200, // focalLength
         new Coords(-150, -300, -60), // pos
@@ -90,6 +39,80 @@ class Scene {
         var scene = new Scene("Scene0", materials, Color.Instances().BlueDark, // backgroundColor
         lighting, camera, shapeDefinitions, shapeDefinitions.map(x => new ShapeBuilder(x.name, new Coords(0, 0, 0))));
         return scene;
+    }
+    static demo_Lighting() {
+        return Lighting.fromLights([
+            LightAmbient.fromIntensity(.05),
+            LightDirectional
+                .fromIntensityAndDirection(.5, Coords.fromXYZ(1, 1, 1)),
+            LightPoint
+                .fromIntensityAndPos(60000, Coords.fromXYZ(200, -200, -300)),
+        ]);
+    }
+    static demo_MaterialEyeball() {
+        /*
+        var imageEyeball = new ImageFromStrings
+        (
+            "ImageEyeball",
+            [
+                "k","b","w","w","w","w","w","w","w","w"
+            ]
+        );
+        */
+        var imageEyeball = ImageFromDataUrl.fromNameAndDataUrl("ImageEyeball", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAICAYAAAA4GpVBAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAAAZSURBVBhXYwCC/0wMi14AKSBgAvExCQYGAMRUBpJwU7r/AAAAAElFTkSuQmCC");
+        var materialEyeball = new Material("MaterialEyeball", Color.Instances().White, 1, // diffuse
+        1, // specular
+        .2, // shininess
+        10, // diffuse
+        new Texture("TextureEyeball", imageEyeball));
+        return materialEyeball;
+    }
+    static demo_MaterialRTBang() {
+        var imageRTBang = new ImageFromStrings("RTBang", [
+            "RRRRRRRRRRRRRRRR",
+            "RRcccccRcccccRcR",
+            "RRcRRRcRRRcRRRcR",
+            "RRcRRRcRRRcRRRcR",
+            "RRcccccRRRcRRRcR",
+            "RRcRRcRRRRcRRRRR",
+            "RRcRRRcRRRcRRRcR",
+            "RRRRRRRRRRRRRRRR",
+        ]);
+        var materialRTBang = new Material("RTBang", Color.Instances().White, 1, // ambient
+        1, // diffuse
+        .2, // specular
+        10, // shininess
+        Texture.fromNameAndImage("RTBang", imageRTBang));
+        return materialRTBang;
+    }
+    static demo_MeshGround(materialGround) {
+        var meshGround = new Mesh("Ground", 
+        // vertices
+        [
+            Vertex.fromPos(Coords.fromXY(-1000, -1000)),
+            Vertex.fromPos(Coords.fromXY(1000, -1000)),
+            Vertex.fromPos(Coords.fromXY(1000, 1000)),
+            Vertex.fromPos(Coords.fromXY(-1000, 1000)),
+        ], 
+        // faces
+        [
+            Face.fromMaterialNameAndVertexIndices(materialGround.name, [3, 2, 1, 0])
+        ]);
+        return meshGround;
+    }
+    static demo_MeshMonolith(materialRTBang) {
+        var meshMonolith = MeshHelper.transformMeshVertexPositions(MeshHelper.buildCubeUnit("Monolith", materialRTBang), new TransformMultiple([
+            new TransformScale(Coords.fromXYZ(40, 10, 90)),
+            new TransformTranslate(Coords.fromXYZ(0, 0, -90)),
+        ]));
+        return meshMonolith;
+    }
+    static demo_SphereEyeball(materialEyeball) {
+        var sphereEyeball = new Sphere("SphereEyeball", materialEyeball.name, 100, // radius
+        Coords.fromXYZ(200, 200, -270), // center
+        Orientation.fromForwardAndDown(Coords.fromXYZ(1, 0, 0), Coords.fromXYZ(1, 1, 0) // down = SE
+        ));
+        return sphereEyeball;
     }
     collisionsOfRayWithObjectsMinusExceptionAddToList(ray, shapeToExcept, collisionsSoFar) {
         var shapes = this.shapes();

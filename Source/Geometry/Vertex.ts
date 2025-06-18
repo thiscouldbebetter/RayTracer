@@ -8,6 +8,11 @@ class Vertex implements Serializable<Vertex>
 		this.pos = pos;
 	}
 
+	static fromPos(pos: Coords): Vertex
+	{
+		return new Vertex(pos);
+	}
+
 	clone(): Vertex
 	{
 		return new Vertex(this.pos.clone());

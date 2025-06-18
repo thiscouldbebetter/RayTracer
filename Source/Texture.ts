@@ -20,6 +20,15 @@ class Texture implements Serializable<Texture>
 		this._loaded = false;
 	}
 
+	static fromNameAndImage
+	(
+		name: string,
+		image: Image2
+	)
+	{
+		return new Texture(name, image);
+	}
+
 	colorSetFromUV(texelColor: Color, texelUV: Coords): Color
 	{
 		var imageSizeInPixels = this.image.sizeInPixels();

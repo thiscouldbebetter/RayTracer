@@ -24,6 +24,15 @@ class Face implements Serializable<Face>
 		this.normalsForVertices = normalsForVertices;
 	}
 
+	static fromMaterialNameAndVertexIndices
+	(
+		materialName: string,
+		vertexIndices: number[]
+	): Face
+	{
+		return new Face(materialName, vertexIndices, null, null);
+	}
+
 	buildTriangles(mesh: Mesh): Face[]
 	{
 		var triangles = [];

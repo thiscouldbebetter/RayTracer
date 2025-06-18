@@ -3,6 +3,9 @@ class Lighting {
     constructor(lights) {
         this.lights = lights;
     }
+    static fromLights(lights) {
+        return new Lighting(lights);
+    }
     // Serializable.
     fromJson(objectAsJson) {
         throw new Error("To be implemented!");

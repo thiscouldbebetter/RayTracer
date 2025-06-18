@@ -24,7 +24,7 @@ class Camera implements Serializable<Camera>
 		this.orientation = orientation;
 	}
 
-	displacementToPixelPos(pixelPos: Coords): Coords
+	displacementToPixelAtPos(pixelPos: Coords): Coords
 	{
 		if (this._displacementToPixel == null)
 		{
@@ -39,54 +39,53 @@ class Camera implements Serializable<Camera>
 		var cameraDown = cameraOrientationTemp.down;
 		var displaySizeInPixelsHalf = this.viewSizeHalf();
 
-		displacementToPixel.overwriteWith
-		(
-			cameraForward.overwriteWith
+		if (this.focalLength == null)
+		{
+			// Parallel projection.
+			displacementToPixel
+				.overwriteWith(cameraOrientation.forward);
+		}
+		else
+		{
+			// Perspective projection.
+
+			displacementToPixel.overwriteWith
 			(
-				cameraOrientation.forward
-			).multiplyScalar
+				cameraRight
+					.overwriteWith(cameraOrientation.right)
+					.multiplyScalar(pixelPos.x - displaySizeInPixelsHalf.x)
+			).add
 			(
-				this.focalLength
-			)
-		).add
-		(
-			cameraRight.overwriteWith
+				cameraDown
+					.overwriteWith(cameraOrientation.down)
+					.multiplyScalar(pixelPos.y - displaySizeInPixelsHalf.y)
+			).add
 			(
-				cameraOrientation.right
-			).multiplyScalar
-			(
-				pixelPos.x - displaySizeInPixelsHalf.x
-			)
-		).add
-		(
-			cameraDown.overwriteWith
-			(
-				cameraOrientation.down
-			).multiplyScalar
-			(
-				pixelPos.y - displaySizeInPixelsHalf.y
-			)
-		);
+				cameraForward
+					.overwriteWith(cameraOrientation.forward)
+					.multiplyScalar(this.focalLength)
+			);
+		}
 
 		return displacementToPixel;
 	}
 
-	directionToPixelPos(pixelPos: Coords): Coords
+	directionToPixelAtPos(pixelPos: Coords): Coords
 	{
 		if (this._directionToPixel == null)
 		{
 			this._directionToPixel = Coords.create();
 		}
 
-		var directionToPixel = this._directionToPixel;
-
 		var displacementToPixel =
-			this.displacementToPixelPos(pixelPos);
+			this.displacementToPixelAtPos(pixelPos);
 
-		directionToPixel.overwriteWith
-		(
-			displacementToPixel
-		).normalize();
+		var directionToPixel =
+			this._directionToPixel;
+
+		directionToPixel
+			.overwriteWith(displacementToPixel)
+			.normalize();
 
 		return directionToPixel;
 	}
