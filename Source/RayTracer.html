@@ -17,7 +17,10 @@
 		<label for="selectDemo">
 			Load Demo:
 		</label>
-		<select onchange="UiEventHandler.selectDemo_Changed(this);">
+		<select
+			id="selectDemo"
+			onchange="UiEventHandler.selectDemo_Changed(this);"
+		>
 			<option>-</option>
 			<option>Perspective</option>
 			<option>Parallel</option>
@@ -73,17 +76,19 @@
 <script type="text/javascript" src="Lighting/LightPoint.js"></script>
 <script type="text/javascript" src="Lighting/Lighting.js"></script>
 
+<script type="text/javascript" src="Rendering/Camera.js"></script>
+<script type="text/javascript" src="Rendering/RayTracer.js"></script>
+<script type="text/javascript" src="Rendering/Scene.js"></script>
+<script type="text/javascript" src="Rendering/SceneRenderer.js"></script>
+
+<script type="text/javascript" src="Surfaces/Material.js"></script>
+<script type="text/javascript" src="Surfaces/Texture.js"></script>
+
 <script type="text/javascript" src="Utility/Cloneable.js"></script>
 <script type="text/javascript" src="Utility/Constants.js"></script>
 <script type="text/javascript" src="Utility/NumberHelper.js"></script>
 <script type="text/javascript" src="Utility/Serializable.js"></script>
 
-<script type="text/javascript" src="Camera.js"></script>
-<script type="text/javascript" src="Material.js"></script>
-<script type="text/javascript" src="RayTracer.js"></script>
-<script type="text/javascript" src="Scene.js"></script>
-<script type="text/javascript" src="SceneRenderer.js"></script>
-<script type="text/javascript" src="Texture.js"></script>
 
 </body>
 </html>
