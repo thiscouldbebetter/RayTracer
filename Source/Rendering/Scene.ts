@@ -144,14 +144,17 @@ class Scene implements Serializable<Scene>
 			"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAICAYAAAA4GpVBAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAAAZSURBVBhXYwCC/0wMi14AKSBgAvExCQYGAMRUBpJwU7r/AAAAAElFTkSuQmCC"
 		);
 
-		var materialEyeball = new Material
+		var materialEyeball = Material.fromNameColorOpticsAndTextures
 		(
 			"MaterialEyeball", 
-			Color.Instances().White, 
-			1, // diffuse
-			1, // specular
-			.2, // shininess
-			10, // diffuse
+			Color.Instances().White,
+			Material_Optics.fromAmbientDiffuseSpecularAndShininess
+			(
+				1, // diffuse
+				1, // specular
+				.2, // shininess
+				10, // diffuse
+			),
 			[
 				new Texture
 				(
@@ -184,11 +187,14 @@ class Scene implements Serializable<Scene>
 		var materialRTBang = new Material
 		(
 			"RTBang", 
-			Color.Instances().White, 
-			1, // ambient
-			1, // diffuse
-			.2, // specular
-			10, // shininess
+			Color.Instances().White,
+			Material_Optics.fromAmbientDiffuseSpecularAndShininess
+			(
+				1, // ambient
+				1, // diffuse
+				.2, // specular
+				10 // shininess
+			),
 			[
 				Texture.fromNameAndImage
 				(

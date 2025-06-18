@@ -91,8 +91,10 @@ class LightPoint
 
 			if (objectIsLitByThisLight)
 			{
+				var materialOptics = material.optics;
+
 				var diffuseComponent = 
-					material.diffuse
+					materialOptics.diffuse
 					* directionFromObjectToLightDotSurfaceNormal
 					* this.intensity
 					/ distanceFromLightToObjectSquared;
@@ -113,11 +115,11 @@ class LightPoint
 						.normalize();
 
 				var specularComponent = 
-					material.specular
+					materialOptics.specular
 					* Math.pow
 					(
 						directionOfReflection.dotProduct(directionFromObjectToViewer),
-						material.shininess
+						materialOptics.shininess
 					)
 					* this.intensity
 					/ distanceFromLightToObjectSquared;

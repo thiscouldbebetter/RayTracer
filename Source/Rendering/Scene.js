@@ -64,11 +64,10 @@ class Scene {
         );
         */
         var imageEyeball = ImageFromDataUrl.fromNameAndDataUrl("ImageEyeball", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAICAYAAAA4GpVBAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAAAZSURBVBhXYwCC/0wMi14AKSBgAvExCQYGAMRUBpJwU7r/AAAAAElFTkSuQmCC");
-        var materialEyeball = new Material("MaterialEyeball", Color.Instances().White, 1, // diffuse
+        var materialEyeball = Material.fromNameColorOpticsAndTextures("MaterialEyeball", Color.Instances().White, Material_Optics.fromAmbientDiffuseSpecularAndShininess(1, // diffuse
         1, // specular
         .2, // shininess
-        10, // diffuse
-        [
+        10), [
             new Texture("TextureEyeball", imageEyeball)
         ]);
         return materialEyeball;
@@ -84,11 +83,11 @@ class Scene {
             "RRcRRRcRRRcRRRcR",
             "RRRRRRRRRRRRRRRR",
         ]);
-        var materialRTBang = new Material("RTBang", Color.Instances().White, 1, // ambient
+        var materialRTBang = new Material("RTBang", Color.Instances().White, Material_Optics.fromAmbientDiffuseSpecularAndShininess(1, // ambient
         1, // diffuse
         .2, // specular
-        10, // shininess
-        [
+        10 // shininess
+        ), [
             Texture.fromNameAndImage("RTBang", imageRTBang)
         ]);
         return materialRTBang;

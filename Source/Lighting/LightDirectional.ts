@@ -76,8 +76,10 @@ class LightDirectional
 
 			if (objectIsLitByThisLight)
 			{
+				var materialOptics = material.optics;
+
 				var diffuseComponent = 
-					material.diffuse
+					materialOptics.diffuse
 					* directionFromObjectToLightDotSurfaceNormal
 					* this.intensity;
 
@@ -97,11 +99,11 @@ class LightDirectional
 						.normalize();
 
 				var specularComponent = 
-					material.specular
+					materialOptics.specular
 					* Math.pow
 					(
 						directionOfReflection.dotProduct(directionFromObjectToViewer),
-						material.shininess
+						materialOptics.shininess
 					)
 					* this.intensity;
 

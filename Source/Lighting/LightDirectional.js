@@ -23,7 +23,8 @@ class LightDirectional {
                 objectIsLitByThisLight = (collisionsBlockingLight.length == 0);
             }
             if (objectIsLitByThisLight) {
-                var diffuseComponent = material.diffuse
+                var materialOptics = material.optics;
+                var diffuseComponent = materialOptics.diffuse
                     * directionFromObjectToLightDotSurfaceNormal
                     * this.intensity;
                 var directionOfReflection = surfaceNormal.multiplyScalar(2 * directionFromObjectToLightDotSurfaceNormal).subtract(directionFromObjectToLight);
@@ -31,8 +32,8 @@ class LightDirectional {
                     .overwriteWith(camera.pos)
                     .subtract(collision.pos)
                     .normalize();
-                var specularComponent = material.specular
-                    * Math.pow(directionOfReflection.dotProduct(directionFromObjectToViewer), material.shininess)
+                var specularComponent = materialOptics.specular
+                    * Math.pow(directionOfReflection.dotProduct(directionFromObjectToViewer), materialOptics.shininess)
                     * this.intensity;
                 returnValue = diffuseComponent + specularComponent;
             }

@@ -3,35 +3,40 @@ class Material implements Serializable<Material>
 {
 	name: string;
 	color: Color;
-	ambient: number;
-	diffuse: number;
-	specular: number;
-	shininess: number;
+	optics: Material_Optics;
 	textures: Texture[];
 
 	constructor
 	(
 		name: string,
 		color: Color,
-		ambient: number,
-		diffuse: number,
-		specular: number,
-		shininess: number,
+		optics: Material_Optics,
 		textures: Texture[]
 	)
 	{
 		this.name = name;
 		this.color = color;
-		this.ambient = ambient;
-		this.diffuse = diffuse;
-		this.specular = specular;
-		this.shininess = shininess;
+		this.optics = optics;
 		this.textures = textures;
 	}
 
 	static fromNameAndColor(name: string, color: Color): Material
 	{
-		return new Material(name, color, 0, 0, 0, 0, []);
+		return new Material(name, color, Material_Optics.zeroes(), []);
+	}
+
+	static fromNameColorOpticsAndTextures
+	(
+		name: string,
+		color: Color,
+		optics: Material_Optics,
+		textures: Texture[]
+	)
+	{
+		return new Material
+		(
+			name, color, optics, textures
+		);
 	}
 
 	// instances
@@ -106,10 +111,7 @@ class Material implements Serializable<Material>
 		(
 			this.name,
 			this.color.clone(),
-			this.ambient,
-			this.diffuse,
-			this.specular,
-			this.shininess,
+			this.optics.clone(),
 			this.textures.map(x => x.clone())
 		);
 	}
@@ -118,10 +120,7 @@ class Material implements Serializable<Material>
 	{
 		this.name = other.name;
 		this.color.overwriteWith(other.color);
-		this.ambient = other.ambient;
-		this.diffuse = other.diffuse;
-		this.specular = other.specular;
-		this.shininess = other.shininess;
+		this.optics.overwriteWith(other.optics);
 
 		this.textures.length = other.textures.length;
 		for (var i = 0; i < this.textures.length; i++)
@@ -161,7 +160,83 @@ class Material_Instances
 	constructor()
 	{
 		var colors = Color.Instances();
-		this.Green = new Material("Green", colors.Green, 1, 1, .2, 0, []);
-		this.White = new Material("White", colors.White, 1, 1, .2, 0, []);
+		var m =
+			(n: string, c: Color, o: Material_Optics, t: Texture[]) =>
+				Material.fromNameColorOpticsAndTextures(n, c, o, t); 
+		var mo =
+			(a: number, d: number, sp: number, sh: number) =>
+				Material_Optics.fromAmbientDiffuseSpecularAndShininess
+				(
+					a, d, sp, sh
+				);
+
+		this.Green = m("Green", colors.Green, mo(1, 1, .2, 0), []);
+		this.White = m("White", colors.White, mo(1, 1, .2, 0), []);
+	}
+}
+
+class Material_Optics
+{
+	ambient: number;
+	diffuse: number;
+	specular: number;
+	shininess: number;
+
+	constructor
+	(
+		ambient: number,
+		diffuse: number,
+		specular: number,
+		shininess: number
+	)
+	{
+		this.ambient = ambient;
+		this.diffuse = diffuse;
+		this.specular = specular;
+		this.shininess = shininess;
+	}
+
+	static fromAmbientDiffuseSpecularAndShininess
+	(
+		ambient: number,
+		diffuse: number,
+		specular: number,
+		shininess: number
+	): Material_Optics
+	{
+		return new Material_Optics
+		(
+			ambient, diffuse, specular, shininess
+		);
+	}
+
+	static zeroes(): Material_Optics
+	{
+		return Material_Optics.fromAmbientDiffuseSpecularAndShininess
+		(
+			0, 0, 0, 0
+		);
+	}
+
+	// Clonable.
+
+	clone(): Material_Optics
+	{
+		return new Material_Optics
+		(
+			this.ambient,
+			this.diffuse,
+			this.specular,
+			this.shininess
+		);
+	}
+
+	overwriteWith(other: Material_Optics): Material_Optics
+	{
+		this.ambient = other.ambient;
+		this.diffuse = other.diffuse;
+		this.specular = other.specular;
+		this.shininess = other.shininess;
+		return this;
 	}
 }

@@ -27,7 +27,8 @@ class LightPoint {
                 objectIsLitByThisLight = (collisionsBlockingLight.length == 0);
             }
             if (objectIsLitByThisLight) {
-                var diffuseComponent = material.diffuse
+                var materialOptics = material.optics;
+                var diffuseComponent = materialOptics.diffuse
                     * directionFromObjectToLightDotSurfaceNormal
                     * this.intensity
                     / distanceFromLightToObjectSquared;
@@ -36,8 +37,8 @@ class LightPoint {
                     .overwriteWith(camera.pos)
                     .subtract(collision.pos)
                     .normalize();
-                var specularComponent = material.specular
-                    * Math.pow(directionOfReflection.dotProduct(directionFromObjectToViewer), material.shininess)
+                var specularComponent = materialOptics.specular
+                    * Math.pow(directionOfReflection.dotProduct(directionFromObjectToViewer), materialOptics.shininess)
                     * this.intensity
                     / distanceFromLightToObjectSquared;
                 returnValue = diffuseComponent + specularComponent;
