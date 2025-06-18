@@ -36,7 +36,7 @@ class Scene implements Serializable<Scene>
 		return new Scene(null, null, null, null, null, null, null);
 	}
 
-	static demo(): Scene
+	static demo(camera: Camera): Scene
 	{
 		var materialEyeball = this.demo_MaterialEyeball();
 		var materialGround = Material.Instances().Green;
@@ -49,34 +49,32 @@ class Scene implements Serializable<Scene>
 			materialRTBang 
 		]; 
 
-		var meshMonolith = this.demo_MeshMonolith(materialRTBang);
+		var meshMonolith =
+			this.demo_MeshMonolith(materialRTBang);
 
-		var meshGround = this.demo_MeshGround(materialGround);
+		var meshGround =
+			this.demo_MeshGround(materialGround);
 
-		var sphereEyeball = this.demo_SphereEyeball(materialEyeball);
+		var sphereEyeball =
+			this.demo_SphereEyeball(materialEyeball);
 
 		var lighting = this.demo_Lighting();
-
-		var displaySize = new Coords(320, 240, 960);
-
-		var camera = new Camera
-		(
-			displaySize.clone(),
-			200, // focalLength
-			new Coords(-150, -300, -60), // pos
-			new Orientation
-			(
-				new Coords(1, 2, 0), // forward
-				new Coords(0, 0, 1) // down
-			)
-		);
 
 		var shapeDefinitions: Array<Shape> =
 		[
 			sphereEyeball,
 			meshMonolith,
-			meshGround,
+			meshGround
 		];
+
+		var shapeBuilders = shapeDefinitions.map
+		(
+			x => ShapeBuilder.fromShapeDefinitionNameAndPos
+			(
+				x.name,
+				Coords.create()
+			)
+		);
 
 		var scene = new Scene
 		(
@@ -86,13 +84,34 @@ class Scene implements Serializable<Scene>
 			lighting,
 			camera,
 			shapeDefinitions,
-			shapeDefinitions.map
-			(
-				x => new ShapeBuilder(x.name, new Coords(0, 0, 0) )
-			)
+			shapeBuilders
 		);
 
 		return scene;
+	}
+
+	static demo_Camera(shouldUseParallelProjection: boolean): Camera
+	{
+		var displaySize = Coords.fromXYZ(320, 240, 960);
+
+		var focalLength =
+			shouldUseParallelProjection
+			? null
+			: 200;
+
+		var camera = Camera.fromViewSizeFocalLengthPosAndOrientation
+		(
+			displaySize.clone(),
+			focalLength,
+			Coords.fromXYZ(-150, -300, -100), // pos
+			Orientation.fromForwardAndDown
+			(
+				Coords.fromXYZ(1, 2, .1),
+				Coords.fromXYZ(0, 0, 1)
+			)
+		);
+
+		return camera;
 	}
 
 	static demo_Lighting(): Lighting
@@ -234,6 +253,18 @@ class Scene implements Serializable<Scene>
 		);
 
 		return sphereEyeball;
+	}
+
+	static demoWithProjectionParallel(): Scene
+	{
+		var camera = this.demo_Camera(true);
+		return this.demo(camera);
+	}
+
+	static demoWithProjectionPerspective(): Scene
+	{
+		var camera = this.demo_Camera(false);
+		return this.demo(camera);
 	}
 
 	collisionsOfRayWithObjectsMinusExceptionAddToList

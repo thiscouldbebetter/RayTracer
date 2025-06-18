@@ -5,13 +5,6 @@ class UiEventHandler {
         var textareaSceneAsJson = d.getElementById("textareaSceneAsJson");
         textareaSceneAsJson.innerHTML = "";
     }
-    static buttonDemoLoad_Clicked() {
-        var d = document;
-        var textareaSceneAsJson = d.getElementById("textareaSceneAsJson");
-        var scene = Scene.demo();
-        var sceneAsJson = scene.toJson();
-        textareaSceneAsJson.innerHTML = sceneAsJson;
-    }
     static buttonRender_Clicked() {
         var d = document;
         var textareaSceneAsJson = d.getElementById("textareaSceneAsJson");
@@ -25,5 +18,19 @@ class UiEventHandler {
             var rayTracer = new RayTracer();
             rayTracer.sceneRender(scene);
         }
+    }
+    static selectDemo_Changed(selectDemo) {
+        var d = document;
+        var textareaSceneAsJson = d.getElementById("textareaSceneAsJson");
+        var demoName = selectDemo.value;
+        var scene = demoName == "Perspective"
+            ? Scene.demoWithProjectionPerspective()
+            : demoName == "Parallel"
+                ? Scene.demoWithProjectionParallel()
+                : null;
+        var sceneAsJson = scene == null
+            ? ""
+            : scene.toJson();
+        textareaSceneAsJson.innerHTML = sceneAsJson;
     }
 }

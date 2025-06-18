@@ -26,6 +26,14 @@ class ShapeBuilder
 		this.pos = pos;
 	}
 
+	static fromShapeDefinitionNameAndPos
+	(
+		shapeDefinitionName: string, pos: Coords
+	): ShapeBuilder
+	{
+		return new ShapeBuilder(shapeDefinitionName, pos);
+	}
+
 	toShape(scene: Scene): Shape
 	{
 		var shapeDefinition = scene.shapeDefinitionByName(this.shapeDefinitionName);

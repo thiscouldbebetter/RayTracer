@@ -6,8 +6,6 @@ class SceneRenderer
 	texturesAreEnabled: boolean;
 	renderToBufferFirst: boolean;
 
-	_rayFromCameraToPixelAtPos: Ray;
-
 	constructor
 	(
 		lightingIsEnabled: boolean,
@@ -254,7 +252,7 @@ class SceneRenderer
 		var camera = scene.camera;
 
 		var rayFromCameraToPixel =
-			this.rayFromCameraToPixelAtPos(camera, pixelPos);
+			camera.rayToPixelAtPos(pixelPos);
 
 		var collisions = this._collisions;
 		collisions.length = 0;
@@ -309,24 +307,5 @@ class SceneRenderer
 		}
 
 		return intensityFromLightsAll;
-	}
-
-	rayFromCameraToPixelAtPos(camera: Camera, pixelPos: Coords): Ray
-	{
-		if (this._rayFromCameraToPixelAtPos == null)
-		{
-			this._rayFromCameraToPixelAtPos = Ray.create();
-		}
-
-		var directionFromEyeToPixel =
-			camera.directionToPixelAtPos(pixelPos);
-
-		this._rayFromCameraToPixelAtPos.startPosAndDirectionSet
-		(
-			camera.pos,
-			directionFromEyeToPixel
-		);
-
-		return this._rayFromCameraToPixelAtPos;
 	}
 }

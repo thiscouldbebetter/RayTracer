@@ -14,9 +14,14 @@
 		<button onclick="UiEventHandler.buttonClear_Clicked();">
 			Clear
 		</button>
-		<button onclick="UiEventHandler.buttonDemoLoad_Clicked();">
-			Demo
-		</button>
+		<label for="selectDemo">
+			Load Demo:
+		</label>
+		<select onchange="UiEventHandler.selectDemo_Changed(this);">
+			<option>-</option>
+			<option>Perspective</option>
+			<option>Parallel</option>
+		</select>
 		<br />
 		<textarea
 			id="textareaSceneAsJson"

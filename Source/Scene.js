@@ -12,7 +12,7 @@ class Scene {
     static create() {
         return new Scene(null, null, null, null, null, null, null);
     }
-    static demo() {
+    static demo(camera) {
         var materialEyeball = this.demo_MaterialEyeball();
         var materialGround = Material.Instances().Green;
         var materialRTBang = this.demo_MaterialRTBang();
@@ -25,20 +25,24 @@ class Scene {
         var meshGround = this.demo_MeshGround(materialGround);
         var sphereEyeball = this.demo_SphereEyeball(materialEyeball);
         var lighting = this.demo_Lighting();
-        var displaySize = new Coords(320, 240, 960);
-        var camera = new Camera(displaySize.clone(), 200, // focalLength
-        new Coords(-150, -300, -60), // pos
-        new Orientation(new Coords(1, 2, 0), // forward
-        new Coords(0, 0, 1) // down
-        ));
         var shapeDefinitions = [
             sphereEyeball,
             meshMonolith,
-            meshGround,
+            meshGround
         ];
+        var shapeBuilders = shapeDefinitions.map(x => ShapeBuilder.fromShapeDefinitionNameAndPos(x.name, Coords.create()));
         var scene = new Scene("Scene0", materials, Color.Instances().BlueDark, // backgroundColor
-        lighting, camera, shapeDefinitions, shapeDefinitions.map(x => new ShapeBuilder(x.name, new Coords(0, 0, 0))));
+        lighting, camera, shapeDefinitions, shapeBuilders);
         return scene;
+    }
+    static demo_Camera(shouldUseParallelProjection) {
+        var displaySize = Coords.fromXYZ(320, 240, 960);
+        var focalLength = shouldUseParallelProjection
+            ? null
+            : 200;
+        var camera = Camera.fromViewSizeFocalLengthPosAndOrientation(displaySize.clone(), focalLength, Coords.fromXYZ(-150, -300, -100), // pos
+        Orientation.fromForwardAndDown(Coords.fromXYZ(1, 2, .1), Coords.fromXYZ(0, 0, 1)));
+        return camera;
     }
     static demo_Lighting() {
         return Lighting.fromLights([
@@ -113,6 +117,14 @@ class Scene {
         Orientation.fromForwardAndDown(Coords.fromXYZ(1, 0, 0), Coords.fromXYZ(1, 1, 0) // down = SE
         ));
         return sphereEyeball;
+    }
+    static demoWithProjectionParallel() {
+        var camera = this.demo_Camera(true);
+        return this.demo(camera);
+    }
+    static demoWithProjectionPerspective() {
+        var camera = this.demo_Camera(false);
+        return this.demo(camera);
     }
     collisionsOfRayWithObjectsMinusExceptionAddToList(ray, shapeToExcept, collisionsSoFar) {
         var shapes = this.shapes();

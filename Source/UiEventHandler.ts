@@ -9,18 +9,6 @@ class UiEventHandler
 		textareaSceneAsJson.innerHTML = "";
 	}
 
-	static buttonDemoLoad_Clicked(): void
-	{
-		var d = document;
-		var textareaSceneAsJson =
-			d.getElementById("textareaSceneAsJson");
-
-		var scene = Scene.demo();
-		var sceneAsJson = scene.toJson();
-
-		textareaSceneAsJson.innerHTML = sceneAsJson;
-	}
-
 	static buttonRender_Clicked(): void
 	{
 		var d = document;
@@ -42,5 +30,28 @@ class UiEventHandler
 			var rayTracer = new RayTracer();
 			rayTracer.sceneRender(scene);
 		}
+	}
+
+	static selectDemo_Changed(selectDemo: any): void
+	{
+		var d = document;
+		var textareaSceneAsJson =
+			d.getElementById("textareaSceneAsJson");
+
+		var demoName = selectDemo.value;
+
+		var scene: Scene =
+			demoName == "Perspective"
+			? Scene.demoWithProjectionPerspective()
+			: demoName == "Parallel"
+			? Scene.demoWithProjectionParallel()
+			: null;
+
+		var sceneAsJson =
+			scene == null
+			? ""
+			: scene.toJson();
+
+		textareaSceneAsJson.innerHTML = sceneAsJson;
 	}
 }

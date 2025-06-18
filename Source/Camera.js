@@ -6,6 +6,9 @@ class Camera {
         this.pos = pos;
         this.orientation = orientation;
     }
+    static fromViewSizeFocalLengthPosAndOrientation(viewSize, focalLength, pos, orientation) {
+        return new Camera(viewSize, focalLength, pos, orientation);
+    }
     displacementToPixelAtPos(pixelPos) {
         if (this._displacementToPixel == null) {
             this._displacementToPixel = Coords.create();
@@ -17,18 +20,14 @@ class Camera {
         var cameraRight = cameraOrientationTemp.right;
         var cameraDown = cameraOrientationTemp.down;
         var displaySizeInPixelsHalf = this.viewSizeHalf();
-        if (this.focalLength == null) {
-            // Parallel projection.
-            displacementToPixel
-                .overwriteWith(cameraOrientation.forward);
-        }
-        else {
-            // Perspective projection.
-            displacementToPixel.overwriteWith(cameraRight
-                .overwriteWith(cameraOrientation.right)
-                .multiplyScalar(pixelPos.x - displaySizeInPixelsHalf.x)).add(cameraDown
-                .overwriteWith(cameraOrientation.down)
-                .multiplyScalar(pixelPos.y - displaySizeInPixelsHalf.y)).add(cameraForward
+        // Perspective projection.
+        displacementToPixel.overwriteWith(cameraRight
+            .overwriteWith(cameraOrientation.right)
+            .multiplyScalar(pixelPos.x - displaySizeInPixelsHalf.x)).add(cameraDown
+            .overwriteWith(cameraOrientation.down)
+            .multiplyScalar(pixelPos.y - displaySizeInPixelsHalf.y));
+        if (this.focalLength != null) {
+            displacementToPixel.add(cameraForward
                 .overwriteWith(cameraOrientation.forward)
                 .multiplyScalar(this.focalLength));
         }
@@ -44,6 +43,37 @@ class Camera {
             .overwriteWith(displacementToPixel)
             .normalize();
         return directionToPixel;
+    }
+    rayToPixelAtPos(pixelPos) {
+        if (this._rayToPixelAtPos == null) {
+            this._rayToPixelAtPos = Ray.create();
+        }
+        var rayToPixelAtPos = this._rayToPixelAtPos;
+        var rayStartPos = rayToPixelAtPos.startPos;
+        var rayDirection = rayToPixelAtPos.direction;
+        rayStartPos.overwriteWith(this.pos);
+        if (this.focalLength == null) {
+            // Parallel projection.
+            var displacementToPixelAtPos = this.displacementToPixelAtPos(pixelPos);
+            var forward = this.orientation.forward;
+            rayStartPos
+                .add(displacementToPixelAtPos);
+            rayDirection
+                .overwriteWith(forward);
+            // hack
+            // Back up the ray start pos,
+            // because otherwise anything "behind" the camera,
+            // like the ground plane in the demo,
+            // will be cut off.
+            rayStartPos.subtract(forward.clone().multiplyScalar(1000));
+        }
+        else {
+            // Perspective projection.
+            var directionToPixelAtPos = this.directionToPixelAtPos(pixelPos);
+            rayDirection
+                .overwriteWith(directionToPixelAtPos);
+        }
+        return rayToPixelAtPos;
     }
     viewSizeHalf() {
         if (this._viewSizeHalf == null) {

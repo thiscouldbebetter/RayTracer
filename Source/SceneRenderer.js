@@ -95,7 +95,7 @@ class SceneRenderer {
     }
     drawSceneToDisplay_Pixel_FindClosestCollision(scene, pixelPos) {
         var camera = scene.camera;
-        var rayFromCameraToPixel = this.rayFromCameraToPixelAtPos(camera, pixelPos);
+        var rayFromCameraToPixel = camera.rayToPixelAtPos(pixelPos);
         var collisions = this._collisions;
         collisions.length = 0;
         collisions = scene.collisionsOfRayWithObjectsMinusExceptionAddToList(rayFromCameraToPixel, null, // objectToExcept
@@ -117,13 +117,5 @@ class SceneRenderer {
             }
         }
         return intensityFromLightsAll;
-    }
-    rayFromCameraToPixelAtPos(camera, pixelPos) {
-        if (this._rayFromCameraToPixelAtPos == null) {
-            this._rayFromCameraToPixelAtPos = Ray.create();
-        }
-        var directionFromEyeToPixel = camera.directionToPixelAtPos(pixelPos);
-        this._rayFromCameraToPixelAtPos.startPosAndDirectionSet(camera.pos, directionFromEyeToPixel);
-        return this._rayFromCameraToPixelAtPos;
     }
 }
