@@ -8,6 +8,11 @@ class TransformScale implements Transform
 		this.scaleFactors = scaleFactors;
 	}
 
+	static fromScaleFactors(scaleFactors: Coords)
+	{
+		return new TransformScale(scaleFactors);
+	}
+
 	transformCoords(coordsToTransform: Coords): Coords
 	{
 		coordsToTransform.multiply(this.scaleFactors);

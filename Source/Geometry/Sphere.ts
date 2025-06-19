@@ -29,7 +29,10 @@ class Sphere implements Shape
 
 	// Shape.
 
-	addCollisionsWithRayToList(ray: Ray, listToAddTo: Collision[]): Collision[]
+	addCollisionsWithRayToList
+	(
+		ray: Ray, listToAddTo: Collision[]
+	): Collision[]
 	{
 		var collision = new Collision().rayAndSphere
 		(
@@ -65,27 +68,20 @@ class Sphere implements Shape
 		var sphereMaterial = sphere.material(scene);
 		surfaceMaterial.overwriteWith(sphereMaterial);
 
-		surfaceNormal.overwriteWith
-		(
-			surfacePos
-		).subtract
-		(
-			sphere.centerPos
-		).normalize();
+		surfaceNormal
+			.overwriteWith(surfacePos)
+			.subtract(sphere.centerPos)
+			.normalize();
 
+		var surfaceNormalInLocalCoords =
+			TransformOrient
+				.fromOrientation(this.orientation)
+				.transformCoords(surfaceNormal.clone());
 
-		var surfaceNormalInLocalCoords = new TransformOrient
-		(
-			this.orientation
-		).transformCoords
-		(
-			surfaceNormal.clone()
-		);
-
-		var surfaceNormalInLocalCoordsAsPolar = Polar.create().fromCoords
-		(
-			surfaceNormalInLocalCoords
-		);
+		var surfaceNormalInLocalCoordsAsPolar =
+			Polar
+				.create()
+				.fromCoords(surfaceNormalInLocalCoords);
 
 		var texelUv = this.texelUv();
 		texelUv.overwriteWithXYZ

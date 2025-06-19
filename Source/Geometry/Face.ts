@@ -3,7 +3,7 @@ class Face implements Serializable<Face>
 {
 	materialName: string;
 	vertexIndices: number[];
-	textureUVsForVertices: Coords[];
+	textureUvsForVertices: Coords[];
 	normalsForVertices: Coords[];
 
 	_edges: Edge[];
@@ -14,13 +14,13 @@ class Face implements Serializable<Face>
 	(
 		materialName: string,
 		vertexIndices: number[],
-		textureUVsForVertices: Coords[],
+		textureUvsForVertices: Coords[],
 		normalsForVertices: Coords[]
 	)
 	{
 		this.materialName = materialName;
 		this.vertexIndices = vertexIndices;
-		this.textureUVsForVertices = textureUVsForVertices;
+		this.textureUvsForVertices = textureUvsForVertices;
 		this.normalsForVertices = normalsForVertices;
 	}
 
@@ -31,6 +31,23 @@ class Face implements Serializable<Face>
 	): Face
 	{
 		return new Face(materialName, vertexIndices, null, null);
+	}
+
+	static fromMaterialNameVertexIndicesTextureUvsAndNormals
+	(
+		materialName: string,
+		vertexIndices: number[],
+		textureUvsForVertices: Coords[],
+		normalsForVertices: Coords[]
+	): Face
+	{
+		return new Face
+		(
+			materialName,
+			vertexIndices,
+			textureUvsForVertices,
+			normalsForVertices
+		);
 	}
 
 	buildTriangles(mesh: Mesh): Face[]
@@ -68,35 +85,42 @@ class Face implements Serializable<Face>
 		var vertexIndex0 = this.vertexIndices[vertexIndexIndex0];
 		var vertexIndex1 = this.vertexIndices[vertexIndexIndex1];
 		var vertexIndex2 = this.vertexIndices[vertexIndexIndex2];
-		
-		var returnValue = new Face
+
+		var vertexIndices =
+		[
+			vertexIndex0,
+			vertexIndex1,
+			vertexIndex2
+		];
+
+		var textureUvsForVertices = this.textureUvsForVertices;
+		textureUvsForVertices =
+			textureUvsForVertices == null
+			? null
+			:
+			[
+				textureUvsForVertices[vertexIndexIndex0],
+				textureUvsForVertices[vertexIndexIndex1],
+				textureUvsForVertices[vertexIndexIndex2]
+			];
+
+		var normalsForVertices = this.normalsForVertices;
+		normalsForVertices =
+			normalsForVertices == null 
+			? null
+			:
+			[
+				normalsForVertices[vertexIndexIndex0],
+				normalsForVertices[vertexIndexIndex1],
+				normalsForVertices[vertexIndexIndex2],
+			];
+
+		var returnValue = Face.fromMaterialNameVertexIndicesTextureUvsAndNormals
 		(
 			this.materialName, 
-			[
-				vertexIndex0,
-				vertexIndex1,
-				vertexIndex2,
-			],
-			(
-				this.textureUVsForVertices == null
-				? null
-				:
-				[
-					this.textureUVsForVertices[vertexIndexIndex0],
-					this.textureUVsForVertices[vertexIndexIndex1],
-					this.textureUVsForVertices[vertexIndexIndex2],
-				]
-			),
-			(
-				this.normalsForVertices == null 
-				? null
-				:
-				[
-					this.normalsForVertices[vertexIndexIndex0],
-					this.normalsForVertices[vertexIndexIndex1],
-					this.normalsForVertices[vertexIndexIndex2],
-				]
-			)
+			vertexIndices,
+			textureUvsForVertices,
+			normalsForVertices
 		);
 
 		return returnValue;
@@ -137,25 +161,18 @@ class Face implements Serializable<Face>
 		vertexValues: Coords[], weights: number[]
 	): Coords
 	{
-		var valueInterpolated = this.vertexValueInterpolated().overwriteWith
-		(
-			vertexValues[0]
-		).multiplyScalar
-		(
-			weights[0]
-		);
+		var valueInterpolated =
+			this.vertexValueInterpolated()
+				.overwriteWith(vertexValues[0])
+				.multiplyScalar(weights[0]);
 
 		var vertexValueWeighted = this.vertexValueWeighted();
 
 		for (var i = 1; i < vertexValues.length; i++)
 		{
-			vertexValueWeighted.overwriteWith
-			(
-				vertexValues[i]
-			).multiplyScalar
-			(
-				weights[i]
-			);
+			vertexValueWeighted
+				.overwriteWith(vertexValues[i])
+				.multiplyScalar(weights[i]);
 
 			valueInterpolated.add(vertexValueWeighted);
 		}
@@ -196,7 +213,7 @@ class Face implements Serializable<Face>
 
 			this._plane = new Plane
 			(
-				Vertex.positionsForMany(vertices)
+				vertices.map(x => x.pos)
 			);
 		}
 
@@ -238,17 +255,21 @@ class Face implements Serializable<Face>
 		return this;
 	}
 
-	texelColorForVertexWeights(texture: Texture, vertexWeights: number[]): Color
+	texelColorForVertexWeights
+	(
+		texture: Texture,
+		vertexWeights: number[]
+	): Color
 	{
-		var texelUV = this.interpolateVertexValuesForWeights
+		var texelUv = this.interpolateVertexValuesForWeights
 		(
-			this.textureUVsForVertices,
+			this.textureUvsForVertices,
 			vertexWeights
 		);
 
 		var texelColor = this.texelColor();
 
-		texture.colorSetFromUv(texelColor, texelUV);
+		texture.colorSetFromUv(texelColor, texelUv);
 
 		return texelColor;
 	}
@@ -350,7 +371,7 @@ class Face implements Serializable<Face>
 		(
 			this.materialName, 
 			this.vertexIndices, 
-			this.textureUVsForVertices, 
+			this.textureUvsForVertices, 
 			this.normalsForVertices
 		);
 	}
@@ -379,14 +400,20 @@ class Face implements Serializable<Face>
 	{
 		var typeSetOnObject = SerializableHelper.typeSetOnObject;
 
-		if (this.textureUVsForVertices != null)
+		if (this.textureUvsForVertices != null)
 		{
-			this.textureUVsForVertices.forEach(x => typeSetOnObject(Coords, x) );
+			this.textureUvsForVertices.forEach
+			(
+				x => typeSetOnObject(Coords, x)
+			);
 		}
 
 		if (this.normalsForVertices != null)
 		{
-			this.normalsForVertices.forEach(x => typeSetOnObject(Coords, x) );
+			this.normalsForVertices.forEach
+			(
+				x => typeSetOnObject(Coords, x)
+			);
 		}
 
 		/*

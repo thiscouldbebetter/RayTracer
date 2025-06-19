@@ -26,6 +26,16 @@ class Mesh implements Shape
 		this._vertexWeightsAtSurfacePos = [];
 	}
 
+	static fromNameVerticesAndFaces
+	(
+		name: string, 
+		vertices: Vertex[], 
+		faces: Face[]
+	): Mesh
+	{
+		return new Mesh(name, vertices, faces);
+	}
+
 	// constants
 
 	static VerticesInATriangle: number = 3;
@@ -34,11 +44,11 @@ class Mesh implements Shape
 
 	clone(): Mesh
 	{
-		var returnValue = new Mesh
+		var returnValue = Mesh.fromNameVerticesAndFaces
 		(
 			this.name,
-			Cloneable.cloneMany(this.vertices), 
-			Cloneable.cloneMany(this.faces)
+			this.vertices.map(x => x.clone() ),
+			this.faces.map(x => x.clone() )
 		);
 
 		return returnValue;
@@ -46,7 +56,10 @@ class Mesh implements Shape
 
 	overwriteWith(other: Mesh): Mesh
 	{
-		Cloneable.overwriteManyWithOthers(this.vertices, other.vertices);
+		for (var i = 0; i < this.vertices.length; i++)
+		{
+			this.vertices[i].overwriteWith(other.vertices[i]);
+		}
 		return this;
 	}
 
@@ -113,6 +126,14 @@ class Mesh implements Shape
 				this._vertexWeightsAtSurfacePos
 			);
 
+		surfaceNormal.overwriteWith
+		(
+			face.normalForVertexWeights
+			(
+				_vertexWeightsAtSurfacePos
+			)
+		); 
+
 		var faceMaterial = face.material(scene);
 
 		surfaceMaterial.overwriteWith(faceMaterial);
@@ -139,14 +160,6 @@ class Mesh implements Shape
 
 			break; // todo
 		}
-
-		surfaceNormal.overwriteWith
-		(
-			face.normalForVertexWeights
-			(
-				_vertexWeightsAtSurfacePos
-			)
-		); 
 
 		return surfaceColor;
 	}

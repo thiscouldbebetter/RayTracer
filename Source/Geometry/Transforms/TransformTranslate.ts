@@ -8,6 +8,11 @@ class TransformTranslate implements Transform
 		this.offset = offset;
 	}
 
+	static fromOffset(offset: Coords): TransformTranslate
+	{
+		return new TransformTranslate(offset);
+	}
+
 	transformCoords(coordsToTransform: Coords): Coords
 	{
 		coordsToTransform.add(this.offset);

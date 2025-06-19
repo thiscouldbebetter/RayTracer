@@ -3,8 +3,12 @@ class TransformOrient {
     constructor(orientation) {
         this.orientation = orientation;
     }
+    static fromOrientation(orientation) {
+        return new TransformOrient(orientation);
+    }
     transformCoords(coordsToTransform) {
-        coordsToTransform.overwriteWithXYZ(this.orientation.forward.dotProduct(coordsToTransform), this.orientation.right.dotProduct(coordsToTransform), this.orientation.down.dotProduct(coordsToTransform));
+        var ori = this.orientation;
+        coordsToTransform.overwriteWithXYZ(ori.forward.dotProduct(coordsToTransform), ori.right.dotProduct(coordsToTransform), ori.down.dotProduct(coordsToTransform));
         return coordsToTransform;
     }
 }

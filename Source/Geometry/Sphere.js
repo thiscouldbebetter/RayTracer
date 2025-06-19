@@ -25,9 +25,16 @@ class Sphere {
         var surfacePos = collisionClosest.pos;
         var sphereMaterial = sphere.material(scene);
         surfaceMaterial.overwriteWith(sphereMaterial);
-        surfaceNormal.overwriteWith(surfacePos).subtract(sphere.centerPos).normalize();
-        var surfaceNormalInLocalCoords = new TransformOrient(this.orientation).transformCoords(surfaceNormal.clone());
-        var surfaceNormalInLocalCoordsAsPolar = Polar.create().fromCoords(surfaceNormalInLocalCoords);
+        surfaceNormal
+            .overwriteWith(surfacePos)
+            .subtract(sphere.centerPos)
+            .normalize();
+        var surfaceNormalInLocalCoords = TransformOrient
+            .fromOrientation(this.orientation)
+            .transformCoords(surfaceNormal.clone());
+        var surfaceNormalInLocalCoordsAsPolar = Polar
+            .create()
+            .fromCoords(surfaceNormalInLocalCoords);
         var texelUv = this.texelUv();
         texelUv.overwriteWithXYZ(surfaceNormalInLocalCoordsAsPolar.azimuth, (1 + surfaceNormalInLocalCoordsAsPolar.elevation) / 2, 0); // todo
         surfaceMaterial.colorSetFromUv(surfaceColor, texelUv);

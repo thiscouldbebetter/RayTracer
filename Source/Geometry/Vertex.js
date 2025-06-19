@@ -6,15 +6,13 @@ class Vertex {
     static fromPos(pos) {
         return new Vertex(pos);
     }
+    // Clonable.
     clone() {
         return new Vertex(this.pos.clone());
     }
-    static positionsForMany(vertices) {
-        var returnValues = [];
-        for (var i = 0; i < vertices.length; i++) {
-            returnValues.push(vertices[i].pos);
-        }
-        return returnValues;
+    overwriteWith(other) {
+        this.pos.overwriteWith(other.pos);
+        return this;
     }
     // strings
     toString() {

@@ -8,13 +8,19 @@ class TransformOrient implements Transform
 		this.orientation = orientation;
 	}
 
+	static fromOrientation(orientation: Orientation): TransformOrient
+	{
+		return new TransformOrient(orientation);
+	}
+
 	transformCoords(coordsToTransform: Coords): Coords
 	{
+		var ori = this.orientation;
 		coordsToTransform.overwriteWithXYZ
 		(
-			this.orientation.forward.dotProduct(coordsToTransform),
-			this.orientation.right.dotProduct(coordsToTransform),
-			this.orientation.down.dotProduct(coordsToTransform)
+			ori.forward.dotProduct(coordsToTransform),
+			ori.right.dotProduct(coordsToTransform),
+			ori.down.dotProduct(coordsToTransform)
 		);
 
 		return coordsToTransform;

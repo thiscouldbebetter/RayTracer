@@ -8,13 +8,18 @@ class Mesh {
         this.recalculateDerivedValues();
         this._vertexWeightsAtSurfacePos = [];
     }
+    static fromNameVerticesAndFaces(name, vertices, faces) {
+        return new Mesh(name, vertices, faces);
+    }
     // methods
     clone() {
-        var returnValue = new Mesh(this.name, Cloneable.cloneMany(this.vertices), Cloneable.cloneMany(this.faces));
+        var returnValue = Mesh.fromNameVerticesAndFaces(this.name, this.vertices.map(x => x.clone()), this.faces.map(x => x.clone()));
         return returnValue;
     }
     overwriteWith(other) {
-        Cloneable.overwriteManyWithOthers(this.vertices, other.vertices);
+        for (var i = 0; i < this.vertices.length; i++) {
+            this.vertices[i].overwriteWith(other.vertices[i]);
+        }
         return this;
     }
     recalculateDerivedValues() {
@@ -47,6 +52,7 @@ class Mesh {
         var surfacePos = collisionClosest.pos;
         var _vertexWeightsAtSurfacePos = face.vertexWeightsAtSurfacePosAddToList(this, // mesh
         surfacePos, this._vertexWeightsAtSurfacePos);
+        surfaceNormal.overwriteWith(face.normalForVertexWeights(_vertexWeightsAtSurfacePos));
         var faceMaterial = face.material(scene);
         surfaceMaterial.overwriteWith(faceMaterial);
         surfaceColor
@@ -60,7 +66,6 @@ class Mesh {
             }
             break; // todo
         }
-        surfaceNormal.overwriteWith(face.normalForVertexWeights(_vertexWeightsAtSurfacePos));
         return surfaceColor;
     }
     // Serializable.

@@ -1,13 +1,16 @@
 "use strict";
 class Face {
-    constructor(materialName, vertexIndices, textureUVsForVertices, normalsForVertices) {
+    constructor(materialName, vertexIndices, textureUvsForVertices, normalsForVertices) {
         this.materialName = materialName;
         this.vertexIndices = vertexIndices;
-        this.textureUVsForVertices = textureUVsForVertices;
+        this.textureUvsForVertices = textureUvsForVertices;
         this.normalsForVertices = normalsForVertices;
     }
     static fromMaterialNameAndVertexIndices(materialName, vertexIndices) {
         return new Face(materialName, vertexIndices, null, null);
+    }
+    static fromMaterialNameVertexIndicesTextureUvsAndNormals(materialName, vertexIndices, textureUvsForVertices, normalsForVertices) {
+        return new Face(materialName, vertexIndices, textureUvsForVertices, normalsForVertices);
     }
     buildTriangles(mesh) {
         var triangles = [];
@@ -31,25 +34,32 @@ class Face {
         var vertexIndex0 = this.vertexIndices[vertexIndexIndex0];
         var vertexIndex1 = this.vertexIndices[vertexIndexIndex1];
         var vertexIndex2 = this.vertexIndices[vertexIndexIndex2];
-        var returnValue = new Face(this.materialName, [
+        var vertexIndices = [
             vertexIndex0,
             vertexIndex1,
-            vertexIndex2,
-        ], (this.textureUVsForVertices == null
-            ? null
-            :
-                [
-                    this.textureUVsForVertices[vertexIndexIndex0],
-                    this.textureUVsForVertices[vertexIndexIndex1],
-                    this.textureUVsForVertices[vertexIndexIndex2],
-                ]), (this.normalsForVertices == null
-            ? null
-            :
-                [
-                    this.normalsForVertices[vertexIndexIndex0],
-                    this.normalsForVertices[vertexIndexIndex1],
-                    this.normalsForVertices[vertexIndexIndex2],
-                ]));
+            vertexIndex2
+        ];
+        var textureUvsForVertices = this.textureUvsForVertices;
+        textureUvsForVertices =
+            textureUvsForVertices == null
+                ? null
+                :
+                    [
+                        textureUvsForVertices[vertexIndexIndex0],
+                        textureUvsForVertices[vertexIndexIndex1],
+                        textureUvsForVertices[vertexIndexIndex2]
+                    ];
+        var normalsForVertices = this.normalsForVertices;
+        normalsForVertices =
+            normalsForVertices == null
+                ? null
+                :
+                    [
+                        normalsForVertices[vertexIndexIndex0],
+                        normalsForVertices[vertexIndexIndex1],
+                        normalsForVertices[vertexIndexIndex2],
+                    ];
+        var returnValue = Face.fromMaterialNameVertexIndicesTextureUvsAndNormals(this.materialName, vertexIndices, textureUvsForVertices, normalsForVertices);
         return returnValue;
     }
     edges() {
@@ -67,10 +77,14 @@ class Face {
         return this._edges;
     }
     interpolateVertexValuesForWeights(vertexValues, weights) {
-        var valueInterpolated = this.vertexValueInterpolated().overwriteWith(vertexValues[0]).multiplyScalar(weights[0]);
+        var valueInterpolated = this.vertexValueInterpolated()
+            .overwriteWith(vertexValues[0])
+            .multiplyScalar(weights[0]);
         var vertexValueWeighted = this.vertexValueWeighted();
         for (var i = 1; i < vertexValues.length; i++) {
-            vertexValueWeighted.overwriteWith(vertexValues[i]).multiplyScalar(weights[i]);
+            vertexValueWeighted
+                .overwriteWith(vertexValues[i])
+                .multiplyScalar(weights[i]);
             valueInterpolated.add(vertexValueWeighted);
         }
         return valueInterpolated;
@@ -91,7 +105,7 @@ class Face {
     plane(mesh) {
         if (this._plane == null) {
             var vertices = this.vertices(mesh);
-            this._plane = new Plane(Vertex.positionsForMany(vertices));
+            this._plane = new Plane(vertices.map(x => x.pos));
         }
         return this._plane;
     }
@@ -118,9 +132,9 @@ class Face {
         return this;
     }
     texelColorForVertexWeights(texture, vertexWeights) {
-        var texelUV = this.interpolateVertexValuesForWeights(this.textureUVsForVertices, vertexWeights);
+        var texelUv = this.interpolateVertexValuesForWeights(this.textureUvsForVertices, vertexWeights);
         var texelColor = this.texelColor();
-        texture.colorSetFromUv(texelColor, texelUV);
+        texture.colorSetFromUv(texelColor, texelUv);
         return texelColor;
     }
     triangles(mesh) {
@@ -172,7 +186,7 @@ class Face {
     // cloneable
     clone() {
         // todo - Deep clone.
-        return new Face(this.materialName, this.vertexIndices, this.textureUVsForVertices, this.normalsForVertices);
+        return new Face(this.materialName, this.vertexIndices, this.textureUvsForVertices, this.normalsForVertices);
     }
     // strings
     toStringForMesh(mesh) {
@@ -188,8 +202,8 @@ class Face {
     }
     prototypesSet() {
         var typeSetOnObject = SerializableHelper.typeSetOnObject;
-        if (this.textureUVsForVertices != null) {
-            this.textureUVsForVertices.forEach(x => typeSetOnObject(Coords, x));
+        if (this.textureUvsForVertices != null) {
+            this.textureUvsForVertices.forEach(x => typeSetOnObject(Coords, x));
         }
         if (this.normalsForVertices != null) {
             this.normalsForVertices.forEach(x => typeSetOnObject(Coords, x));

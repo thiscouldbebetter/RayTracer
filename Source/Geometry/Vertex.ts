@@ -13,21 +13,17 @@ class Vertex implements Serializable<Vertex>
 		return new Vertex(pos);
 	}
 
+	// Clonable.
+
 	clone(): Vertex
 	{
 		return new Vertex(this.pos.clone());
 	}
 
-	static positionsForMany(vertices: Vertex[]): Coords[]
+	overwriteWith(other: Vertex): Vertex
 	{
-		var returnValues = [];
-
-		for (var i = 0; i < vertices.length; i++)
-		{
-			returnValues.push(vertices[i].pos);
-		}
-
-		return returnValues;
+		this.pos.overwriteWith(other.pos);
+		return this;
 	}
 
 	// strings
