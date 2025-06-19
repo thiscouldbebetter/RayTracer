@@ -14,7 +14,19 @@ class Orientation implements Serializable<Orientation>
 		this.overwriteWithForwardDown(forward, down);
 	}
 
-	static fromForwardAndDown(forward: Coords, down: Coords): Orientation
+	static default(): Orientation
+	{
+		return new Orientation
+		(
+			new Coords(1, 0, 0),
+			new Coords(0, 0, 1)
+		);
+	}
+
+	static fromForwardAndDown
+	(
+		forward: Coords, down: Coords
+	): Orientation
 	{
 		return new Orientation(forward, down);
 	}

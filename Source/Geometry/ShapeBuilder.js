@@ -1,16 +1,18 @@
 "use strict";
 class ShapeBuilder {
-    constructor(shapeDefinitionName, pos) {
-        this.shapeDefinitionName = shapeDefinitionName;
+    constructor(name, shapeDefinition, pos) {
+        this.shapeDefinitionName = shapeDefinition.name;
         this.pos = pos;
     }
-    static fromShapeDefinitionNameAndPos(shapeDefinitionName, pos) {
-        return new ShapeBuilder(shapeDefinitionName, pos);
+    static fromNameShapeDefinitionAndPos(name, shapeDefinition, pos) {
+        return new ShapeBuilder(name, shapeDefinition, pos);
     }
     toShape(scene) {
         var shapeDefinition = scene.shapeDefinitionByName(this.shapeDefinitionName);
         var shape = shapeDefinition.clone();
-        // todo - Transform.
+        shape.name = this.name;
+        var transform = new TransformTranslate(this.pos);
+        shape.transformApply(transform);
         return shape;
     }
 }

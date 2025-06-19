@@ -1,12 +1,11 @@
 "use strict";
 class Sphere {
-    constructor(name, materialName, radius, centerPos, orientation) {
+    constructor(name, materialName, radius, disp) {
         this.typeName = Sphere.name;
         this.name = name;
         this.materialName = materialName;
         this.radius = radius;
-        this.centerPos = centerPos;
-        this.orientation = orientation;
+        this.disp = disp;
     }
     // Shape.
     addCollisionsWithRayToList(ray, listToAddTo) {
@@ -27,10 +26,10 @@ class Sphere {
         surfaceMaterial.overwriteWith(sphereMaterial);
         surfaceNormal
             .overwriteWith(surfacePos)
-            .subtract(sphere.centerPos)
+            .subtract(sphere.disp.pos)
             .normalize();
         var surfaceNormalInLocalCoords = TransformOrient
-            .fromOrientation(this.orientation)
+            .fromOrientation(this.disp.ori)
             .transformCoords(surfaceNormal.clone());
         var surfaceNormalInLocalCoordsAsPolar = Polar
             .create()
@@ -40,9 +39,13 @@ class Sphere {
         surfaceMaterial.colorSetFromUv(surfaceColor, texelUv);
         return surfaceColor;
     }
+    transformApply(transform) {
+        transform.transformCoords(this.disp.pos);
+        return this;
+    }
     // Clonable.
     clone() {
-        return new Sphere(this.name, this.materialName, this.radius, this.centerPos.clone(), this.orientation.clone());
+        return new Sphere(this.name, this.materialName, this.radius, this.disp.clone());
     }
     // Serializable.
     fromJson(objectAsJson) {
@@ -53,8 +56,8 @@ class Sphere {
     }
     prototypesSet() {
         var typeSetOnObject = SerializableHelper.typeSetOnObject;
-        typeSetOnObject(Coords, this.centerPos);
-        typeSetOnObject(Orientation, this.orientation);
+        typeSetOnObject(Disposition, this.disp);
+        this.disp.prototypesSet();
         typeSetOnObject(Coords, this._texelUv);
         return this;
     }

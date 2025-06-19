@@ -31,17 +31,9 @@ class Scene {
             meshMonolith,
             meshGround
         ];
-        var shapeBuilders = shapeDefinitions.map(x => ShapeBuilder.fromShapeDefinitionNameAndPos(x.name, Coords.zeroes()));
-        /*
-        var shapeBuilderMonolith2 =
-            ShapeBuilder.fromShapeDefinitionNameAndPos
-            (
-                meshMonolith.name + "2",
-                Coords.fromXY(0, 100)
-            );
-
+        var shapeBuilders = shapeDefinitions.map(x => ShapeBuilder.fromNameShapeDefinitionAndPos(x.name + "1", x, Coords.zeroes()));
+        var shapeBuilderMonolith2 = ShapeBuilder.fromNameShapeDefinitionAndPos("Monolith2", meshMonolith, Coords.fromXY(0, 300));
         shapeBuilders.push(shapeBuilderMonolith2);
-        */
         var scene = new Scene("Scene0", materials, backgroundColor, lighting, camera, shapeDefinitions, shapeBuilders);
         return scene;
     }
@@ -113,9 +105,9 @@ class Scene {
     }
     static demo_SphereEyeball(materialEyeball) {
         var sphereEyeball = new Sphere("SphereEyeball", materialEyeball.name, 100, // radius
-        Coords.fromXYZ(200, 200, -270), // center
+        Disposition.fromPosAndOri(Coords.fromXYZ(200, 200, -270), // center
         Orientation.fromForwardAndDown(Coords.fromXYZ(1, 0, 0), Coords.fromXYZ(1, 1, 0) // down = SE
-        ));
+        )));
         return sphereEyeball;
     }
     static demoWithProjectionParallel() {

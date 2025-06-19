@@ -6,6 +6,9 @@ class Orientation {
         this.down = Coords.create();
         this.overwriteWithForwardDown(forward, down);
     }
+    static default() {
+        return new Orientation(new Coords(1, 0, 0), new Coords(0, 0, 1));
+    }
     static fromForwardAndDown(forward, down) {
         return new Orientation(forward, down);
     }

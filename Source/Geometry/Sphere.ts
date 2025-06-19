@@ -6,16 +6,14 @@ class Sphere implements Shape
 	name: string;
 	materialName: string;
 	radius: number;
-	centerPos: Coords;
-	orientation: Orientation;
+	disp: Disposition;
 
 	constructor
 	(
 		name: string,
 		materialName: string,
 		radius: number,
-		centerPos: Coords,
-		orientation: Orientation
+		disp: Disposition
 	)
 	{
 		this.typeName = Sphere.name;
@@ -23,8 +21,7 @@ class Sphere implements Shape
 		this.name = name;
 		this.materialName = materialName;
 		this.radius = radius;
-		this.centerPos = centerPos;
-		this.orientation = orientation;
+		this.disp = disp;
 	}
 
 	// Shape.
@@ -70,12 +67,12 @@ class Sphere implements Shape
 
 		surfaceNormal
 			.overwriteWith(surfacePos)
-			.subtract(sphere.centerPos)
+			.subtract(sphere.disp.pos)
 			.normalize();
 
 		var surfaceNormalInLocalCoords =
 			TransformOrient
-				.fromOrientation(this.orientation)
+				.fromOrientation(this.disp.ori)
 				.transformCoords(surfaceNormal.clone());
 
 		var surfaceNormalInLocalCoordsAsPolar =
@@ -100,6 +97,12 @@ class Sphere implements Shape
 		return surfaceColor;
 	}
 
+	transformApply(transform: Transform): Sphere
+	{
+		transform.transformCoords(this.disp.pos);
+		return this;
+	}
+
 	// Clonable.
 
 	clone(): Sphere
@@ -109,8 +112,7 @@ class Sphere implements Shape
 			this.name,
 			this.materialName,
 			this.radius,
-			this.centerPos.clone(),
-			this.orientation.clone()
+			this.disp.clone()
 		);
 	}
 
@@ -129,8 +131,8 @@ class Sphere implements Shape
 	prototypesSet(): Sphere
 	{
 		var typeSetOnObject = SerializableHelper.typeSetOnObject;
-		typeSetOnObject(Coords, this.centerPos);
-		typeSetOnObject(Orientation, this.orientation);
+		typeSetOnObject(Disposition, this.disp);
+		this.disp.prototypesSet();
 		typeSetOnObject(Coords, this._texelUv);
 		return this;
 	}

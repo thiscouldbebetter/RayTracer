@@ -69,7 +69,9 @@ class Collision {
     }
     rayAndSphere(ray, sphere) {
         var rayDirection = ray.direction;
-        var displacementFromSphereCenterToCamera = ray.startPos.clone().subtract(sphere.centerPos);
+        var displacementFromSphereCenterToCamera = ray.startPos
+            .clone()
+            .subtract(sphere.disp.pos);
         var sphereRadius = sphere.radius;
         var sphereRadiusSquared = sphereRadius * sphereRadius;
         var a = rayDirection.dotProduct(rayDirection);

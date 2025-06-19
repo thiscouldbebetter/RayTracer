@@ -71,23 +71,23 @@ class Scene implements Serializable<Scene>
 
 		var shapeBuilders = shapeDefinitions.map
 		(
-			x => ShapeBuilder.fromShapeDefinitionNameAndPos
+			x => ShapeBuilder.fromNameShapeDefinitionAndPos
 			(
-				x.name,
+				x.name + "1",
+				x,
 				Coords.zeroes()
 			)
 		);
 
-		/*
 		var shapeBuilderMonolith2 =
-			ShapeBuilder.fromShapeDefinitionNameAndPos
+			ShapeBuilder.fromNameShapeDefinitionAndPos
 			(
-				meshMonolith.name + "2",
-				Coords.fromXY(0, 100)
+				"Monolith2",
+				meshMonolith,
+				Coords.fromXY(0, 300)
 			);
 
 		shapeBuilders.push(shapeBuilderMonolith2);
-		*/
 
 		var scene = new Scene
 		(
@@ -254,11 +254,14 @@ class Scene implements Serializable<Scene>
 			"SphereEyeball", 
 			materialEyeball.name,
 			100, // radius
-			Coords.fromXYZ(200, 200, -270), // center
-			Orientation.fromForwardAndDown
+			Disposition.fromPosAndOri
 			(
-				Coords.fromXYZ(1, 0, 0),
-				Coords.fromXYZ(1, 1, 0) // down = SE
+				Coords.fromXYZ(200, 200, -270), // center
+				Orientation.fromForwardAndDown
+				(
+					Coords.fromXYZ(1, 0, 0),
+					Coords.fromXYZ(1, 1, 0) // down = SE
+				)
 			)
 		);
 

@@ -1,28 +1,32 @@
 
 class ShapeBuilder
 {
+	name: string;
 	shapeDefinitionName: string;
 	pos: Coords;
 
-	constructor(shapeDefinitionName: string, pos: Coords)
+	constructor(name: string, shapeDefinition: Shape, pos: Coords)
 	{
-		this.shapeDefinitionName = shapeDefinitionName;
+		this.shapeDefinitionName = shapeDefinition.name;
 		this.pos = pos;
 	}
 
-	static fromShapeDefinitionNameAndPos
+	static fromNameShapeDefinitionAndPos
 	(
-		shapeDefinitionName: string, pos: Coords
+		name: string, shapeDefinition: Shape, pos: Coords
 	): ShapeBuilder
 	{
-		return new ShapeBuilder(shapeDefinitionName, pos);
+		return new ShapeBuilder(name, shapeDefinition, pos);
 	}
 
 	toShape(scene: Scene): Shape
 	{
-		var shapeDefinition = scene.shapeDefinitionByName(this.shapeDefinitionName);
+		var shapeDefinition =
+			scene.shapeDefinitionByName(this.shapeDefinitionName);
 		var shape = shapeDefinition.clone();
-		// todo - Transform.
+		shape.name = this.name;
+		var transform = new TransformTranslate(this.pos);
+		shape.transformApply(transform);
 		return shape;
 	}
 }
