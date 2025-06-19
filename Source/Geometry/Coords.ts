@@ -27,6 +27,11 @@ class Coords implements Serializable<Coords>
 		return new Coords(x, y, z);
 	}
 
+	static ones(): Coords
+	{
+		return new Coords(1, 1, 1);
+	}
+
 	static zeroes(): Coords
 	{
 		return new Coords(0, 0, 0);
@@ -74,6 +79,28 @@ class Coords implements Serializable<Coords>
 		return [ this.x, this.y, this.z ];
 	}
 
+	dimensionSet(dimensionIndex: number, value: number): Coords
+	{
+		if (dimensionIndex == 0)
+		{
+			this.x = value;
+		}
+		else if (dimensionIndex == 1)
+		{
+			this.y = value;
+		}
+		else if (dimensionIndex == 2)
+		{
+			this.z = value;
+		}
+		else
+		{
+			throw new Error("DimensionIndex too high!");
+		}
+
+		return this;
+	}
+
 	divide(other: Coords): Coords
 	{
 		this.x /= other.x;
@@ -100,6 +127,11 @@ class Coords implements Serializable<Coords>
 			+ this.z * other.z;
 
 		return returnValue;
+	}
+
+	doublify(): Coords
+	{
+		return this.multiplyScalar(2);
 	}
 
 	half(): Coords
@@ -162,6 +194,14 @@ class Coords implements Serializable<Coords>
 		this.y = y;
 		this.z = z;
 
+		return this;
+	}
+
+	randomize(): Coords
+	{
+		this.x = Math.random();
+		this.y = Math.random();
+		this.z = Math.random();
 		return this;
 	}
 

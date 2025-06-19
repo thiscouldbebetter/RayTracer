@@ -95,6 +95,32 @@ class Scene {
         return materialRTBang;
     }
     static demo_MeshGround(materialGround) {
+        //return this.demo_MeshGround_Rectangle(materialGround);
+        return this.demo_MeshGround_Grid(materialGround);
+    }
+    static demo_MeshGround_Grid(materialGround) {
+        var meshGroundDimensionInPixels = 2000;
+        var meshGroundDimensionInCells = 8; // todo - Anything greater fails.
+        var meshGround = MeshBuilder.gridFromNameMaterialAndSizesInCellsAndPixels("Ground", materialGround, Coords.fromXY(1, 1)
+            .multiplyScalar(meshGroundDimensionInCells), Coords.fromXY(1, 1)
+            .multiplyScalar(meshGroundDimensionInPixels));
+        var offset = Coords.fromXY(-1, -1)
+            .multiplyScalar(meshGroundDimensionInPixels)
+            .half();
+        var transformCenter = TransformTranslate.fromOffset(offset);
+        meshGround.transformApply(transformCenter);
+        var transformFlipUpright = TransformOrient.fromOrientation(Orientation.fromForwardAndDown(Coords.fromXYZ(1, 0, 0), Coords.fromXYZ(0, 0, -1)));
+        meshGround.transformApply(transformFlipUpright);
+        /*
+        MeshBuilder.meshVerticesDisplaceRandomlyToDistanceMax
+        (
+            meshGround,
+            100
+        );
+        */
+        return meshGround;
+    }
+    static demo_MeshGround_Rectangle(materialGround) {
         var meshGround = MeshBuilder.rectangleFromNameSizeAndMaterial("Ground", Coords.fromXY(1, 1).multiplyScalar(2000), materialGround);
         return meshGround;
     }

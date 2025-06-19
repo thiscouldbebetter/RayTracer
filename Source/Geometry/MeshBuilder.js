@@ -38,6 +38,73 @@ class MeshBuilder {
         var returnValue = new Mesh(name, vertices, faces);
         return returnValue;
     }
+    static gridFromNameMaterialAndSizesInCellsAndPixels(name, material, sizeInCells, gridSizeInPixels) {
+        var cellPosInCells = Coords.create();
+        var vertexPositions = new Array();
+        var vertexPos = Coords.create();
+        for (var y = 0; y <= sizeInCells.y; y++) {
+            cellPosInCells.y = y;
+            for (var x = 0; x <= sizeInCells.x; x++) {
+                cellPosInCells.x = x;
+                vertexPos.overwriteWith(cellPosInCells);
+                vertexPositions.push(vertexPos.clone());
+            }
+        }
+        var vertices = vertexPositions.map(x => Vertex.fromPos(x));
+        var faces = new Array();
+        var faceFromVertexIndicesAndTextureUvs = (vis, uvs) => new Face(material.name, vis, uvs, null); // normals
+        var textureUvsForTriangleNW = [
+            Coords.fromXY(0, 0),
+            Coords.fromXY(1, 0),
+            Coords.fromXY(0, 1)
+        ];
+        var textureUvsForTriangleSE = [
+            Coords.fromXY(1, 0),
+            Coords.fromXY(1, 1),
+            Coords.fromXY(0, 1)
+        ];
+        var vertexIndexOfCornerNW = 0; // "NW" = "NorthWest".
+        var verticesPerRow = sizeInCells.x + 1;
+        for (var y = 0; y < sizeInCells.y; y++) {
+            for (var x = 0; x < sizeInCells.x; x++) {
+                var vertexIndexOfCornerNE = vertexIndexOfCornerNW + 1;
+                var vertexIndexOfCornerSE = vertexIndexOfCornerNE + verticesPerRow;
+                var vertexIndexOfCornerSW = vertexIndexOfCornerNW + verticesPerRow;
+                var faceForCellTriangleNW = faceFromVertexIndicesAndTextureUvs([
+                    vertexIndexOfCornerNW,
+                    vertexIndexOfCornerNE,
+                    vertexIndexOfCornerSW
+                ], textureUvsForTriangleNW);
+                faces.push(faceForCellTriangleNW);
+                var faceForCellTriangleSE = faceFromVertexIndicesAndTextureUvs([
+                    vertexIndexOfCornerNE,
+                    vertexIndexOfCornerSE,
+                    vertexIndexOfCornerSW
+                ], textureUvsForTriangleSE);
+                faces.push(faceForCellTriangleSE);
+                vertexIndexOfCornerNW++;
+            }
+            vertexIndexOfCornerNW++;
+        }
+        var meshGrid = new Mesh(name, vertices, faces);
+        var scaleFactors = gridSizeInPixels
+            .clone()
+            .divide(sizeInCells)
+            .zSet(0);
+        var transform = TransformScale.fromScaleFactors(scaleFactors);
+        meshGrid.transformApply(transform);
+        return meshGrid;
+    }
+    static meshVerticesDisplaceRandomlyToDistanceMax(meshToDistort, vertexDisplacementDistanceMax) {
+        var vertices = meshToDistort.vertices;
+        vertices.forEach(x => x.pos.add(Polar
+            .create()
+            .randomize()
+            .toCoords(Coords.create())
+            .multiplyScalar(vertexDisplacementDistanceMax)));
+        meshToDistort.recalculateDerivedValues(); // Necessary?
+        return meshToDistort;
+    }
     static rectangleFromNameSizeAndMaterial(name, size, material) {
         var sizeHalf = size.clone().half();
         var vertexPositions = [

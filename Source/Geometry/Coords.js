@@ -14,6 +14,9 @@ class Coords {
     static fromXYZ(x, y, z) {
         return new Coords(x, y, z);
     }
+    static ones() {
+        return new Coords(1, 1, 1);
+    }
     static zeroes() {
         return new Coords(0, 0, 0);
     }
@@ -37,6 +40,21 @@ class Coords {
     dimensionValues() {
         return [this.x, this.y, this.z];
     }
+    dimensionSet(dimensionIndex, value) {
+        if (dimensionIndex == 0) {
+            this.x = value;
+        }
+        else if (dimensionIndex == 1) {
+            this.y = value;
+        }
+        else if (dimensionIndex == 2) {
+            this.z = value;
+        }
+        else {
+            throw new Error("DimensionIndex too high!");
+        }
+        return this;
+    }
     divide(other) {
         this.x /= other.x;
         this.y /= other.y;
@@ -54,6 +72,9 @@ class Coords {
             + this.y * other.y
             + this.z * other.z;
         return returnValue;
+    }
+    doublify() {
+        return this.multiplyScalar(2);
     }
     half() {
         return this.divideScalar(2);
@@ -92,6 +113,12 @@ class Coords {
         this.x = x;
         this.y = y;
         this.z = z;
+        return this;
+    }
+    randomize() {
+        this.x = Math.random();
+        this.y = Math.random();
+        this.z = Math.random();
         return this;
     }
     subtract(other) {

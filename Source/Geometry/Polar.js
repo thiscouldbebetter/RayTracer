@@ -8,6 +8,13 @@ class Polar {
     static create() {
         return new Polar(0, 0, 0);
     }
+    randomize() {
+        this.azimuth = Math.random();
+        this.elevation = Math.random();
+        this.radius = Math.random();
+        return this;
+    }
+    // Coords.
     fromCoords(coordsToConvert) {
         this.radius = coordsToConvert.magnitude();
         this.azimuth = Math.atan2(coordsToConvert.y, coordsToConvert.x) / Constants.RadiansPerCircle;

@@ -42,6 +42,13 @@ class Mesh implements Shape
 
 	// methods
 
+	bounds(): Bounds
+	{
+		return Bounds.ofPoints(this.vertices.map(x => x.pos) );
+	}
+
+	// Clonable.
+
 	clone(): Mesh
 	{
 		var returnValue = Mesh.fromNameVerticesAndFaces

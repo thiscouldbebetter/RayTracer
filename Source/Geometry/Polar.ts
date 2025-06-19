@@ -17,6 +17,16 @@ class Polar
 		return new Polar(0, 0, 0);
 	}
 
+	randomize(): Polar
+	{
+		this.azimuth = Math.random();
+		this.elevation = Math.random();
+		this.radius = Math.random();
+		return this;
+	}
+
+	// Coords.
+
 	fromCoords(coordsToConvert: Coords): Polar
 	{
 		this.radius = coordsToConvert.magnitude();

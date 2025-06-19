@@ -12,6 +12,10 @@ class Mesh {
         return new Mesh(name, vertices, faces);
     }
     // methods
+    bounds() {
+        return Bounds.ofPoints(this.vertices.map(x => x.pos));
+    }
+    // Clonable.
     clone() {
         var returnValue = Mesh.fromNameVerticesAndFaces(this.name, this.vertices.map(x => x.clone()), this.faces.map(x => x.clone()));
         return returnValue;

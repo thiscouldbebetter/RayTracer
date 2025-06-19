@@ -10,6 +10,30 @@ class Bounds {
     static create() {
         return new Bounds(null, null);
     }
+    static fromMinAndMax(min, max) {
+        return new Bounds(min, max);
+    }
+    static ofPoints(points) {
+        var point0 = points[0];
+        var minSoFar = point0.clone();
+        var maxSoFar = point0.clone();
+        for (var p = 1; p < points.length; p++) {
+            var point = points[p];
+            for (var d = 0; d < Coords.NumberOfDimensions; d++) {
+                var pointDimension = point.dimension(d);
+                var minDimension = minSoFar.dimension(d);
+                if (pointDimension < minDimension) {
+                    minSoFar.dimensionSet(d, pointDimension);
+                }
+                var maxDimension = maxSoFar.dimension(d);
+                if (pointDimension > maxDimension) {
+                    maxSoFar.dimensionSet(d, pointDimension);
+                }
+            }
+        }
+        var bounds = Bounds.fromMinAndMax(minSoFar, maxSoFar);
+        return bounds;
+    }
     overlapsWith(other) {
         var returnValue = false;
         var bounds = [this, other];
