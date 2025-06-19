@@ -184,4 +184,19 @@ class Mesh implements Shape
 		return this;
 	}
 
+	// Transformable.
+
+	transformApply(transform: Transform): Mesh
+	{
+		var vertices = this.vertices;
+		for (var v = 0; v < vertices.length; v++)
+		{
+			var vertex = vertices[v];
+			transform.transformCoords(vertex.pos);
+		}
+
+		this.recalculateDerivedValues();
+
+		return this;
+	}
 }

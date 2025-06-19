@@ -214,6 +214,12 @@ class Coords implements Serializable<Coords>
 		return this;
 	}
 
+	zSet(value: number): Coords
+	{
+		this.z = value;
+		return this;
+	}
+
 	// Serializable.
 
 	fromJson(objectAsJson: string): Coords

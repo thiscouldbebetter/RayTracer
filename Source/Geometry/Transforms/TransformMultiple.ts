@@ -8,12 +8,15 @@ class TransformMultiple implements Transform
 		this.children = children;
 	}
 
+	static fromChildren(children: Transform[])
+	{
+		return new TransformMultiple(children);
+	}
+
 	transformCoords(coordsToTransform: Coords): Coords
 	{
-		for (var i = 0; i < this.children.length; i++)
-		{
-			this.children[i].transformCoords(coordsToTransform);
-		}
+		this.children
+			.forEach(x => x.transformCoords(coordsToTransform) );
 
 		return coordsToTransform;
 	}

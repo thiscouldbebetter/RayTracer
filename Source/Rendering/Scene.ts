@@ -49,6 +49,10 @@ class Scene implements Serializable<Scene>
 			materialRTBang 
 		]; 
 
+		var backgroundColor = Color.Instances().BlueDark;
+
+		var lighting = this.demo_Lighting();
+
 		var meshMonolith =
 			this.demo_MeshMonolith(materialRTBang);
 
@@ -57,8 +61,6 @@ class Scene implements Serializable<Scene>
 
 		var sphereEyeball =
 			this.demo_SphereEyeball(materialEyeball);
-
-		var lighting = this.demo_Lighting();
 
 		var shapeDefinitions: Array<Shape> =
 		[
@@ -72,15 +74,26 @@ class Scene implements Serializable<Scene>
 			x => ShapeBuilder.fromShapeDefinitionNameAndPos
 			(
 				x.name,
-				Coords.create()
+				Coords.zeroes()
 			)
 		);
+
+		/*
+		var shapeBuilderMonolith2 =
+			ShapeBuilder.fromShapeDefinitionNameAndPos
+			(
+				meshMonolith.name + "2",
+				Coords.fromXY(0, 100)
+			);
+
+		shapeBuilders.push(shapeBuilderMonolith2);
+		*/
 
 		var scene = new Scene
 		(
 			"Scene0",
 			materials,
-			Color.Instances().BlueDark, // backgroundColor
+			backgroundColor,
 			lighting,
 			camera,
 			shapeDefinitions,
@@ -209,24 +222,11 @@ class Scene implements Serializable<Scene>
 
 	static demo_MeshGround(materialGround: Material): Mesh
 	{
-		var meshGround = new Mesh
+		var meshGround = MeshBuilder.rectangleFromNameSizeAndMaterial
 		(
 			"Ground",
-			// vertices
-			[
-				Vertex.fromPos(Coords.fromXY(-1000, -1000)),
-				Vertex.fromPos(Coords.fromXY(1000, -1000)),
-				Vertex.fromPos(Coords.fromXY(1000, 1000)),
-				Vertex.fromPos(Coords.fromXY(-1000, 1000)),
-			],
-			// faces
-			[
-				Face.fromMaterialNameAndVertexIndices
-				(
-					materialGround.name,
-					[3, 2, 1, 0]
-				)
-			]
+			Coords.fromXY(1, 1).multiplyScalar(2000),
+			materialGround
 		);
 
 		return meshGround;
@@ -234,15 +234,15 @@ class Scene implements Serializable<Scene>
 
 	static demo_MeshMonolith(materialRTBang: Material): Mesh
 	{
-		var meshMonolith = MeshHelper.transformMeshVertexPositions
-		(
-			MeshHelper.buildCubeUnit("Monolith", materialRTBang),
-			new TransformMultiple
-			([
-				new TransformScale(Coords.fromXYZ(40, 10, 90)),
-				new TransformTranslate(Coords.fromXYZ(0, 0, -90)),
-			])
-		);
+		var meshMonolithSize = Coords.fromXYZ(80, 20, 180);
+
+		var meshMonolith =
+			MeshBuilder.boxFromNameMaterialAndSize
+			(
+				"Monolith",
+				materialRTBang,
+				meshMonolithSize
+			);
 
 		return meshMonolith;
 	}

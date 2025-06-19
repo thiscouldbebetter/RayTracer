@@ -125,6 +125,10 @@ class Coords {
         }
         return this;
     }
+    zSet(value) {
+        this.z = value;
+        return this;
+    }
     // Serializable.
     fromJson(objectAsJson) {
         throw new Error("To be implemented!");

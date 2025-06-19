@@ -21,18 +21,28 @@ class Scene {
             materialGround,
             materialRTBang
         ];
+        var backgroundColor = Color.Instances().BlueDark;
+        var lighting = this.demo_Lighting();
         var meshMonolith = this.demo_MeshMonolith(materialRTBang);
         var meshGround = this.demo_MeshGround(materialGround);
         var sphereEyeball = this.demo_SphereEyeball(materialEyeball);
-        var lighting = this.demo_Lighting();
         var shapeDefinitions = [
             sphereEyeball,
             meshMonolith,
             meshGround
         ];
-        var shapeBuilders = shapeDefinitions.map(x => ShapeBuilder.fromShapeDefinitionNameAndPos(x.name, Coords.create()));
-        var scene = new Scene("Scene0", materials, Color.Instances().BlueDark, // backgroundColor
-        lighting, camera, shapeDefinitions, shapeBuilders);
+        var shapeBuilders = shapeDefinitions.map(x => ShapeBuilder.fromShapeDefinitionNameAndPos(x.name, Coords.zeroes()));
+        /*
+        var shapeBuilderMonolith2 =
+            ShapeBuilder.fromShapeDefinitionNameAndPos
+            (
+                meshMonolith.name + "2",
+                Coords.fromXY(0, 100)
+            );
+
+        shapeBuilders.push(shapeBuilderMonolith2);
+        */
+        var scene = new Scene("Scene0", materials, backgroundColor, lighting, camera, shapeDefinitions, shapeBuilders);
         return scene;
     }
     static demo_Camera(shouldUseParallelProjection) {
@@ -93,25 +103,12 @@ class Scene {
         return materialRTBang;
     }
     static demo_MeshGround(materialGround) {
-        var meshGround = new Mesh("Ground", 
-        // vertices
-        [
-            Vertex.fromPos(Coords.fromXY(-1000, -1000)),
-            Vertex.fromPos(Coords.fromXY(1000, -1000)),
-            Vertex.fromPos(Coords.fromXY(1000, 1000)),
-            Vertex.fromPos(Coords.fromXY(-1000, 1000)),
-        ], 
-        // faces
-        [
-            Face.fromMaterialNameAndVertexIndices(materialGround.name, [3, 2, 1, 0])
-        ]);
+        var meshGround = MeshBuilder.rectangleFromNameSizeAndMaterial("Ground", Coords.fromXY(1, 1).multiplyScalar(2000), materialGround);
         return meshGround;
     }
     static demo_MeshMonolith(materialRTBang) {
-        var meshMonolith = MeshHelper.transformMeshVertexPositions(MeshHelper.buildCubeUnit("Monolith", materialRTBang), new TransformMultiple([
-            new TransformScale(Coords.fromXYZ(40, 10, 90)),
-            new TransformTranslate(Coords.fromXYZ(0, 0, -90)),
-        ]));
+        var meshMonolithSize = Coords.fromXYZ(80, 20, 180);
+        var meshMonolith = MeshBuilder.boxFromNameMaterialAndSize("Monolith", materialRTBang, meshMonolithSize);
         return meshMonolith;
     }
     static demo_SphereEyeball(materialEyeball) {

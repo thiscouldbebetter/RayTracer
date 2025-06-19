@@ -81,6 +81,16 @@ class Mesh {
         this.faces.forEach(x => typeSetOnObject(Face, x));
         return this;
     }
+    // Transformable.
+    transformApply(transform) {
+        var vertices = this.vertices;
+        for (var v = 0; v < vertices.length; v++) {
+            var vertex = vertices[v];
+            transform.transformCoords(vertex.pos);
+        }
+        this.recalculateDerivedValues();
+        return this;
+    }
 }
 // constants
 Mesh.VerticesInATriangle = 3;
