@@ -18,17 +18,6 @@ class Pane {
             this.pixelRows.push(pixelRow);
         }
     }
-    drawSceneForRenderer(scene, sceneRenderer) {
-        var paneSize = this.sizeInPixels;
-        var pixelPosRelative = this._pixelPosRelative;
-        for (var y = 0; y < paneSize.y; y++) {
-            pixelPosRelative.y = y;
-            for (var x = 0; x < paneSize.x; x++) {
-                pixelPosRelative.x = x;
-                sceneRenderer.drawSceneToDisplay_DrawToPaneAtPixelPosRelative(scene, this, pixelPosRelative);
-            }
-        }
-    }
     drawToDisplay(display) {
         var pixelPosRelative = this._pixelPosRelative;
         var pixelPosAbsolute = this._pixelPosAbsolute;
@@ -49,5 +38,16 @@ class Pane {
     pixelAtPosRelativeSetToColor(posRelative, color) {
         var pixelAsColor = this.pixelRows[posRelative.y][posRelative.x];
         pixelAsColor.overwriteWith(color);
+    }
+    sceneDrawForRenderer(scene, sceneRenderer) {
+        var paneSize = this.sizeInPixels;
+        var pixelPosRelative = this._pixelPosRelative;
+        for (var y = 0; y < paneSize.y; y++) {
+            pixelPosRelative.y = y;
+            for (var x = 0; x < paneSize.x; x++) {
+                pixelPosRelative.x = x;
+                sceneRenderer.sceneDrawToPaneAtPixelPosRelative(scene, this, pixelPosRelative);
+            }
+        }
     }
 }

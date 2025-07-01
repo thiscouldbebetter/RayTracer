@@ -79,10 +79,10 @@ class SceneRenderer {
         var boundsMin = bounds.min;
         var boundsMax = bounds.max;
         var pane = new Pane(boundsMin, boundsMax);
-        pane.drawSceneForRenderer(scene, this);
+        pane.sceneDrawForRenderer(scene, this);
         pane.drawToDisplay(display);
     }
-    drawSceneToDisplay_DrawToPaneAtPixelPosRelative(scene, pane, pixelPosRelativeToPane) {
+    sceneDrawToPaneAtPixelPosRelative(scene, pane, pixelPosRelativeToPane) {
         var pixelPosAbsolute = this._pixelPosAbsolute
             .overwriteWith(pixelPosRelativeToPane)
             .add(pane.boundsMin);

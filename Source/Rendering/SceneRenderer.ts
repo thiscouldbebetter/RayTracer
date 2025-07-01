@@ -191,13 +191,12 @@ class SceneRenderer
 
 		var pane = new Pane(boundsMin, boundsMax);
 
-		pane.drawSceneForRenderer(scene, this);
+		pane.sceneDrawForRenderer(scene, this);
 
 		pane.drawToDisplay(display);
 	}
 
-
-	drawSceneToDisplay_DrawToPaneAtPixelPosRelative
+	sceneDrawToPaneAtPixelPosRelative
 	(
 		scene: Scene,
 		pane: Pane,
