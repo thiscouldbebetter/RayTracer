@@ -14,15 +14,15 @@ class Face {
     static fromMaterialNameVertexIndicesTextureUvsAndNormals(materialName, vertexIndices, textureUvsForVertices, normalsForVertices) {
         return new Face(Face.name + materialName, materialName, vertexIndices, textureUvsForVertices, normalsForVertices);
     }
-    buildTriangles(mesh) {
+    buildTriangles() {
         var triangles = new Array();
         if (this.vertexIndices.length == 3) {
             var triangle = this.clone();
             triangles.push(triangle);
         }
         else if (this.vertexIndices.length == 4) {
-            var triangle0 = this.buildTriangle(0, 1, 2).recalculateDerivedValues(mesh);
-            var triangle1 = this.buildTriangle(2, 3, 0).recalculateDerivedValues(mesh);
+            var triangle0 = this.buildTriangle(0, 1, 2).recalculateDerivedValues();
+            var triangle1 = this.buildTriangle(2, 3, 0).recalculateDerivedValues();
             triangles.push(triangle0);
             triangles.push(triangle1);
         }
@@ -61,7 +61,8 @@ class Face {
                         normalsForVertices[vertexIndexIndex1],
                         normalsForVertices[vertexIndexIndex2],
                     ];
-        var returnValue = Face.fromMaterialNameVertexIndicesTextureUvsAndNormals(this.materialName, vertexIndices, textureUvsForVertices, normalsForVertices);
+        var mesh = this.mesh();
+        var returnValue = Face.fromMaterialNameVertexIndicesTextureUvsAndNormals(this.materialName, vertexIndices, textureUvsForVertices, normalsForVertices).meshSet(mesh);
         return returnValue;
     }
     edges() {
@@ -94,37 +95,47 @@ class Face {
     material(scene) {
         return scene.materialByName(this.materialName);
     }
-    normalForVertexWeights(mesh, vertexWeights) {
+    mesh() {
+        if (this._mesh == null) {
+            throw new Error("Face._mesh not set!");
+        }
+        return this._mesh;
+    }
+    meshSet(mesh) {
+        this._mesh = mesh;
+        return this;
+    }
+    normalForVertexWeights(vertexWeights) {
         var returnValue;
         if (this.normalsForVertices == null) {
-            returnValue = this.plane(mesh).normal;
+            returnValue = this.plane().normal;
         }
         else {
             returnValue = this.interpolateVertexValuesForWeights(this.normalsForVertices, vertexWeights);
         }
         return returnValue;
     }
-    plane(mesh) {
+    plane() {
         if (this._plane == null) {
-            var vertices = this.vertices(mesh);
-            this._plane = new Plane(mesh.name + Plane.name, vertices.map(x => x.pos));
+            var vertices = this.vertices();
+            this._plane = new Plane(this.name + Plane.name, vertices.map(x => x.pos));
         }
         return this._plane;
     }
-    recalculateDerivedValues(mesh) {
+    recalculateDerivedValues() {
         if (this.normalsForVertices != null) {
             for (var i = 0; i < this.normalsForVertices.length; i++) {
                 var normalForVertex = this.normalsForVertices[i];
                 normalForVertex.normalize();
             }
         }
-        var plane = this.plane(mesh);
+        var plane = this.plane();
         plane.recalculateDerivedValues();
-        var triangles = this.triangles(mesh);
+        var triangles = this.triangles();
         if (triangles.length > 1) {
             for (var t = 0; t < triangles.length; t++) {
                 var triangle = triangles[t];
-                triangle.recalculateDerivedValues(mesh);
+                triangle.recalculateDerivedValues();
             }
         }
         var edges = this.edges();
@@ -139,14 +150,15 @@ class Face {
         texture.colorSetFromUv(texelColor, texelUv);
         return texelColor;
     }
-    triangles(mesh) {
+    triangles() {
         if (this._triangles == null) {
-            this._triangles = this.buildTriangles(mesh);
+            this._triangles = this.buildTriangles();
         }
         return this._triangles;
     }
-    vertexWeightsAtSurfacePosAddToList(mesh, surfacePos, weights) {
-        var vertices = this.vertices(mesh);
+    vertexWeightsAtSurfacePosAddToList(surfacePos, weights) {
+        var mesh = this.mesh();
+        var vertices = this.vertices();
         var edges = this.edges();
         var edge0Displacement = edges[0].displacement(mesh);
         var edge1Displacement = edges[1].displacement(mesh);
@@ -171,13 +183,15 @@ class Face {
         }
         return weights;
     }
-    vertex(mesh, vertexIndexIndex) {
+    vertexAtIndex(vertexIndexIndex) {
+        var mesh = this.mesh();
         var vertexIndex = this.vertexIndices[vertexIndexIndex];
         var vertex = mesh.vertices[vertexIndex];
         return vertex;
     }
-    vertices(mesh) {
+    vertices() {
         var returnValues = new Array();
+        var mesh = this.mesh();
         for (var i = 0; i < this.vertexIndices.length; i++) {
             var vertexIndex = this.vertexIndices[i];
             var vertex = mesh.vertices[vertexIndex];
@@ -187,11 +201,11 @@ class Face {
     }
     // cloneable
     clone() {
-        return new Face(this.name, this.materialName, this.vertexIndices.map(x => x), this.textureUvsForVertices.map(x => x.clone()), this.normalsForVertices == null ? null : this.normalsForVertices.map(x => x.clone()));
+        return new Face(this.name, this.materialName, this.vertexIndices.map(x => x), this.textureUvsForVertices.map(x => x.clone()), this.normalsForVertices == null ? null : this.normalsForVertices.map(x => x.clone())).meshSet(this.mesh());
     }
     // strings
-    toStringForMesh(mesh) {
-        var returnValue = this.vertices(mesh).join("->");
+    toString() {
+        var returnValue = this.vertices().join("->");
         return returnValue;
     }
     // Shape.

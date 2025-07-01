@@ -62,7 +62,7 @@ class Collision
 
 	rayAndFace(ray: Ray, mesh: Mesh, face: Face): Collision
 	{
-		var plane = face.plane(mesh);
+		var plane = face.plane();
 		this.rayAndPlane(ray, plane);
 
 		var colliderPlane = this.colliderByName(Plane.name);
@@ -78,7 +78,7 @@ class Collision
 			{
 				this.colliderByNameSet(Face.name, face);
 
-				var faceTriangles = face.triangles(mesh);
+				var faceTriangles = face.triangles();
 
 				for (var t = 0; t < faceTriangles.length; t++)
 				{
@@ -218,7 +218,7 @@ class Collision
 				.overwriteWith(this.pos)
 				.subtract(edgeVertex0.pos);
 
-			var facePlane = face.plane(mesh);
+			var facePlane = face.plane();
 
 			var edgeDirection = edge.direction(mesh);
 

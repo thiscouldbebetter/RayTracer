@@ -106,7 +106,7 @@ class Edge implements Serializable<Edge>
 		if (this._transverse == null)
 		{
 			var direction = this.direction(mesh)
-			var facePlane = face.plane(mesh);
+			var facePlane = face.plane();
 			this._transverse =
 				direction
 					.clone()

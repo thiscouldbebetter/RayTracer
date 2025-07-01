@@ -10,6 +10,7 @@ class Face implements Shape
 	typeName: string;
 
 	_edges: Edge[];
+	_mesh: Mesh;
 	_plane: Plane;
 	_triangles: Face[];
 
@@ -58,7 +59,7 @@ class Face implements Shape
 		);
 	}
 
-	buildTriangles(mesh: Mesh): Face[]
+	buildTriangles(): Face[]
 	{
 		var triangles = new Array<Face>();
 
@@ -69,8 +70,8 @@ class Face implements Shape
 		}
 		else if (this.vertexIndices.length == 4)
 		{
-			var triangle0 = this.buildTriangle(0, 1, 2).recalculateDerivedValues(mesh);
-			var triangle1 = this.buildTriangle(2, 3, 0).recalculateDerivedValues(mesh);
+			var triangle0 = this.buildTriangle(0, 1, 2).recalculateDerivedValues();
+			var triangle1 = this.buildTriangle(2, 3, 0).recalculateDerivedValues();
 			triangles.push(triangle0);
 			triangles.push(triangle1);
 		}
@@ -123,13 +124,15 @@ class Face implements Shape
 				normalsForVertices[vertexIndexIndex2],
 			];
 
+		var mesh = this.mesh();
+
 		var returnValue = Face.fromMaterialNameVertexIndicesTextureUvsAndNormals
 		(
 			this.materialName, 
 			vertexIndices,
 			textureUvsForVertices,
 			normalsForVertices
-		);
+		).meshSet(mesh);
 
 		return returnValue;
 	}
@@ -193,13 +196,28 @@ class Face implements Shape
 		return scene.materialByName(this.materialName);
 	}
 
-	normalForVertexWeights(mesh: Mesh, vertexWeights: number[]): Coords
+	mesh(): Mesh
+	{
+		if (this._mesh == null)
+		{
+			throw new Error("Face._mesh not set!");
+		}
+		return this._mesh;
+	}
+
+	meshSet(mesh: Mesh): Face
+	{
+		this._mesh = mesh;
+		return this;
+	}
+
+	normalForVertexWeights(vertexWeights: number[]): Coords
 	{
 		var returnValue;
 
 		if (this.normalsForVertices == null)
 		{
-			returnValue = this.plane(mesh).normal;
+			returnValue = this.plane().normal;
 		}
 		else
 		{
@@ -213,15 +231,15 @@ class Face implements Shape
 		return returnValue;	
 	}
 
-	plane(mesh: Mesh): Plane
+	plane(): Plane
 	{
 		if (this._plane == null)
 		{
-			var vertices = this.vertices(mesh);
+			var vertices = this.vertices();
 
 			this._plane = new Plane
 			(
-				mesh.name + Plane.name,
+				this.name + Plane.name,
 				vertices.map(x => x.pos)
 			);
 		}
@@ -229,7 +247,7 @@ class Face implements Shape
 		return this._plane;
 	}
 
-	recalculateDerivedValues(mesh: Mesh): Face
+	recalculateDerivedValues(): Face
 	{
 		if (this.normalsForVertices != null)
 		{
@@ -240,17 +258,17 @@ class Face implements Shape
 			}
 		}
 
-		var plane = this.plane(mesh);
+		var plane = this.plane();
 		plane.recalculateDerivedValues();
 
-		var triangles = this.triangles(mesh);
+		var triangles = this.triangles();
 
 		if (triangles.length > 1)
 		{
 			for (var t = 0; t < triangles.length; t++)
 			{
 				var triangle = triangles[t];
-				triangle.recalculateDerivedValues(mesh);
+				triangle.recalculateDerivedValues();
 			}
 		}
 
@@ -283,23 +301,24 @@ class Face implements Shape
 		return texelColor;
 	}
 
-	triangles(mesh: Mesh): Face[]
+	triangles(): Face[]
 	{
 		if (this._triangles == null)
 		{
-			this._triangles = this.buildTriangles(mesh);
+			this._triangles = this.buildTriangles();
 		}
 		return this._triangles;
 	}
 
 	vertexWeightsAtSurfacePosAddToList
 	(
-		mesh: Mesh,
 		surfacePos: Coords,
 		weights: number[]
-	)
+	): number[]
 	{
-		var vertices = this.vertices(mesh);
+		var mesh = this.mesh();
+
+		var vertices = this.vertices();
 
 		var edges = this.edges();
 
@@ -350,16 +369,19 @@ class Face implements Shape
 		return weights;
 	}
 
-	vertex(mesh: Mesh, vertexIndexIndex: number): Vertex
+	vertexAtIndex(vertexIndexIndex: number): Vertex
 	{
+		var mesh = this.mesh();
 		var vertexIndex = this.vertexIndices[vertexIndexIndex];
 		var vertex = mesh.vertices[vertexIndex];
 		return vertex;
 	}
 
-	vertices(mesh: Mesh): Vertex[]
+	vertices(): Vertex[]
 	{
 		var returnValues = new Array<Vertex>();
+
+		var mesh = this.mesh();
 
 		for (var i = 0; i < this.vertexIndices.length; i++)
 		{
@@ -382,14 +404,14 @@ class Face implements Shape
 			this.vertexIndices.map(x => x), 
 			this.textureUvsForVertices.map(x => x.clone() ), 
 			this.normalsForVertices == null ? null : this.normalsForVertices.map(x => x.clone() )
-		);
+		).meshSet(this.mesh() );
 	}
 
 	// strings
 
-	toStringForMesh(mesh: Mesh): string
+	toString(): string
 	{
-		var returnValue = this.vertices(mesh).join("->");
+		var returnValue = this.vertices().join("->");
 		return returnValue;
 	}
 

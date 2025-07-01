@@ -33,7 +33,7 @@ class Collision {
         return this.colliders[0];
     }
     rayAndFace(ray, mesh, face) {
-        var plane = face.plane(mesh);
+        var plane = face.plane();
         this.rayAndPlane(ray, plane);
         var colliderPlane = this.colliderByName(Plane.name);
         if (colliderPlane != null) {
@@ -43,7 +43,7 @@ class Collision {
             }
             else {
                 this.colliderByNameSet(Face.name, face);
-                var faceTriangles = face.triangles(mesh);
+                var faceTriangles = face.triangles();
                 for (var t = 0; t < faceTriangles.length; t++) {
                     var triangle = faceTriangles[t];
                     var collisionPosIsWithinTriangle = this.isPosWithinFace(mesh, triangle);
@@ -111,7 +111,7 @@ class Collision {
             displacementFromVertex0ToCollision
                 .overwriteWith(this.pos)
                 .subtract(edgeVertex0.pos);
-            var facePlane = face.plane(mesh);
+            var facePlane = face.plane();
             var edgeDirection = edge.direction(mesh);
             var edgeTransverse = edgeDirection
                 .clone()

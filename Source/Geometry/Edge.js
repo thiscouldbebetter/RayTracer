@@ -63,7 +63,7 @@ class Edge {
     transverse(mesh, face) {
         if (this._transverse == null) {
             var direction = this.direction(mesh);
-            var facePlane = face.plane(mesh);
+            var facePlane = face.plane();
             this._transverse =
                 direction
                     .clone()

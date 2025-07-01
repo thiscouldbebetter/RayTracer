@@ -4,7 +4,7 @@ class Mesh {
         this.typeName = Mesh.name;
         this.name = name;
         this.vertices = vertices;
-        this.faces = faces;
+        this.faces = faces.map(x => x.meshSet(this));
         this.recalculateDerivedValues();
         this._vertexWeightsAtSurfacePos = [];
     }
@@ -17,7 +17,9 @@ class Mesh {
     }
     // Clonable.
     clone() {
-        var returnValue = Mesh.fromNameVerticesAndFaces(this.name, this.vertices.map(x => x.clone()), this.faces.map(x => x.clone()));
+        var vertices = this.vertices.map(x => x.clone());
+        var faces = this.faces.map(x => x.clone());
+        var returnValue = Mesh.fromNameVerticesAndFaces(this.name, vertices, faces);
         return returnValue;
     }
     overwriteWith(other) {
@@ -29,14 +31,14 @@ class Mesh {
     recalculateDerivedValues() {
         for (var f = 0; f < this.faces.length; f++) {
             var face = this.faces[f];
-            face.recalculateDerivedValues(this);
+            face.recalculateDerivedValues();
         }
     }
     // Shape.
     addCollisionsWithRayToList(ray, listToAddTo) {
         for (var f = 0; f < this.faces.length; f++) {
             var face = this.faces[f];
-            var facePlane = face.plane(this);
+            var facePlane = face.plane();
             if (facePlane.normal.dotProduct(ray.direction) < 0) {
                 var collision = new Collision().rayAndFace(ray, this, // mesh
                 face);
@@ -54,8 +56,7 @@ class Mesh {
             throw new Error("todo");
         }
         var surfacePos = collisionClosest.pos;
-        var _vertexWeightsAtSurfacePos = face.vertexWeightsAtSurfacePosAddToList(this, // mesh
-        surfacePos, this._vertexWeightsAtSurfacePos);
+        var _vertexWeightsAtSurfacePos = face.vertexWeightsAtSurfacePosAddToList(surfacePos, this._vertexWeightsAtSurfacePos);
         surfaceNormal.overwriteWith(face.normalForVertexWeights(_vertexWeightsAtSurfacePos));
         var faceMaterial = face.material(scene);
         surfaceMaterial.overwriteWith(faceMaterial);
@@ -82,7 +83,11 @@ class Mesh {
     prototypesSet() {
         var typeSetOnObject = SerializableHelper.typeSetOnObject;
         this.vertices.forEach(x => typeSetOnObject(Vertex, x));
-        this.faces.forEach(x => typeSetOnObject(Face, x));
+        this.faces.forEach(x => {
+            var face = typeSetOnObject(Face, x);
+            face.meshSet(this);
+            return face;
+        });
         return this;
     }
     // Transformable.

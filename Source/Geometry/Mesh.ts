@@ -20,7 +20,8 @@ class Mesh implements Shape
 
 		this.name = name;
 		this.vertices = vertices;
-		this.faces = faces;
+		this.faces = faces.map(x => x.meshSet(this) );
+
 		this.recalculateDerivedValues();
 
 		this._vertexWeightsAtSurfacePos = [];
@@ -51,11 +52,14 @@ class Mesh implements Shape
 
 	clone(): Mesh
 	{
+		var vertices = this.vertices.map(x => x.clone() );
+		var faces = this.faces.map(x => x.clone() as Face);
+
 		var returnValue = Mesh.fromNameVerticesAndFaces
 		(
 			this.name,
-			this.vertices.map(x => x.clone() ),
-			this.faces.map(x => x.clone() as Face)
+			vertices,
+			faces
 		);
 
 		return returnValue;
@@ -75,7 +79,7 @@ class Mesh implements Shape
 		for (var f = 0; f < this.faces.length; f++)
 		{
 			var face = this.faces[f];
-			face.recalculateDerivedValues(this);
+			face.recalculateDerivedValues();
 		}
 	}
 
@@ -86,7 +90,7 @@ class Mesh implements Shape
 		for (var f = 0; f < this.faces.length; f++)
 		{
 			var face = this.faces[f];
-			var facePlane = face.plane(this);
+			var facePlane = face.plane();
 
 			if (facePlane.normal.dotProduct(ray.direction) < 0)
 			{
@@ -128,7 +132,6 @@ class Mesh implements Shape
 		var _vertexWeightsAtSurfacePos =
 			face.vertexWeightsAtSurfacePosAddToList
 			(
-				this, // mesh
 				surfacePos,
 				this._vertexWeightsAtSurfacePos
 			);
@@ -187,7 +190,15 @@ class Mesh implements Shape
 	{
 		var typeSetOnObject = SerializableHelper.typeSetOnObject;
 		this.vertices.forEach(x => typeSetOnObject(Vertex, x) );
-		this.faces.forEach(x => typeSetOnObject(Face, x) );
+		this.faces.forEach
+		(
+			x =>
+			{
+				var face = typeSetOnObject(Face, x) as Face;
+				face.meshSet(this);
+				return face;
+			}
+		);
 		return this;
 	}
 
