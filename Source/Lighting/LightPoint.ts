@@ -82,7 +82,7 @@ class LightPoint
 					scene.collisionsOfRayWithObjectsMinusExceptionAddToList
 					(
 						rayFromObjectToBeLitToLight,
-						collision.colliderFirst(), // objectToExcept
+						collision.shapeCollidingFirst(), // objectToExcept
 						[]
 					);
 

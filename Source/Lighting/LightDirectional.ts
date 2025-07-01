@@ -67,7 +67,7 @@ class LightDirectional
 					scene.collisionsOfRayWithObjectsMinusExceptionAddToList
 					(
 						rayFromObjectToBeLitToLight,
-						collision.colliderFirst(), // objectToExcept
+						collision.shapeCollidingFirst(), // objectToExcept
 						[]
 					);
 

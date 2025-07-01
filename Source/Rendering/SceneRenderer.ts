@@ -212,7 +212,7 @@ class SceneRenderer
 		if (collisionClosest != null)
 		{
 			var shape =
-				collisionClosest.colliderByName(ShapeHelper.name);
+				collisionClosest.shapeCollidingFinal();
 
 			var surfaceNormal = this._surfaceNormal;
 			var surfaceMaterial = this._material;

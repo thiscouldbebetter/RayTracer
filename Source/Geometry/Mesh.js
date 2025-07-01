@@ -42,8 +42,8 @@ class Mesh {
             if (facePlane.normal.dotProduct(ray.direction) < 0) {
                 var collision = new Collision().rayAndFace(ray, this, // mesh
                 face);
-                if (collision.colliderByName(Face.name) != null) {
-                    collision.colliderByNameSet(ShapeHelper.name, this);
+                if (collision.shapeCollidingWithName(Face.name) != null) {
+                    collision.shapeCollidingAdd(this);
                     listToAddTo.push(collision);
                 }
             }
@@ -51,7 +51,7 @@ class Mesh {
         return listToAddTo;
     }
     surfaceMaterialColorAndNormalForCollision(scene, collisionClosest, surfaceMaterial, surfaceColor, surfaceNormal) {
-        var face = collisionClosest.colliderByName("Triangle");
+        var face = collisionClosest.shapeCollidingWithName(Face.name);
         if (face == null) {
             throw new Error("todo");
         }

@@ -10,8 +10,8 @@ class Sphere {
     // Shape.
     addCollisionsWithRayToList(ray, listToAddTo) {
         var collision = new Collision().rayAndSphere(ray, this);
-        if (collision.colliderByName(Sphere.name) != null) {
-            collision.colliderByNameSet(ShapeHelper.name, this);
+        if (collision.shapeCollidingWithName(Sphere.name) != null) {
+            collision.shapeCollidingAdd(this);
             listToAddTo.push(collision);
         }
         return listToAddTo;
@@ -20,7 +20,7 @@ class Sphere {
         return scene.materialByName(this.materialName);
     }
     surfaceMaterialColorAndNormalForCollision(scene, collisionClosest, surfaceMaterial, surfaceColor, surfaceNormal) {
-        var sphere = collisionClosest.colliderByName(Sphere.name);
+        var sphere = collisionClosest.shapeCollidingWithName(Sphere.name);
         var surfacePos = collisionClosest.pos;
         var sphereMaterial = sphere.material(scene);
         surfaceMaterial.overwriteWith(sphereMaterial);

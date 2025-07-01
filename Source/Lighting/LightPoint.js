@@ -22,7 +22,7 @@ class LightPoint {
             var objectIsLitByThisLight = false;
             if (sceneRenderer.shadowsAreEnabled) {
                 var rayFromObjectToBeLitToLight = new Ray(collision.pos, directionFromObjectToLight);
-                var collisionsBlockingLight = scene.collisionsOfRayWithObjectsMinusExceptionAddToList(rayFromObjectToBeLitToLight, collision.colliderFirst(), // objectToExcept
+                var collisionsBlockingLight = scene.collisionsOfRayWithObjectsMinusExceptionAddToList(rayFromObjectToBeLitToLight, collision.shapeCollidingFirst(), // objectToExcept
                 []);
                 objectIsLitByThisLight = (collisionsBlockingLight.length == 0);
             }

@@ -101,9 +101,9 @@ class Mesh implements Shape
 					face
 				);
 
-				if (collision.colliderByName(Face.name) != null)
+				if (collision.shapeCollidingWithName(Face.name) != null)
 				{
-					collision.colliderByNameSet(ShapeHelper.name, this);
+					collision.shapeCollidingAdd(this);
 					listToAddTo.push(collision);
 				}
 			}
@@ -121,7 +121,7 @@ class Mesh implements Shape
 		surfaceNormal: Coords
 	): Color
 	{
-		var face = collisionClosest.colliderByName("Triangle");
+		var face = collisionClosest.shapeCollidingWithName(Face.name) as Face;
 		if (face == null)
 		{
 			throw new Error("todo");

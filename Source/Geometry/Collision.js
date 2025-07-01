@@ -3,8 +3,7 @@ class Collision {
     constructor() {
         this.pos = Coords.create();
         this.distanceToCollision = null;
-        this.colliders = [];
-        this._collidersByName = new Map();
+        this.shapesColliding = [];
     }
     // instance methods
     static closestOf(collisions) {
@@ -22,33 +21,45 @@ class Collision {
         }
         return collisionClosest;
     }
-    colliderByName(name) {
-        return this._collidersByName.get(name);
+    shapeCollidingAdd(shape) {
+        this.shapesColliding.push(shape);
+        var shapeTypeName = shape.constructor.name;
+        this.shapesCollidingByName().set(shapeTypeName, shape);
+        return this;
     }
-    colliderByNameSet(name, value) {
-        this.colliders.push(value);
-        this._collidersByName.set(name, value);
+    shapeCollidingFinal() {
+        return this.shapesColliding[this.shapesColliding.length - 1];
     }
-    colliderFirst() {
-        return this.colliders[0];
+    shapeCollidingFirst() {
+        return this.shapesColliding[0];
+    }
+    shapeCollidingWithName(name) {
+        return this.shapesCollidingByName().get(name);
+    }
+    shapesCollidingByName() {
+        if (this._shapesCollidingByName == null) {
+            this._shapesCollidingByName = new Map();
+        }
+        return this._shapesCollidingByName;
+    }
+    shapesCollidingByNameReset() {
+        this._shapesCollidingByName = null;
+        return this;
     }
     rayAndFace(ray, mesh, face) {
         var plane = face.plane();
         this.rayAndPlane(ray, plane);
-        var colliderPlane = this.colliderByName(Plane.name);
+        var colliderPlane = this.shapeCollidingWithName(Plane.name);
         if (colliderPlane != null) {
             var collisionPosIsWithinFace = this.isPosWithinFace(mesh, face);
-            if (collisionPosIsWithinFace == false) {
-                this.colliderByNameSet(Face.name, null);
-            }
-            else {
-                this.colliderByNameSet(Face.name, face);
+            if (collisionPosIsWithinFace) {
+                this.shapeCollidingAdd(face);
                 var faceTriangles = face.triangles();
                 for (var t = 0; t < faceTriangles.length; t++) {
                     var triangle = faceTriangles[t];
                     var collisionPosIsWithinTriangle = this.isPosWithinFace(mesh, triangle);
                     if (collisionPosIsWithinTriangle) {
-                        this.colliderByNameSet("Triangle", triangle);
+                        this.shapeCollidingAdd(triangle);
                         break;
                     }
                 }
@@ -63,7 +74,7 @@ class Collision {
                 / plane.normal.dotProduct(ray.direction);
         if (this.distanceToCollision >= 0) {
             this.pos.overwriteWith(ray.direction).multiplyScalar(this.distanceToCollision).add(ray.startPos);
-            this.colliderByNameSet(Plane.name, plane);
+            this.shapeCollidingAdd(plane);
         }
         return this;
     }
@@ -97,7 +108,7 @@ class Collision {
                 this.distanceToCollision = distanceToCollision2;
             }
             this.pos.overwriteWith(ray.direction).multiplyScalar(this.distanceToCollision).add(ray.startPos);
-            this.colliderByNameSet(Sphere.name, sphere);
+            this.shapeCollidingAdd(sphere);
         }
         return this;
     }

@@ -37,9 +37,9 @@ class Sphere implements Shape
 			this
 		);
 
-		if (collision.colliderByName(Sphere.name) != null)
+		if (collision.shapeCollidingWithName(Sphere.name) != null)
 		{
-			collision.colliderByNameSet(ShapeHelper.name, this);
+			collision.shapeCollidingAdd(this);
 			listToAddTo.push(collision);
 		}
 
@@ -60,7 +60,7 @@ class Sphere implements Shape
 		surfaceNormal: Coords
 	): Color
 	{
-		var sphere = collisionClosest.colliderByName(Sphere.name);
+		var sphere = collisionClosest.shapeCollidingWithName(Sphere.name) as Sphere;
 		var surfacePos = collisionClosest.pos;
 		var sphereMaterial = sphere.material(scene);
 		surfaceMaterial.overwriteWith(sphereMaterial);
