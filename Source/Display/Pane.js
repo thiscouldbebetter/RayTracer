@@ -19,22 +19,13 @@ class Pane {
         }
     }
     drawSceneForRenderer(scene, sceneRenderer) {
-        var pixelColor = this._pixelColor;
         var paneSize = this.sizeInPixels;
-        var boundsMin = this.boundsMin;
-        var pixelPosAbsolute = this._pixelPosAbsolute;
         var pixelPosRelative = this._pixelPosRelative;
         for (var y = 0; y < paneSize.y; y++) {
             pixelPosRelative.y = y;
             for (var x = 0; x < paneSize.x; x++) {
                 pixelPosRelative.x = x;
-                pixelPosAbsolute
-                    .overwriteWith(pixelPosRelative)
-                    .add(boundsMin);
-                var collisionForRayFromCameraToPixel = sceneRenderer.drawSceneToDisplay_ColorSetFromPixelAtPos(scene, pixelColor, pixelPosAbsolute);
-                if (collisionForRayFromCameraToPixel != null) {
-                    this.pixelAtPosRelativeSetToColor(pixelPosRelative, pixelColor);
-                }
+                sceneRenderer.drawSceneToDisplay_DrawToPaneAtPixelPosRelative(scene, this, pixelPosRelative);
             }
         }
     }

@@ -66,6 +66,7 @@ class SceneRenderer {
         this._displacementFromEyeToPixel = Coords.create();
         this._material = Material.fromNameAndColor("DisplayMaterial", Color.blank("MaterialColor"));
         this._pixelColor = Color.blank("PixelColor");
+        this._pixelPosAbsolute = Coords.create();
         this._surfaceNormal = Coords.create();
         this._texelColor = Color.blank("TexelColor");
         this._texelUV = Coords.create();
@@ -81,27 +82,31 @@ class SceneRenderer {
         pane.drawSceneForRenderer(scene, this);
         pane.drawToDisplay(display);
     }
-    drawSceneToDisplay_ColorSetFromPixelAtPos(scene, surfaceColor, pixelPos) {
-        var collisionClosest = this.drawSceneToDisplay_Pixel_FindClosestCollision(scene, pixelPos);
-        if (collisionClosest != null) {
-            var shape = collisionClosest.shapeCollidingFinal();
+    drawSceneToDisplay_DrawToPaneAtPixelPosRelative(scene, pane, pixelPosRelativeToPane) {
+        var pixelPosAbsolute = this._pixelPosAbsolute
+            .overwriteWith(pixelPosRelativeToPane)
+            .add(pane.boundsMin);
+        var collisions = this.drawSceneToDisplay_Pixel_FindCollisions(scene, pixelPosAbsolute);
+        var collision = Collision.closestOf(collisions);
+        if (collisions.length > 0) {
+            var shape = collision.shapeCollidingFinal();
             var surfaceNormal = this._surfaceNormal;
+            var surfaceColor = this._pixelColor;
             var surfaceMaterial = this._material;
-            shape.surfaceMaterialColorAndNormalForCollision(scene, collisionClosest, surfaceMaterial, surfaceColor, surfaceNormal);
-            var intensityFromLightsAll = this.intensityFromLightsAll(collisionClosest, surfaceMaterial, surfaceNormal, scene);
+            shape.surfaceMaterialColorAndNormalForCollision(scene, collision, surfaceMaterial, surfaceColor, surfaceNormal);
+            var intensityFromLightsAll = this.intensityFromLightsAll(collision, surfaceMaterial, surfaceNormal, scene);
             surfaceColor.multiply(intensityFromLightsAll);
+            pane.pixelAtPosRelativeSetToColor(pixelPosRelativeToPane, surfaceColor);
         }
-        return collisionClosest;
     }
-    drawSceneToDisplay_Pixel_FindClosestCollision(scene, pixelPos) {
+    drawSceneToDisplay_Pixel_FindCollisions(scene, pixelPos) {
         var camera = scene.camera;
         var rayFromCameraToPixel = camera.rayToPixelAtPos(pixelPos);
         var collisions = this._collisions;
         collisions.length = 0;
         collisions = scene.collisionsOfRayWithObjectsMinusExceptionAddToList(rayFromCameraToPixel, null, // objectToExcept
         collisions);
-        var collisionClosest = Collision.closestOf(collisions);
-        return collisionClosest;
+        return collisions;
     }
     intensityFromLightsAll(collisionClosest, surfaceMaterial, surfaceNormal, scene) {
         var intensityFromLightsAll = 0;
