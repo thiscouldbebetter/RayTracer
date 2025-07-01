@@ -1,10 +1,13 @@
 
-class Face implements Serializable<Face>
+class Face implements Shape
 {
+	name: string;
 	materialName: string;
 	vertexIndices: number[];
 	textureUvsForVertices: Coords[];
 	normalsForVertices: Coords[];
+
+	typeName: string;
 
 	_edges: Edge[];
 	_plane: Plane;
@@ -12,16 +15,20 @@ class Face implements Serializable<Face>
 
 	constructor
 	(
+		name: string,
 		materialName: string,
 		vertexIndices: number[],
 		textureUvsForVertices: Coords[],
 		normalsForVertices: Coords[]
 	)
 	{
+		this.name = name;
 		this.materialName = materialName;
 		this.vertexIndices = vertexIndices;
 		this.textureUvsForVertices = textureUvsForVertices;
 		this.normalsForVertices = normalsForVertices;
+
+		this.typeName = Face.name;
 	}
 
 	static fromMaterialNameAndVertexIndices
@@ -30,7 +37,7 @@ class Face implements Serializable<Face>
 		vertexIndices: number[]
 	): Face
 	{
-		return new Face(materialName, vertexIndices, null, null);
+		return new Face(Face.name, materialName, vertexIndices, null, null);
 	}
 
 	static fromMaterialNameVertexIndicesTextureUvsAndNormals
@@ -43,6 +50,7 @@ class Face implements Serializable<Face>
 	{
 		return new Face
 		(
+			Face.name + materialName,
 			materialName,
 			vertexIndices,
 			textureUvsForVertices,
@@ -52,19 +60,19 @@ class Face implements Serializable<Face>
 
 	buildTriangles(mesh: Mesh): Face[]
 	{
-		var triangles = [];
+		var triangles = new Array<Face>();
 
 		if (this.vertexIndices.length == 3)
 		{
-			triangles = [ this.clone() ];
+			var triangle = this.clone() as Face;
+			triangles.push(triangle);
 		}
 		else if (this.vertexIndices.length == 4)
 		{
-			triangles = 
-			[
-				this.buildTriangle(0, 1, 2).recalculateDerivedValues(mesh),
-				this.buildTriangle(2, 3, 0).recalculateDerivedValues(mesh),
-			];
+			var triangle0 = this.buildTriangle(0, 1, 2).recalculateDerivedValues(mesh);
+			var triangle1 = this.buildTriangle(2, 3, 0).recalculateDerivedValues(mesh);
+			triangles.push(triangle0);
+			triangles.push(triangle1);
 		}
 		else
 		{
@@ -364,15 +372,15 @@ class Face implements Serializable<Face>
 
 	// cloneable
 
-	clone(): Face
+	clone(): Shape
 	{
-		// todo - Deep clone.
 		return new Face
 		(
+			this.name,
 			this.materialName, 
-			this.vertexIndices, 
-			this.textureUvsForVertices, 
-			this.normalsForVertices
+			this.vertexIndices.map(x => x), 
+			this.textureUvsForVertices.map(x => x.clone() ), 
+			this.normalsForVertices == null ? null : this.normalsForVertices.map(x => x.clone() )
 		);
 	}
 
@@ -384,9 +392,14 @@ class Face implements Serializable<Face>
 		return returnValue;
 	}
 
-	// Serializable.
+	// Shape.
 
-	fromJson(objectAsJson: string): Face
+	addCollisionsWithRayToList(ray: Ray, listToAddTo: Collision[]): Collision[]
+	{
+		throw new Error("To be implemented!");
+	}
+
+	fromJson(objectAsJson: string): Shape
 	{
 		throw new Error("To be implemented!");
 	}
@@ -396,7 +409,7 @@ class Face implements Serializable<Face>
 		throw new Error("To be implemented!");
 	}
 
-	prototypesSet(): Face
+	prototypesSet(): Shape
 	{
 		var typeSetOnObject = SerializableHelper.typeSetOnObject;
 
@@ -416,27 +429,24 @@ class Face implements Serializable<Face>
 			);
 		}
 
-		/*
-		var edges = this.edges();
-		if (edges != null)
-		{
-			edges.forEach(x => typeSetOnObject(Edge, x) );
-		}
-
-		var plane = this.plane();
-		if (plane != null)
-		{
-			typeSetOnObject(Plane, plane);
-		}
-
-		var triangles = this.triangles();
-		if (triangles != null)
-		{
-			triangles.forEach(x => typeSetOnObject(Face, x) );
-		}
-		*/
-
 		return this;
+	}
+
+	surfaceMaterialColorAndNormalForCollision
+	(
+		scene: Scene, 
+		collisionClosest: Collision,
+		surfaceMaterial: Material,
+		surfaceColor: Color,
+		surfaceNormal: Coords
+	): Color
+	{
+		throw new Error("To be implemented!");
+	}
+
+	transformApply(transform: Transform): Shape
+	{
+		throw new Error("To be implemented!");
 	}
 
 	// Temporary variables.

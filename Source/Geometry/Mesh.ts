@@ -55,7 +55,7 @@ class Mesh implements Shape
 		(
 			this.name,
 			this.vertices.map(x => x.clone() ),
-			this.faces.map(x => x.clone() )
+			this.faces.map(x => x.clone() as Face)
 		);
 
 		return returnValue;

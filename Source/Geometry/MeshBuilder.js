@@ -26,7 +26,7 @@ class MeshBuilder {
         var vertices = vertexPositions.map(x => Vertex.fromPos(x));
         var materialName = material.name;
         var c = (x, y) => Coords.fromXY(x, y);
-        var f = (vis, cs) => new Face(materialName, vis, cs, null); // normals
+        var f = (vis, cs) => new Face(Face.name + vis.join("-"), materialName, vis, cs, null); // normals
         var faces = [
             f([3, 2, 1, 0], [c(0, 1), c(1, 1), c(1, 0), c(0, 0)]), // top
             f([4, 5, 6, 7], [c(0, 0), c(1, 0), c(1, 1), c(0, 1)]), // bottom
@@ -52,7 +52,7 @@ class MeshBuilder {
         }
         var vertices = vertexPositions.map(x => Vertex.fromPos(x));
         var faces = new Array();
-        var faceFromVertexIndicesAndTextureUvs = (vis, uvs) => new Face(material.name, vis, uvs, null); // normals
+        var faceFromVertexIndicesAndTextureUvs = (vis, uvs) => new Face(Face.name + vis.join("-"), material.name, vis, uvs, null); // normals
         var textureUvsForTriangleNW = [
             Coords.fromXY(0, 0),
             Coords.fromXY(1, 0),

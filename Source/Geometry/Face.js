@@ -1,28 +1,30 @@
 "use strict";
 class Face {
-    constructor(materialName, vertexIndices, textureUvsForVertices, normalsForVertices) {
+    constructor(name, materialName, vertexIndices, textureUvsForVertices, normalsForVertices) {
+        this.name = name;
         this.materialName = materialName;
         this.vertexIndices = vertexIndices;
         this.textureUvsForVertices = textureUvsForVertices;
         this.normalsForVertices = normalsForVertices;
+        this.typeName = Face.name;
     }
     static fromMaterialNameAndVertexIndices(materialName, vertexIndices) {
-        return new Face(materialName, vertexIndices, null, null);
+        return new Face(Face.name, materialName, vertexIndices, null, null);
     }
     static fromMaterialNameVertexIndicesTextureUvsAndNormals(materialName, vertexIndices, textureUvsForVertices, normalsForVertices) {
-        return new Face(materialName, vertexIndices, textureUvsForVertices, normalsForVertices);
+        return new Face(Face.name + materialName, materialName, vertexIndices, textureUvsForVertices, normalsForVertices);
     }
     buildTriangles(mesh) {
-        var triangles = [];
+        var triangles = new Array();
         if (this.vertexIndices.length == 3) {
-            triangles = [this.clone()];
+            var triangle = this.clone();
+            triangles.push(triangle);
         }
         else if (this.vertexIndices.length == 4) {
-            triangles =
-                [
-                    this.buildTriangle(0, 1, 2).recalculateDerivedValues(mesh),
-                    this.buildTriangle(2, 3, 0).recalculateDerivedValues(mesh),
-                ];
+            var triangle0 = this.buildTriangle(0, 1, 2).recalculateDerivedValues(mesh);
+            var triangle1 = this.buildTriangle(2, 3, 0).recalculateDerivedValues(mesh);
+            triangles.push(triangle0);
+            triangles.push(triangle1);
         }
         else {
             var errorMessage = "A Face may only have 3 or 4 vertices.";
@@ -185,15 +187,17 @@ class Face {
     }
     // cloneable
     clone() {
-        // todo - Deep clone.
-        return new Face(this.materialName, this.vertexIndices, this.textureUvsForVertices, this.normalsForVertices);
+        return new Face(this.name, this.materialName, this.vertexIndices.map(x => x), this.textureUvsForVertices.map(x => x.clone()), this.normalsForVertices == null ? null : this.normalsForVertices.map(x => x.clone()));
     }
     // strings
     toStringForMesh(mesh) {
         var returnValue = this.vertices(mesh).join("->");
         return returnValue;
     }
-    // Serializable.
+    // Shape.
+    addCollisionsWithRayToList(ray, listToAddTo) {
+        throw new Error("To be implemented!");
+    }
     fromJson(objectAsJson) {
         throw new Error("To be implemented!");
     }
@@ -208,26 +212,13 @@ class Face {
         if (this.normalsForVertices != null) {
             this.normalsForVertices.forEach(x => typeSetOnObject(Coords, x));
         }
-        /*
-        var edges = this.edges();
-        if (edges != null)
-        {
-            edges.forEach(x => typeSetOnObject(Edge, x) );
-        }
-
-        var plane = this.plane();
-        if (plane != null)
-        {
-            typeSetOnObject(Plane, plane);
-        }
-
-        var triangles = this.triangles();
-        if (triangles != null)
-        {
-            triangles.forEach(x => typeSetOnObject(Face, x) );
-        }
-        */
         return this;
+    }
+    surfaceMaterialColorAndNormalForCollision(scene, collisionClosest, surfaceMaterial, surfaceColor, surfaceNormal) {
+        throw new Error("To be implemented!");
+    }
+    transformApply(transform) {
+        throw new Error("To be implemented!");
     }
     // Temporary variables.
     displacementFromVertexNextToPos() {

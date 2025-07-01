@@ -59,7 +59,7 @@ class MeshBuilder
 
 		var f =
 			(vis: number[], cs: Coords[]) =>
-				new Face(materialName, vis, cs, null); // normals
+				new Face(Face.name + vis.join("-"), materialName, vis, cs, null); // normals
 
 		var faces =
 		[
@@ -116,7 +116,7 @@ class MeshBuilder
 
 		var faceFromVertexIndicesAndTextureUvs =
 			(vis: number[], uvs: Coords[]) =>
-				new Face(material.name, vis, uvs, null); // normals
+				new Face(Face.name + vis.join("-"), material.name, vis, uvs, null); // normals
 
 		var textureUvsForTriangleNW =
 		[
