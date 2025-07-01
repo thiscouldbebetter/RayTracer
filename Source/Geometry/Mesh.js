@@ -77,9 +77,6 @@ class Mesh {
     fromJson(objectAsJson) {
         throw new Error("To be implemented!");
     }
-    toJson() {
-        throw new Error("To be implemented!");
-    }
     prototypesSet() {
         var typeSetOnObject = SerializableHelper.typeSetOnObject;
         this.vertices.forEach(x => typeSetOnObject(Vertex, x));
@@ -89,6 +86,18 @@ class Mesh {
             return face;
         });
         return this;
+    }
+    toJson() {
+        throw new Error("To be implemented!");
+    }
+    toObjectSerializable() {
+        var thisAsObject = {
+            "typeName": this.typeName,
+            "name": this.name,
+            "vertices": this.vertices.map(x => x.toObjectSerializable()),
+            "faces": this.faces.map(x => x.toObjectSerializable())
+        };
+        return thisAsObject;
     }
     // Transformable.
     transformApply(transform) {

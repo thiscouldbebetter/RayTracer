@@ -10,9 +10,6 @@ class Lighting {
     fromJson(objectAsJson) {
         throw new Error("To be implemented!");
     }
-    toJson() {
-        throw new Error("To be implemented!");
-    }
     prototypesSet() {
         this.lights.forEach(x => {
             var prototypeToSet = x.typeName == LightAmbient.name
@@ -27,6 +24,12 @@ class Lighting {
             }
             Object.setPrototypeOf(x, prototypeToSet);
         }); // hack
+        return this;
+    }
+    toJson() {
+        throw new Error("To be implemented!");
+    }
+    toObjectSerializable() {
         return this;
     }
 }

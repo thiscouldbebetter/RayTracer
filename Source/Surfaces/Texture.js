@@ -49,11 +49,14 @@ class Texture {
     fromJson(objectAsJson) {
         throw new Error("To be implemented!");
     }
+    prototypesSet() {
+        ImageHelper.imageTypeSet(this.image);
+        return this;
+    }
     toJson() {
         throw new Error("To be implemented!");
     }
-    prototypesSet() {
-        ImageHelper.imageTypeSet(this.image);
+    toObjectSerializable() {
         return this;
     }
 }

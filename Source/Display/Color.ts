@@ -140,17 +140,28 @@ class Color
 		throw new Error("To be implemented!");
 	}
 
-	toJson(): string
-	{
-		throw new Error("To be implemented!");
-	}
-
 	prototypesSet(): Color
 	{
 		// Do nothing.
 		return this;
 	}
 
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toObjectSerializable(): any
+	{
+		var thisAsObject =
+		{
+			"name": this.name,
+			"codeChar": this.codeChar,
+			"componentsRGBA": this.componentsRGBA
+		};
+
+		return thisAsObject;
+	}
 }
 
 class Color_Instances

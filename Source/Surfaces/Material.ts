@@ -138,11 +138,6 @@ class Material implements Serializable<Material>
 		throw new Error("To be implemented!");
 	}
 
-	toJson(): string
-	{
-		throw new Error("To be implemented!");
-	}
-
 	prototypesSet() : Material
 	{
 		var typeSetOnObject = SerializableHelper.typeSetOnObject;
@@ -150,6 +145,25 @@ class Material implements Serializable<Material>
 		this.textures.forEach(x => typeSetOnObject(Texture, x) );
 		return this;
 	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toObjectSerializable(): any
+	{
+		var thisAsObject =
+		{
+			"name": this.name,
+			"color": this.color.toObjectSerializable(),
+			"optics": this.optics,
+			"textures": this.textures
+		};
+
+		return thisAsObject;
+	}
+
 }
 
 class Material_Instances

@@ -40,17 +40,22 @@ class Vertex implements Serializable<Vertex>
 		throw new Error("To be implemented!");
 	}
 
-	toJson(): string
-	{
-		throw new Error("To be implemented!");
-	}
-
 	prototypesSet(): Vertex
 	{
 		var typeSetOnObject = SerializableHelper.typeSetOnObject;
 
 		typeSetOnObject(Coords, this.pos);
 
+		return this;
+	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toObjectSerializable(): any
+	{
 		return this;
 	}
 }

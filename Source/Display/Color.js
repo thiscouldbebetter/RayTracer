@@ -71,12 +71,20 @@ class Color {
     fromJson(objectAsJson) {
         throw new Error("To be implemented!");
     }
-    toJson() {
-        throw new Error("To be implemented!");
-    }
     prototypesSet() {
         // Do nothing.
         return this;
+    }
+    toJson() {
+        throw new Error("To be implemented!");
+    }
+    toObjectSerializable() {
+        var thisAsObject = {
+            "name": this.name,
+            "codeChar": this.codeChar,
+            "componentsRGBA": this.componentsRGBA
+        };
+        return thisAsObject;
     }
 }
 // constants

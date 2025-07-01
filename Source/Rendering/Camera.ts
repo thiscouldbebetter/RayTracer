@@ -162,11 +162,6 @@ class Camera implements Serializable<Camera>
 		throw new Error("To be implemented!");
 	}
 
-	toJson(): string
-	{
-		throw new Error("To be implemented!");
-	}
-
 	prototypesSet(): Camera
 	{
 		var typeSetOnObject = SerializableHelper.typeSetOnObject;
@@ -175,6 +170,16 @@ class Camera implements Serializable<Camera>
 		typeSetOnObject(Coords, this.pos);
 		typeSetOnObject(Orientation, this.orientation);
 
+		return this;
+	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toObjectSerializable(): any
+	{
 		return this;
 	}
 

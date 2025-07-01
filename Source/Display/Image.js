@@ -83,11 +83,14 @@ class ImageFromStrings {
     fromJson(objectAsJson) {
         throw new Error("To be implemented!");
     }
+    prototypesSet() {
+        Object.setPrototypeOf(this.imageData, ImageData.prototype);
+        return this;
+    }
     toJson() {
         throw new Error("To be implemented!");
     }
-    prototypesSet() {
-        Object.setPrototypeOf(this.imageData, ImageData.prototype);
+    toObjectSerializable() {
         return this;
     }
 }
@@ -134,11 +137,14 @@ class ImageFromDataUrl {
     fromJson(objectAsJson) {
         throw new Error("To be implemented!");
     }
+    prototypesSet() {
+        Object.setPrototypeOf(this.imageData, ImageData.prototype);
+        return this;
+    }
     toJson() {
         throw new Error("To be implemented!");
     }
-    prototypesSet() {
-        Object.setPrototypeOf(this.imageData, ImageData.prototype);
+    toObjectSerializable() {
         return this;
     }
 }

@@ -66,14 +66,23 @@ class Material {
     fromJson(objectAsJson) {
         throw new Error("To be implemented!");
     }
-    toJson() {
-        throw new Error("To be implemented!");
-    }
     prototypesSet() {
         var typeSetOnObject = SerializableHelper.typeSetOnObject;
         typeSetOnObject(Color, this.color);
         this.textures.forEach(x => typeSetOnObject(Texture, x));
         return this;
+    }
+    toJson() {
+        throw new Error("To be implemented!");
+    }
+    toObjectSerializable() {
+        var thisAsObject = {
+            "name": this.name,
+            "color": this.color.toObjectSerializable(),
+            "optics": this.optics,
+            "textures": this.textures
+        };
+        return thisAsObject;
     }
 }
 class Material_Instances {

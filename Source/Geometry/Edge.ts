@@ -43,12 +43,17 @@ class Edge implements Serializable<Edge>
 		throw new Error("To be implemented!");
 	}
 
+	prototypesSet(): Edge
+	{
+		return this;
+	}
+
 	toJson(): string
 	{
 		throw new Error("To be implemented!");
 	}
 
-	prototypesSet(): Edge
+	toObjectSerializable(): any
 	{
 		return this;
 	}

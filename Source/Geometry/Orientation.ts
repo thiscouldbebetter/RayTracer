@@ -70,11 +70,6 @@ class Orientation implements Serializable<Orientation>
 		throw new Error("To be implemented!");
 	}
 
-	toJson(): string
-	{
-		throw new Error("To be implemented!");
-	}
-
 	prototypesSet(): Orientation
 	{
 		var typeSetOnObject = SerializableHelper.typeSetOnObject;
@@ -83,6 +78,16 @@ class Orientation implements Serializable<Orientation>
 		typeSetOnObject(Coords, this.right);
 		typeSetOnObject(Coords, this.down);
 
+		return this;
+	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toObjectSerializable(): any
+	{
 		return this;
 	}
 }

@@ -109,15 +109,20 @@ class Texture implements Serializable<Texture>
 		throw new Error("To be implemented!");
 	}
 
+	prototypesSet(): Texture
+	{
+		ImageHelper.imageTypeSet(this.image);
+
+		return this;
+	}
+
 	toJson(): string
 	{
 		throw new Error("To be implemented!");
 	}
 
-	prototypesSet(): Texture
+	toObjectSerializable(): any
 	{
-		ImageHelper.imageTypeSet(this.image);
-
 		return this;
 	}
 }

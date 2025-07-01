@@ -21,10 +21,14 @@ class Plane {
     clone() {
         return new Plane(this.name, this.positionsOnPlane.map(x => x.clone()));
     }
-    fromJson(objectAsJson) {
+    surfaceMaterialColorAndNormalForCollision(scene, collisionClosest, surfaceMaterial, surfaceColor, surfaceNormal) {
         throw new Error("To be implemented!");
     }
-    toJson() {
+    transformApply(transform) {
+        throw new Error("To be implemented!");
+    }
+    // Serializable.
+    fromJson(objectAsJson) {
         throw new Error("To be implemented!");
     }
     prototypesSet() {
@@ -33,10 +37,10 @@ class Plane {
         this.positionsOnPlane.forEach(x => typeSetOnObject(Coords, x));
         return this;
     }
-    surfaceMaterialColorAndNormalForCollision(scene, collisionClosest, surfaceMaterial, surfaceColor, surfaceNormal) {
+    toJson() {
         throw new Error("To be implemented!");
     }
-    transformApply(transform) {
-        throw new Error("To be implemented!");
+    toObjectSerializable() {
+        return this;
     }
 }

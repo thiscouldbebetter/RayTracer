@@ -32,14 +32,17 @@ class Orientation {
     fromJson(objectAsJson) {
         throw new Error("To be implemented!");
     }
-    toJson() {
-        throw new Error("To be implemented!");
-    }
     prototypesSet() {
         var typeSetOnObject = SerializableHelper.typeSetOnObject;
         typeSetOnObject(Coords, this.forward);
         typeSetOnObject(Coords, this.right);
         typeSetOnObject(Coords, this.down);
+        return this;
+    }
+    toJson() {
+        throw new Error("To be implemented!");
+    }
+    toObjectSerializable() {
         return this;
     }
 }

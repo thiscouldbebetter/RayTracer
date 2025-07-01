@@ -427,11 +427,6 @@ class Face implements Shape
 		throw new Error("To be implemented!");
 	}
 
-	toJson(): string
-	{
-		throw new Error("To be implemented!");
-	}
-
 	prototypesSet(): Shape
 	{
 		var typeSetOnObject = SerializableHelper.typeSetOnObject;
@@ -452,6 +447,16 @@ class Face implements Shape
 			);
 		}
 
+		return this;
+	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toObjectSerializable(): any
+	{
 		return this;
 	}
 

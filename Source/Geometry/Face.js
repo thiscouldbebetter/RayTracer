@@ -215,9 +215,6 @@ class Face {
     fromJson(objectAsJson) {
         throw new Error("To be implemented!");
     }
-    toJson() {
-        throw new Error("To be implemented!");
-    }
     prototypesSet() {
         var typeSetOnObject = SerializableHelper.typeSetOnObject;
         if (this.textureUvsForVertices != null) {
@@ -226,6 +223,12 @@ class Face {
         if (this.normalsForVertices != null) {
             this.normalsForVertices.forEach(x => typeSetOnObject(Coords, x));
         }
+        return this;
+    }
+    toJson() {
+        throw new Error("To be implemented!");
+    }
+    toObjectSerializable() {
         return this;
     }
     surfaceMaterialColorAndNormalForCollision(scene, collisionClosest, surfaceMaterial, surfaceColor, surfaceNormal) {

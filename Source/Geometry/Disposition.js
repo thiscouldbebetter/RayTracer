@@ -18,13 +18,16 @@ class Disposition {
     fromJson() {
         throw new Error("Not yet implemented!");
     }
-    toJson() {
-        throw new Error("Not yet implemented!");
-    }
     prototypesSet() {
         var typeSetOnObject = SerializableHelper.typeSetOnObject;
         typeSetOnObject(Coords, this.pos);
         typeSetOnObject(Orientation, this.ori);
+        return this;
+    }
+    toJson() {
+        throw new Error("Not yet implemented!");
+    }
+    toObjectSerializable() {
         return this;
     }
 }

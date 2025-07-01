@@ -181,11 +181,6 @@ class Mesh implements Shape
 		throw new Error("To be implemented!");
 	}
 
-	toJson(): string
-	{
-		throw new Error("To be implemented!");
-	}
-
 	prototypesSet(): Mesh
 	{
 		var typeSetOnObject = SerializableHelper.typeSetOnObject;
@@ -200,6 +195,24 @@ class Mesh implements Shape
 			}
 		);
 		return this;
+	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toObjectSerializable(): any
+	{
+		var thisAsObject =
+		{
+			"typeName": this.typeName,
+			"name": this.name,
+			"vertices": this.vertices.map(x => x.toObjectSerializable() ),
+			"faces": this.faces.map(x => x.toObjectSerializable() )
+		};
+
+		return thisAsObject;
 	}
 
 	// Transformable.

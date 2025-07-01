@@ -267,13 +267,19 @@ class Coords implements Serializable<Coords>
 		throw new Error("To be implemented!");
 	}
 
+	prototypesSet(): Coords
+	{
+		return this;
+	}
+
 	toJson(): string
 	{
 		throw new Error("To be implemented!");
 	}
 
-	prototypesSet(): Coords
+	toObjectSerializable(): any
 	{
 		return this;
 	}
+
 }

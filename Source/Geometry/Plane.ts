@@ -50,26 +50,6 @@ class Plane implements Shape
 		return new Plane(this.name, this.positionsOnPlane.map(x => x.clone() ) );
 	}
 
-	fromJson(objectAsJson: string): Shape
-	{
-		throw new Error("To be implemented!");
-	}
-
-	toJson(): string
-	{
-		throw new Error("To be implemented!");
-	}
-
-	prototypesSet(): Shape
-	{
-		var typeSetOnObject = SerializableHelper.typeSetOnObject;
-
-		typeSetOnObject(Coords, this.normal);
-		this.positionsOnPlane.forEach(x => typeSetOnObject(Coords, x) );
-
-		return this;
-	}
-
 	surfaceMaterialColorAndNormalForCollision
 	(
 		scene: Scene, 
@@ -85,6 +65,33 @@ class Plane implements Shape
 	transformApply(transform: Transform): Shape
 	{
 		throw new Error("To be implemented!");
+	}
+
+	// Serializable.
+
+	fromJson(objectAsJson: string): Shape
+	{
+		throw new Error("To be implemented!");
+	}
+
+	prototypesSet(): Shape
+	{
+		var typeSetOnObject = SerializableHelper.typeSetOnObject;
+
+		typeSetOnObject(Coords, this.normal);
+		this.positionsOnPlane.forEach(x => typeSetOnObject(Coords, x) );
+
+		return this;
+	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toObjectSerializable(): any
+	{
+		return this;
 	}
 
 }

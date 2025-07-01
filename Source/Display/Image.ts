@@ -160,14 +160,19 @@ class ImageFromStrings implements Image2
 		throw new Error("To be implemented!");
 	}
 
+	prototypesSet(): Image2
+	{
+		Object.setPrototypeOf(this.imageData, ImageData.prototype);
+		return this;
+	}
+
 	toJson(): string
 	{
 		throw new Error("To be implemented!");
 	}
 
-	prototypesSet(): Image2
+	toObjectSerializable(): any
 	{
-		Object.setPrototypeOf(this.imageData, ImageData.prototype);
 		return this;
 	}
 }
@@ -249,16 +254,20 @@ class ImageFromDataUrl implements Image2
 		throw new Error("To be implemented!");
 	}
 
-	toJson(): string
-	{
-		throw new Error("To be implemented!");
-	}
-
 	prototypesSet(): Image2
 	{
 		Object.setPrototypeOf(this.imageData, ImageData.prototype);
 		return this;
 	}
 
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toObjectSerializable(): any
+	{
+		return this;
+	}
 }
 

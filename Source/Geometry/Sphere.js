@@ -51,14 +51,17 @@ class Sphere {
     fromJson(objectAsJson) {
         throw new Error("To be implemented!");
     }
-    toJson() {
-        throw new Error("To be implemented!");
-    }
     prototypesSet() {
         var typeSetOnObject = SerializableHelper.typeSetOnObject;
         typeSetOnObject(Disposition, this.disp);
         this.disp.prototypesSet();
         typeSetOnObject(Coords, this._texelUv);
+        return this;
+    }
+    toJson() {
+        throw new Error("To be implemented!");
+    }
+    toObjectSerializable() {
         return this;
     }
     // Temporary variables.

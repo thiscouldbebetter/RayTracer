@@ -160,10 +160,13 @@ class Coords {
     fromJson(objectAsJson) {
         throw new Error("To be implemented!");
     }
+    prototypesSet() {
+        return this;
+    }
     toJson() {
         throw new Error("To be implemented!");
     }
-    prototypesSet() {
+    toObjectSerializable() {
         return this;
     }
 }

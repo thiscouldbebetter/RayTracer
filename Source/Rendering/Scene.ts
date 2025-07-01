@@ -455,40 +455,27 @@ class Scene implements Serializable<Scene>
 
 	toJson(): string
 	{
-		Scene.temporaryFieldsRemoveFromObjectAndDescendants(this, 0);
-		var sceneAsJson = JSON.stringify(this, null, 4);
+		var sceneAsObjectSerializable = this.toObjectSerializable();
+		var sceneAsJson = JSON.stringify(sceneAsObjectSerializable, null, 4);
+
 		return sceneAsJson;
 	}
 
-	static temporaryFieldsRemoveFromObjectAndDescendants
-	(
-		objectToRemoveFrom: any,
-		depth: number
-	): void
+	toObjectSerializable(): any
 	{
-		for (var fieldName in objectToRemoveFrom)
+		SerializableHelper.temporaryFieldsRemoveFromObjectAndDescendants(this, 0);
+
+		var thisAsObject =
 		{
-			if (fieldName.startsWith("_"))
-			{
-				delete objectToRemoveFrom[fieldName];
-			}
-			else
-			{
-				var fieldValue = objectToRemoveFrom[fieldName];
-				if (fieldValue != null)
-				{
-					var fieldTypeName = fieldValue.constructor.name;
-					var fieldTypeIsPrimitive =
-						(fieldTypeName == String.name);
-					if (fieldTypeIsPrimitive == false)
-					{
-						Scene.temporaryFieldsRemoveFromObjectAndDescendants
-						(
-							fieldValue, depth + 1
-						);
-					}
-				}
-			}
-		}
+			"name": this.name,
+			"materials": this.materials.map(x => x.toObjectSerializable() ),
+			"backgroundColor": this.backgroundColor,
+			"lighting": this.lighting,
+			"camera": this.camera,
+			"shapeDefinitions": this.shapeDefinitions,
+			"shapeBuilders": this.shapeBuilders
+		};
+
+		return thisAsObject;
 	}
 }

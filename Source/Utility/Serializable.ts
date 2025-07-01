@@ -1,9 +1,10 @@
 
 interface Serializable<T>
 {
-	toJson(): string;
 	fromJson(objectAsJson: string): T;
 	prototypesSet(): T;
+	toJson(): string;
+	toObjectSerializable(): any;
 }
 
 class SerializableHelper
@@ -14,6 +15,36 @@ class SerializableHelper
 		var objectWithTypes =
 			SerializableHelper.typeSetOnObject(objectType, objectDeserialized);
 		return objectWithTypes;
+	}
+
+	static temporaryFieldsRemoveFromObjectAndDescendants
+	(
+		objectToRemoveFrom: any, depth: number
+	): void
+	{
+		for (var fieldName in objectToRemoveFrom)
+		{
+			if (fieldName.startsWith("_") )
+			{
+				delete objectToRemoveFrom[fieldName];
+			}
+			else
+			{
+				var fieldValue = objectToRemoveFrom[fieldName];
+				if (fieldValue != null)
+				{
+					var fieldTypeName = fieldValue.constructor.name;
+					var fieldTypeIsPrimitive = (fieldTypeName == String.name);
+					if (fieldTypeIsPrimitive == false)
+					{
+						SerializableHelper.temporaryFieldsRemoveFromObjectAndDescendants
+						(
+							fieldValue, depth + 1
+						);
+					}
+				}
+			}
+		}
 	}
 
 	static typeSetOnObject(objectType: any, objectToSetTypesOn: Serializable<any>): any

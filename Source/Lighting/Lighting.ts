@@ -20,11 +20,6 @@ class Lighting implements Serializable<Lighting>
 		throw new Error("To be implemented!");
 	}
 
-	toJson(): string
-	{
-		throw new Error("To be implemented!");
-	}
-
 	prototypesSet(): Lighting
 	{
 		this.lights.forEach
@@ -48,6 +43,16 @@ class Lighting implements Serializable<Lighting>
 				Object.setPrototypeOf(x, prototypeToSet);
 			}
 		); // hack
+		return this;
+	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toObjectSerializable(): any
+	{
 		return this;
 	}
 

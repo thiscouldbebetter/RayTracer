@@ -123,17 +123,22 @@ class Sphere implements Shape
 		throw new Error("To be implemented!");
 	}
 
-	toJson(): string
-	{
-		throw new Error("To be implemented!");
-	}
-
 	prototypesSet(): Sphere
 	{
 		var typeSetOnObject = SerializableHelper.typeSetOnObject;
 		typeSetOnObject(Disposition, this.disp);
 		this.disp.prototypesSet();
 		typeSetOnObject(Coords, this._texelUv);
+		return this;
+	}
+
+	toJson(): string
+	{
+		throw new Error("To be implemented!");
+	}
+
+	toObjectSerializable(): any
+	{
 		return this;
 	}
 
