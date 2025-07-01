@@ -107,7 +107,7 @@ class Face {
     plane(mesh) {
         if (this._plane == null) {
             var vertices = this.vertices(mesh);
-            this._plane = new Plane(vertices.map(x => x.pos));
+            this._plane = new Plane(mesh.name + Plane.name, vertices.map(x => x.pos));
         }
         return this._plane;
     }

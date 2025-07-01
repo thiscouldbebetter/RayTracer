@@ -1,9 +1,11 @@
 "use strict";
 class Plane {
-    constructor(positionsOnPlane) {
+    constructor(name, positionsOnPlane) {
+        this.name = name;
         this.positionsOnPlane = positionsOnPlane;
-        this.normal = new Coords(0, 0, 0);
+        this.normal = Coords.create();
         this.recalculateDerivedValues();
+        this.typeName = Plane.name;
     }
     recalculateDerivedValues() {
         var pos0 = this.positionsOnPlane[0];
@@ -12,7 +14,13 @@ class Plane {
         this.normal.overwriteWith(displacementFromPos0To1).crossProduct(displacementFromPos0To2).normalize();
         this.distanceFromOrigin = this.normal.dotProduct(pos0);
     }
-    // Serializable.
+    // Shape.
+    addCollisionsWithRayToList(ray, listToAddTo) {
+        throw new Error("To be implemented!");
+    }
+    clone() {
+        return new Plane(this.name, this.positionsOnPlane.map(x => x.clone()));
+    }
     fromJson(objectAsJson) {
         throw new Error("To be implemented!");
     }
@@ -24,5 +32,11 @@ class Plane {
         typeSetOnObject(Coords, this.normal);
         this.positionsOnPlane.forEach(x => typeSetOnObject(Coords, x));
         return this;
+    }
+    surfaceMaterialColorAndNormalForCollision(scene, collisionClosest, surfaceMaterial, surfaceColor, surfaceNormal) {
+        throw new Error("To be implemented!");
+    }
+    transformApply(transform) {
+        throw new Error("To be implemented!");
     }
 }

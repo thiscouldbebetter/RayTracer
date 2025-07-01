@@ -221,6 +221,7 @@ class Face implements Shape
 
 			this._plane = new Plane
 			(
+				mesh.name + Plane.name,
 				vertices.map(x => x.pos)
 			);
 		}

@@ -1,16 +1,23 @@
 
-class Plane implements Serializable<Plane>
+class Plane implements Shape
 {
+	name: string
 	positionsOnPlane: Coords[];
 
 	normal: Coords;
 	distanceFromOrigin: number;
 
-	constructor(positionsOnPlane: Coords[])
+	typeName: string;
+
+	constructor(name: string, positionsOnPlane: Coords[])
 	{
+		this.name = name;
 		this.positionsOnPlane = positionsOnPlane;
-		this.normal = new Coords(0, 0, 0);
+
+		this.normal = Coords.create();
 		this.recalculateDerivedValues();
+
+		this.typeName = Plane.name;
 	}
 
 	recalculateDerivedValues(): void
@@ -31,9 +38,19 @@ class Plane implements Serializable<Plane>
 		this.distanceFromOrigin = this.normal.dotProduct(pos0);
 	}
 
-	// Serializable.
+	// Shape.
 
-	fromJson(objectAsJson: string): Plane
+	addCollisionsWithRayToList(ray: Ray, listToAddTo: Collision[]): Collision[]
+	{
+		throw new Error("To be implemented!");
+	}
+
+	clone(): Shape
+	{
+		return new Plane(this.name, this.positionsOnPlane.map(x => x.clone() ) );
+	}
+
+	fromJson(objectAsJson: string): Shape
 	{
 		throw new Error("To be implemented!");
 	}
@@ -43,7 +60,7 @@ class Plane implements Serializable<Plane>
 		throw new Error("To be implemented!");
 	}
 
-	prototypesSet(): Plane
+	prototypesSet(): Shape
 	{
 		var typeSetOnObject = SerializableHelper.typeSetOnObject;
 
@@ -51,6 +68,23 @@ class Plane implements Serializable<Plane>
 		this.positionsOnPlane.forEach(x => typeSetOnObject(Coords, x) );
 
 		return this;
+	}
+
+	surfaceMaterialColorAndNormalForCollision
+	(
+		scene: Scene, 
+		collisionClosest: Collision,
+		surfaceMaterial: Material,
+		surfaceColor: Color,
+		surfaceNormal: Coords
+	): Color
+	{
+		throw new Error("To be implemented!");
+	}
+
+	transformApply(transform: Transform): Shape
+	{
+		throw new Error("To be implemented!");
 	}
 
 }
