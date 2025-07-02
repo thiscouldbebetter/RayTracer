@@ -5,6 +5,10 @@ class Collision
 	distanceToCollision: number;
 	shapesColliding: Shape[];
 
+	surfaceMaterial: Material;
+	surfaceNormal: Coords;
+	surfaceColor: Color;
+
 	_shapesCollidingByName: Map<string, Shape>;
 
 	constructor()
@@ -12,6 +16,10 @@ class Collision
 		this.pos = Coords.create();
 		this.distanceToCollision = null;
 		this.shapesColliding = [];
+
+		this.surfaceMaterial = Material.fromName(Collision.name);
+		this.surfaceNormal = Coords.create();
+		this.surfaceColor = Color.create();
 	}
 
 	// instance methods

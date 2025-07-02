@@ -4,6 +4,9 @@ class Collision {
         this.pos = Coords.create();
         this.distanceToCollision = null;
         this.shapesColliding = [];
+        this.surfaceMaterial = Material.fromName(Collision.name);
+        this.surfaceNormal = Coords.create();
+        this.surfaceColor = Color.create();
     }
     // instance methods
     static closestOf(collisions) {

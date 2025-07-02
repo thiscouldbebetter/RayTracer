@@ -7,6 +7,9 @@ class Ray {
     static create() {
         return new Ray(Coords.create(), Coords.create());
     }
+    static fromStartPosAndDirection(startPos, direction) {
+        return new Ray(startPos, direction);
+    }
     startPosAndDirectionSet(startPos, direction) {
         this.startPos.overwriteWith(startPos);
         this.direction.overwriteWith(direction);

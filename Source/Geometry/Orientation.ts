@@ -14,12 +14,21 @@ class Orientation implements Serializable<Orientation>
 		this.overwriteWithForwardDown(forward, down);
 	}
 
+	static create(): Orientation
+	{
+		return new Orientation
+		(
+			Coords.create(),
+			Coords.create()
+		);
+	}
+
 	static default(): Orientation
 	{
 		return new Orientation
 		(
-			new Coords(1, 0, 0),
-			new Coords(0, 0, 1)
+			Coords.fromXYZ(1, 0, 0),
+			Coords.fromXYZ(0, 0, 1)
 		);
 	}
 
@@ -40,6 +49,12 @@ class Orientation implements Serializable<Orientation>
 			this.forward.clone(), 
 			this.down.clone()
 		);
+	}
+
+	overwriteWith(other: Orientation): Orientation
+	{
+		this.overwriteWithForwardDown(other.forward, other.down);
+		return this;
 	}
 
 	overwriteWithForwardDown(forward: Coords, down: Coords): Orientation

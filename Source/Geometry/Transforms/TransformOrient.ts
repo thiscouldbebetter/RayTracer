@@ -8,9 +8,20 @@ class TransformOrient implements Transform
 		this.orientation = orientation;
 	}
 
+	static create(): TransformOrient
+	{
+		return new TransformOrient(Orientation.create() );
+	}
+
 	static fromOrientation(orientation: Orientation): TransformOrient
 	{
 		return new TransformOrient(orientation);
+	}
+
+	orientationSet(value: Orientation): TransformOrient
+	{
+		this.orientation.overwriteWith(value);
+		return this;
 	}
 
 	transformCoords(coordsToTransform: Coords): Coords

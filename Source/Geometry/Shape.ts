@@ -7,10 +7,7 @@ interface Shape extends Serializable<Shape>
 	surfaceMaterialColorAndNormalForCollision
 	(
 		scene: Scene, 
-		collisionClosest: Collision,
-		surfaceMaterial: Material,
-		surfaceColor: Color,
-		surfaceNormal: Coords
+		collision: Collision
 	): Color;
 	transformApply(transform: Transform): Shape;
 	typeName: string; // hack - For deserialization.

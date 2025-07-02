@@ -6,8 +6,11 @@ class Orientation {
         this.down = Coords.create();
         this.overwriteWithForwardDown(forward, down);
     }
+    static create() {
+        return new Orientation(Coords.create(), Coords.create());
+    }
     static default() {
-        return new Orientation(new Coords(1, 0, 0), new Coords(0, 0, 1));
+        return new Orientation(Coords.fromXYZ(1, 0, 0), Coords.fromXYZ(0, 0, 1));
     }
     static fromForwardAndDown(forward, down) {
         return new Orientation(forward, down);
@@ -15,6 +18,10 @@ class Orientation {
     // instance methods
     clone() {
         return new Orientation(this.forward.clone(), this.down.clone());
+    }
+    overwriteWith(other) {
+        this.overwriteWithForwardDown(other.forward, other.down);
+        return this;
     }
     overwriteWithForwardDown(forward, down) {
         this.forward.overwriteWith(forward).normalize();

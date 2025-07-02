@@ -17,11 +17,9 @@ class LightAmbient
 		return new LightAmbient(intensity);
 	}
 
-	intensityForCollisionMaterialNormalAndCamera
+	intensityForCollisionAndCamera
 	(
 		collision: Collision,
-		material: Material,
-		normal: Coords,
 		camera: Camera,
 		sceneRenderer: SceneRenderer,
 		scene: Scene

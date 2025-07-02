@@ -5,7 +5,6 @@ class Bounds
 	max: Coords;
 
 	minAndMax: Coords[];
-	size: Coords;
 
 	constructor(min: Coords, max: Coords)
 	{
@@ -13,7 +12,6 @@ class Bounds
 		this.max = max || Coords.create();
 
 		this.minAndMax = [ this.min, this.max ];
-		this.size = Coords.create();
 
 		this.recalculateDerivedValues();
 	}
@@ -101,6 +99,17 @@ class Bounds
 
 	recalculateDerivedValues(): void
 	{
-		this.size.overwriteWith(this.max).subtract(this.min);
+		this._size = null;
+	}
+
+	_size: Coords;
+
+	size(): Coords
+	{
+		if (this._size == null)
+		{
+			this._size = this.max.clone().subtract(this.min);
+		}
+		return this._size;
 	}
 }

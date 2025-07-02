@@ -7,7 +7,7 @@ class LightAmbient {
     static fromIntensity(intensity) {
         return new LightAmbient(intensity);
     }
-    intensityForCollisionMaterialNormalAndCamera(collision, material, normal, camera, sceneRenderer, scene) {
+    intensityForCollisionAndCamera(collision, camera, sceneRenderer, scene) {
         return this.intensity;
     }
 }

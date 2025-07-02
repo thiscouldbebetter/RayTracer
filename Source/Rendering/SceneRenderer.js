@@ -1,16 +1,17 @@
 "use strict";
 class SceneRenderer {
-    constructor(lightingIsEnabled, shadowsAreEnabled, texturesAreEnabled, renderToBufferFirst) {
+    constructor(lightingIsEnabled, shadowsAreEnabled, texturesAreEnabled, transparencyIsEnabled, renderToBufferFirst) {
         this.lightingIsEnabled = lightingIsEnabled;
         this.shadowsAreEnabled = shadowsAreEnabled;
         this.texturesAreEnabled = texturesAreEnabled;
+        this.transparencyIsEnabled = transparencyIsEnabled;
         this.renderToBufferFirst = renderToBufferFirst;
     }
     static minimal() {
-        return new SceneRenderer(false, false, false, false);
+        return new SceneRenderer(false, false, false, false, false);
     }
     static maximal() {
-        return new SceneRenderer(true, true, true, false); // todo - Enable renderToBufferFirst.
+        return new SceneRenderer(true, true, true, true, false); // todo - Enable renderToBufferFirst.
     }
     sceneRender(scene) {
         var displaySize = scene.camera.viewSize;
@@ -24,7 +25,7 @@ class SceneRenderer {
         });
     }
     sceneRender_SceneLoaded(sceneLoaded, sceneRenderer, displayToRenderToFirst, timeBeforeRender) {
-        sceneRenderer.drawSceneToDisplay(sceneLoaded, displayToRenderToFirst);
+        sceneRenderer.sceneDrawToDisplay(sceneLoaded, displayToRenderToFirst);
         if (this.renderToBufferFirst) {
             var displayFinal = new DisplayGraphics(sceneLoaded.camera.viewSize);
             displayToRenderToFirst.drawToOther(displayFinal);
@@ -34,9 +35,9 @@ class SceneRenderer {
             - timeBeforeRender.valueOf();
         console.log("Scene rendered in " + renderTimeInMilliseconds + " ms.");
     }
-    drawSceneToDisplay(scene, display) {
-        this.drawSceneToDisplay_InitializeTemporaryVariables();
-        this.drawSceneToDisplay_Background(scene, display);
+    sceneDrawToDisplay(scene, display) {
+        this.sceneDrawToDisplay_InitializeTemporaryVariables();
+        this.sceneDrawToDisplay_Background(scene, display);
         var sizeInTiles = Coords.fromXY(1, 1);
         var tileSizeInPixels = display.sizeInPixels
             .clone()
@@ -47,59 +48,54 @@ class SceneRenderer {
             tilePosInTiles.y = y;
             for (var x = 0; x < sizeInTiles.x; x++) {
                 tilePosInTiles.x = x;
-                this.drawSceneToDisplay_ForTilePosAndBounds(scene, display, tileSizeInPixels, tilePosInTiles, tileBounds);
+                this.sceneDrawToDisplay_ForTilePosAndBounds(scene, display, tileSizeInPixels, tilePosInTiles, tileBounds);
             }
         }
     }
-    drawSceneToDisplay_ForTilePosAndBounds(scene, display, tileSizeInPixels, tilePosInTiles, tileBounds) {
+    sceneDrawToDisplay_ForTilePosAndBounds(scene, display, tileSizeInPixels, tilePosInTiles, tileBounds) {
         tileBounds.min
             .overwriteWith(tilePosInTiles)
             .multiply(tileSizeInPixels);
         tileBounds.max
             .overwriteWith(tileBounds.min)
             .add(tileSizeInPixels);
-        this.drawSceneToDisplay_PixelsGetAndDrawForBounds(scene, display, tileBounds);
+        this.sceneDrawToDisplay_PixelsGetAndDrawForBounds(scene, display, tileBounds);
     }
-    drawSceneToDisplay_InitializeTemporaryVariables() {
+    sceneDrawToDisplay_InitializeTemporaryVariables() {
         this._collisions = [];
         this._directionFromEyeToPixel = Coords.create();
         this._displacementFromEyeToPixel = Coords.create();
-        this._material = Material.fromNameAndColor("DisplayMaterial", Color.blank("MaterialColor"));
         this._pixelColor = Color.blank("PixelColor");
         this._pixelPosAbsolute = Coords.create();
-        this._surfaceNormal = Coords.create();
         this._texelColor = Color.blank("TexelColor");
         this._texelUV = Coords.create();
         this._vertexWeightsAtSurfacePos = [];
     }
-    drawSceneToDisplay_Background(scene, display) {
+    sceneDrawToDisplay_Background(scene, display) {
         display.fillWithColor(scene.backgroundColor);
     }
-    drawSceneToDisplay_PixelsGetAndDrawForBounds(scene, display, bounds) {
-        var boundsMin = bounds.min;
-        var boundsMax = bounds.max;
-        var pane = new Pane(boundsMin, boundsMax);
+    sceneDrawToDisplay_PixelsGetAndDrawForBounds(scene, display, bounds) {
+        var pane = Pane.fromBounds(bounds);
         pane.sceneDrawForRenderer(scene, this);
         pane.drawToDisplay(display);
     }
     sceneDrawToPaneAtPixelPosRelative(scene, pane, pixelPosRelativeToPane) {
         var pixelPosAbsolute = this._pixelPosAbsolute
             .overwriteWith(pixelPosRelativeToPane)
-            .add(pane.boundsMin);
-        var collisions = this.drawSceneToDisplay_Pixel_FindCollisions(scene, pixelPosAbsolute);
+            .add(pane.bounds.min);
+        var collisions = this.collisionsFindOfSceneWithRayFromCameraToPixelPos(scene, pixelPosAbsolute);
         var collision = Collision.closestOf(collisions);
         if (collisions.length > 0) {
             var shape = collision.shapeCollidingFinal();
-            var surfaceNormal = this._surfaceNormal;
-            var surfaceColor = this._pixelColor;
-            var surfaceMaterial = this._material;
-            shape.surfaceMaterialColorAndNormalForCollision(scene, collision, surfaceMaterial, surfaceColor, surfaceNormal);
-            var intensityFromLightsAll = this.intensityFromLightsAll(collision, surfaceMaterial, surfaceNormal, scene);
-            surfaceColor.multiply(intensityFromLightsAll);
-            pane.pixelAtPosRelativeSetToColor(pixelPosRelativeToPane, surfaceColor);
+            shape.surfaceMaterialColorAndNormalForCollision(scene, collision);
+            var intensityFromLightsAll = this.intensityFromLightsAll(collision, scene);
+            var pixelColor = this._pixelColor
+                .overwriteWith(collision.surfaceColor)
+                .multiply(intensityFromLightsAll);
+            pane.pixelAtPosRelativeSetToColor(pixelPosRelativeToPane, pixelColor);
         }
     }
-    drawSceneToDisplay_Pixel_FindCollisions(scene, pixelPos) {
+    collisionsFindOfSceneWithRayFromCameraToPixelPos(scene, pixelPos) {
         var camera = scene.camera;
         var rayFromCameraToPixel = camera.rayToPixelAtPos(pixelPos);
         var collisions = this._collisions;
@@ -108,7 +104,7 @@ class SceneRenderer {
         collisions);
         return collisions;
     }
-    intensityFromLightsAll(collisionClosest, surfaceMaterial, surfaceNormal, scene) {
+    intensityFromLightsAll(collision, scene) {
         var intensityFromLightsAll = 0;
         if (this.lightingIsEnabled == false) {
             intensityFromLightsAll = 1;
@@ -117,7 +113,7 @@ class SceneRenderer {
             var lights = scene.lighting.lights;
             for (var i = 0; i < lights.length; i++) {
                 var light = lights[i];
-                var intensity = light.intensityForCollisionMaterialNormalAndCamera(collisionClosest, surfaceMaterial, surfaceNormal, scene.camera, this, scene);
+                var intensity = light.intensityForCollisionAndCamera(collision, scene.camera, this, scene);
                 intensityFromLightsAll += intensity;
             }
         }

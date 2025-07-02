@@ -7,8 +7,8 @@ class LightPoint
 	pos: Coords;
 
 	_directionFromObjectToViewer: Coords;
+	_directionOfReflection: Coords;
 	_displacementFromObjectToLight: Coords;
-	_surfaceNormal: Coords;
 
 	constructor(intensity: number, pos: Coords)
 	{
@@ -23,110 +23,48 @@ class LightPoint
 		return new LightPoint(intensity, pos);
 	}
 
-	intensityForCollisionMaterialNormalAndCamera
+	intensityForCollisionAndCamera
 	(
 		collision: Collision,
-		material: Material,
-		normal: Coords,
 		camera: Camera,
 		sceneRenderer: SceneRenderer,
 		scene: Scene
 	): number
 	{
+		var returnValue = 0;
+
 		this.temporaryVariablesInitializeIfNecessary();
 
 		var displacementFromObjectToLight =
-			this._displacementFromObjectToLight;
-
-		displacementFromObjectToLight.overwriteWith
-		(
-			this.pos
-		).subtract
-		(
-			collision.pos
-		);
+			this._displacementFromObjectToLight
+				.overwriteWith(this.pos)
+				.subtract(collision.pos);
 
 		var distanceFromLightToObject =
 			displacementFromObjectToLight.magnitude();
-		var distanceFromLightToObjectSquared = Math.pow
-		(
-			distanceFromLightToObject, 2
-		);
-
-		var surfaceNormal = this._surfaceNormal.overwriteWith(normal);
+		var distanceFromLightToObjectSquared =
+			Math.pow(distanceFromLightToObject, 2);
 
 		var directionFromObjectToLight =
 			displacementFromObjectToLight.normalize();
 
 		var directionFromObjectToLightDotSurfaceNormal =
-			directionFromObjectToLight.dotProduct
-			(
-				surfaceNormal
-			);
+			directionFromObjectToLight
+				.dotProduct(collision.surfaceNormal);
 
-		var returnValue = 0;
+		var intensityAdjusted =
+			this.intensity / distanceFromLightToObjectSquared;
 
-		if (directionFromObjectToLightDotSurfaceNormal > 0)
-		{
-			var objectIsLitByThisLight = false;
-
-			if (sceneRenderer.shadowsAreEnabled)
-			{
-				var rayFromObjectToBeLitToLight = new Ray
-				(
-					collision.pos,
-					directionFromObjectToLight
-				);
-
-				var collisionsBlockingLight = 
-					scene.collisionsOfRayWithObjectsMinusExceptionAddToList
-					(
-						rayFromObjectToBeLitToLight,
-						collision.shapeCollidingFirst(), // objectToExcept
-						[]
-					);
-
-				objectIsLitByThisLight = (collisionsBlockingLight.length == 0);
-			}
-
-			if (objectIsLitByThisLight)
-			{
-				var materialOptics = material.optics;
-
-				var diffuseComponent = 
-					materialOptics.diffuse
-					* directionFromObjectToLightDotSurfaceNormal
-					* this.intensity
-					/ distanceFromLightToObjectSquared;
-
-				var directionOfReflection = 
-					surfaceNormal.multiplyScalar
-					(
-						2 * directionFromObjectToLightDotSurfaceNormal
-					).subtract
-					(
-						directionFromObjectToLight
-					);
-
-				var directionFromObjectToViewer =
-					this._directionFromObjectToViewer
-						.overwriteWith(camera.pos)
-						.subtract(collision.pos)
-						.normalize();
-
-				var specularComponent = 
-					materialOptics.specular
-					* Math.pow
-					(
-						directionOfReflection.dotProduct(directionFromObjectToViewer),
-						materialOptics.shininess
-					)
-					* this.intensity
-					/ distanceFromLightToObjectSquared;
-
-				returnValue = diffuseComponent + specularComponent;
-			}
-		}
+		returnValue = Lighting.intensityForCollisionAndCamera
+		(
+			collision,
+			camera,
+			sceneRenderer,
+			scene,
+			directionFromObjectToLight,
+			directionFromObjectToLightDotSurfaceNormal,
+			intensityAdjusted
+		);
 
 		return returnValue;
 	}
@@ -140,10 +78,6 @@ class LightPoint
 		if (this._displacementFromObjectToLight == null)
 		{
 			this._displacementFromObjectToLight = Coords.create();
-		}
-		if (this._surfaceNormal == null)
-		{
-			this._surfaceNormal = Coords.create();
 		}
 	}
 }

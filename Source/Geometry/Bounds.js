@@ -4,7 +4,6 @@ class Bounds {
         this.min = min || Coords.create();
         this.max = max || Coords.create();
         this.minAndMax = [this.min, this.max];
-        this.size = Coords.create();
         this.recalculateDerivedValues();
     }
     static create() {
@@ -56,6 +55,12 @@ class Bounds {
         return returnValue;
     }
     recalculateDerivedValues() {
-        this.size.overwriteWith(this.max).subtract(this.min);
+        this._size = null;
+    }
+    size() {
+        if (this._size == null) {
+            this._size = this.max.clone().subtract(this.min);
+        }
+        return this._size;
     }
 }

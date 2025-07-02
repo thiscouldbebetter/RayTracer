@@ -6,6 +6,9 @@ class Sphere {
         this.materialName = materialName;
         this.radius = radius;
         this.disp = disp;
+        this._polar = Polar.create();
+        this._transformOrient =
+            TransformOrient.create();
     }
     // Shape.
     addCollisionsWithRayToList(ray, listToAddTo) {
@@ -19,20 +22,20 @@ class Sphere {
     material(scene) {
         return scene.materialByName(this.materialName);
     }
-    surfaceMaterialColorAndNormalForCollision(scene, collisionClosest, surfaceMaterial, surfaceColor, surfaceNormal) {
-        var sphere = collisionClosest.shapeCollidingWithName(Sphere.name);
-        var surfacePos = collisionClosest.pos;
+    surfaceMaterialColorAndNormalForCollision(scene, collision) {
+        var sphere = collision.shapeCollidingWithName(Sphere.name);
+        var surfacePos = collision.pos;
         var sphereMaterial = sphere.material(scene);
-        surfaceMaterial.overwriteWith(sphereMaterial);
-        surfaceNormal
+        var surfaceMaterial = collision.surfaceMaterial.overwriteWith(sphereMaterial);
+        var surfaceColor = collision.surfaceColor;
+        var surfaceNormal = collision.surfaceNormal
             .overwriteWith(surfacePos)
             .subtract(sphere.disp.pos)
             .normalize();
-        var surfaceNormalInLocalCoords = TransformOrient
-            .fromOrientation(this.disp.ori)
+        var surfaceNormalInLocalCoords = this._transformOrient
+            .orientationSet(this.disp.ori)
             .transformCoords(surfaceNormal.clone());
-        var surfaceNormalInLocalCoordsAsPolar = Polar
-            .create()
+        var surfaceNormalInLocalCoordsAsPolar = this._polar
             .fromCoords(surfaceNormalInLocalCoords);
         var texelUv = this.texelUv();
         texelUv.overwriteWithXYZ(surfaceNormalInLocalCoordsAsPolar.azimuth, (1 + surfaceNormalInLocalCoordsAsPolar.elevation) / 2, 0); // todo

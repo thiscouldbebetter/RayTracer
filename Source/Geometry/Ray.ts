@@ -15,6 +15,15 @@ class Ray
 		return new Ray(Coords.create(), Coords.create() );
 	}
 
+	static fromStartPosAndDirection
+	(
+		startPos: Coords,
+		direction: Coords
+	): Ray
+	{
+		return new Ray(startPos, direction);
+	}
+
 	startPosAndDirectionSet(startPos: Coords, direction: Coords): Ray
 	{
 		this.startPos.overwriteWith(startPos);

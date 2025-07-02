@@ -42,7 +42,8 @@ class Mesh {
             if (facePlane.normal.dotProduct(ray.direction) < 0) {
                 var collision = new Collision().rayAndFace(ray, this, // mesh
                 face);
-                if (collision.shapeCollidingWithName(Face.name) != null) {
+                var faceColliding = collision.shapeCollidingWithName(Face.name);
+                if (faceColliding != null) {
                     collision.shapeCollidingAdd(this);
                     listToAddTo.push(collision);
                 }
@@ -50,18 +51,18 @@ class Mesh {
         }
         return listToAddTo;
     }
-    surfaceMaterialColorAndNormalForCollision(scene, collisionClosest, surfaceMaterial, surfaceColor, surfaceNormal) {
-        var face = collisionClosest.shapeCollidingWithName(Face.name);
+    surfaceMaterialColorAndNormalForCollision(scene, collision) {
+        var face = collision.shapeCollidingWithName(Face.name);
         if (face == null) {
-            throw new Error("todo");
+            throw new Error("Face should not be null.");
         }
-        var surfacePos = collisionClosest.pos;
+        var surfacePos = collision.pos;
+        var surfaceNormal = collision.surfaceNormal;
         var _vertexWeightsAtSurfacePos = face.vertexWeightsAtSurfacePosAddToList(surfacePos, this._vertexWeightsAtSurfacePos);
         surfaceNormal.overwriteWith(face.normalForVertexWeights(_vertexWeightsAtSurfacePos));
         var faceMaterial = face.material(scene);
-        surfaceMaterial.overwriteWith(faceMaterial);
-        surfaceColor
-            .overwriteWith(surfaceMaterial.color);
+        var surfaceMaterial = collision.surfaceMaterial.overwriteWith(faceMaterial);
+        var surfaceColor = collision.surfaceColor.overwriteWith(surfaceMaterial.color);
         var textures = surfaceMaterial.textures;
         for (var t = 0; t < textures.length; t++) {
             var texture = textures[t];

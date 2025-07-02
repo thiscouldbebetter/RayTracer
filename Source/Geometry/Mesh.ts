@@ -101,7 +101,9 @@ class Mesh implements Shape
 					face
 				);
 
-				if (collision.shapeCollidingWithName(Face.name) != null)
+				var faceColliding =
+					collision.shapeCollidingWithName(Face.name);
+				if (faceColliding != null)
 				{
 					collision.shapeCollidingAdd(this);
 					listToAddTo.push(collision);
@@ -115,19 +117,19 @@ class Mesh implements Shape
 	surfaceMaterialColorAndNormalForCollision
 	(
 		scene: Scene, 
-		collisionClosest: Collision,
-		surfaceMaterial: Material,
-		surfaceColor: Color,
-		surfaceNormal: Coords
+		collision: Collision
 	): Color
 	{
-		var face = collisionClosest.shapeCollidingWithName(Face.name) as Face;
+		var face =
+			collision.shapeCollidingWithName(Face.name) as Face;
+
 		if (face == null)
 		{
-			throw new Error("todo");
+			throw new Error("Face should not be null.");
 		}
 
-		var surfacePos = collisionClosest.pos;
+		var surfacePos = collision.pos;
+		var surfaceNormal = collision.surfaceNormal;
 
 		var _vertexWeightsAtSurfacePos =
 			face.vertexWeightsAtSurfacePosAddToList
@@ -146,10 +148,11 @@ class Mesh implements Shape
 
 		var faceMaterial = face.material(scene);
 
-		surfaceMaterial.overwriteWith(faceMaterial);
+		var surfaceMaterial =
+			collision.surfaceMaterial.overwriteWith(faceMaterial);
 
-		surfaceColor
-			.overwriteWith(surfaceMaterial.color);
+		var surfaceColor =
+			collision.surfaceColor.overwriteWith(surfaceMaterial.color);
 
 		var textures = surfaceMaterial.textures; 
 

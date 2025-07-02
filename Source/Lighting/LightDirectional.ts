@@ -8,7 +8,6 @@ class LightDirectional
 
 	_directionFromObjectToViewer: Coords;
 	_directionInverted: Coords;
-	_surfaceNormal: Coords;
 
 	constructor(intensity: number, direction: Coords)
 	{
@@ -26,90 +25,41 @@ class LightDirectional
 		return new LightDirectional(intensity, direction);
 	}
 
-	intensityForCollisionMaterialNormalAndCamera
+	intensityForCollisionAndCamera
 	(
 		collision: Collision,
-		material: Material,
-		normal: Coords,
 		camera: Camera,
 		sceneRenderer: SceneRenderer,
 		scene: Scene
 	): number
 	{
-		this.temporaryVariablesInitializeIfNecessary();
-
-		var surfaceNormal = this._surfaceNormal.overwriteWith(normal);
-
-		var directionFromObjectToLight =
-			this._directionInverted.overwriteWith(this.direction).invert();
-
-		var directionFromObjectToLightDotSurfaceNormal =
-			directionFromObjectToLight.dotProduct
-			(
-				surfaceNormal
-			);
-
 		var returnValue = 0;
 
-		if (directionFromObjectToLightDotSurfaceNormal > 0)
-		{
-			var objectIsLitByThisLight = false;
+		this.temporaryVariablesInitializeIfNecessary();
 
-			if (sceneRenderer.shadowsAreEnabled)
-			{
-				var rayFromObjectToBeLitToLight = new Ray
-				(
-					collision.pos,
-					directionFromObjectToLight
-				);
+		var surfaceNormal = collision.surfaceNormal;
 
-				var collisionsBlockingLight = 
-					scene.collisionsOfRayWithObjectsMinusExceptionAddToList
-					(
-						rayFromObjectToBeLitToLight,
-						collision.shapeCollidingFirst(), // objectToExcept
-						[]
-					);
+		var directionFromObjectToLight =
+			this._directionInverted
+				.overwriteWith(this.direction)
+				.invert();
 
-				objectIsLitByThisLight = (collisionsBlockingLight.length == 0);
-			}
+		var directionFromObjectToLightDotSurfaceNormal =
+			directionFromObjectToLight
+				.dotProduct(surfaceNormal);
 
-			if (objectIsLitByThisLight)
-			{
-				var materialOptics = material.optics;
+		var intensityAdjusted = this.intensity;
 
-				var diffuseComponent = 
-					materialOptics.diffuse
-					* directionFromObjectToLightDotSurfaceNormal
-					* this.intensity;
-
-				var directionOfReflection = 
-					surfaceNormal.multiplyScalar
-					(
-						2 * directionFromObjectToLightDotSurfaceNormal
-					).subtract
-					(
-						directionFromObjectToLight
-					);
-
-				var directionFromObjectToViewer =
-					this._directionFromObjectToViewer
-						.overwriteWith(camera.pos)
-						.subtract(collision.pos)
-						.normalize();
-
-				var specularComponent = 
-					materialOptics.specular
-					* Math.pow
-					(
-						directionOfReflection.dotProduct(directionFromObjectToViewer),
-						materialOptics.shininess
-					)
-					* this.intensity;
-
-				returnValue = diffuseComponent + specularComponent;
-			}
-		}
+		returnValue = Lighting.intensityForCollisionAndCamera
+		(
+			collision,
+			camera,
+			sceneRenderer,
+			scene,
+			directionFromObjectToLight,
+			directionFromObjectToLightDotSurfaceNormal,
+			intensityAdjusted
+		);
 
 		return returnValue;
 	}
@@ -124,11 +74,6 @@ class LightDirectional
 		if (this._directionInverted == null)
 		{
 			this._directionInverted = Coords.create();
-		}
-
-		if (this._surfaceNormal == null)
-		{
-			this._surfaceNormal = Coords.create();
 		}
 	}
 }

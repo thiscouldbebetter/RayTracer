@@ -21,7 +21,7 @@ class Plane {
     clone() {
         return new Plane(this.name, this.positionsOnPlane.map(x => x.clone()));
     }
-    surfaceMaterialColorAndNormalForCollision(scene, collisionClosest, surfaceMaterial, surfaceColor, surfaceNormal) {
+    surfaceMaterialColorAndNormalForCollision(scene, collision) {
         throw new Error("To be implemented!");
     }
     transformApply(transform) {

@@ -56,4 +56,112 @@ class Lighting implements Serializable<Lighting>
 		return this;
 	}
 
+	// Helpers.
+
+	static intensityForCollisionAndCamera
+	(
+		collision: Collision,
+		camera: Camera,
+		sceneRenderer: SceneRenderer,
+		scene: Scene,
+		directionFromObjectToLight: Coords,
+		directionFromObjectToLightDotSurfaceNormal: number,
+		intensityAdjusted: number
+	): number
+	{
+		var returnValue = 0;
+
+		if (directionFromObjectToLightDotSurfaceNormal > 0)
+		{
+			var objectIsLitByThisLight = false;
+
+			if (sceneRenderer.shadowsAreEnabled)
+			{
+				var rayFromObjectToBeLitToLight =
+					Ray.fromStartPosAndDirection
+					(
+						collision.pos,
+						directionFromObjectToLight
+					);
+
+				var collisionsBlockingLight = 
+					scene.collisionsOfRayWithObjectsMinusExceptionAddToList
+					(
+						rayFromObjectToBeLitToLight,
+						collision.shapeCollidingFirst(), // objectToExcept
+						[]
+					);
+
+				objectIsLitByThisLight =
+					(collisionsBlockingLight.length == 0);
+			}
+
+			returnValue = Lighting.intensityForCollisionAndCamera_2
+			(
+				objectIsLitByThisLight,
+				camera,
+				collision,
+				directionFromObjectToLight,
+				directionFromObjectToLightDotSurfaceNormal,
+				intensityAdjusted
+			);
+		}
+
+		return returnValue;
+	}
+
+	static _directionFromObjectToViewer: Coords = Coords.create();
+
+	static intensityForCollisionAndCamera_2
+	(
+		objectIsLitByThisLight: boolean,
+		camera: Camera,
+		collision: Collision,
+		directionFromObjectToLight: Coords,
+		directionFromObjectToLightDotSurfaceNormal: number,
+		intensityAdjusted: number
+	): number
+	{
+		var returnValue = 0;
+
+		if (objectIsLitByThisLight)
+		{
+			var material = collision.surfaceMaterial;
+			var materialOptics = material.optics;
+
+			var diffuseComponent = 
+				materialOptics.diffuse
+				* directionFromObjectToLightDotSurfaceNormal
+				* intensityAdjusted;
+
+			var surfaceNormal = collision.surfaceNormal;
+
+			var directionOfReflection = 
+				this._directionOfReflection
+					.overwriteWith(surfaceNormal)
+					.multiplyScalar(2 * directionFromObjectToLightDotSurfaceNormal)
+					.subtract(directionFromObjectToLight);
+
+			var directionFromObjectToViewer =
+				this._directionFromObjectToViewer
+					.overwriteWith(camera.pos)
+					.subtract(collision.pos)
+					.normalize();
+
+			var specularComponent = 
+				materialOptics.specular
+				* Math.pow
+				(
+					directionOfReflection.dotProduct(directionFromObjectToViewer),
+					materialOptics.shininess
+				)
+				* intensityAdjusted;
+
+			returnValue = diffuseComponent + specularComponent;
+		}
+
+		return returnValue;
+	}
+
+	static _directionOfReflection: Coords = Coords.create();
 }

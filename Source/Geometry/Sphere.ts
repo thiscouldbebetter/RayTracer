@@ -8,6 +8,9 @@ class Sphere implements Shape
 	radius: number;
 	disp: Disposition;
 
+	_polar: Polar;
+	_transformOrient: TransformOrient;
+
 	constructor
 	(
 		name: string,
@@ -22,6 +25,10 @@ class Sphere implements Shape
 		this.materialName = materialName;
 		this.radius = radius;
 		this.disp = disp;
+
+		this._polar = Polar.create();
+		this._transformOrient =
+			TransformOrient.create();
 	}
 
 	// Shape.
@@ -54,30 +61,31 @@ class Sphere implements Shape
 	surfaceMaterialColorAndNormalForCollision
 	(
 		scene: Scene, 
-		collisionClosest: Collision,
-		surfaceMaterial: Material,
-		surfaceColor: Color,
-		surfaceNormal: Coords
+		collision: Collision
 	): Color
 	{
-		var sphere = collisionClosest.shapeCollidingWithName(Sphere.name) as Sphere;
-		var surfacePos = collisionClosest.pos;
-		var sphereMaterial = sphere.material(scene);
-		surfaceMaterial.overwriteWith(sphereMaterial);
+		var sphere =
+			collision.shapeCollidingWithName(Sphere.name) as Sphere;
 
-		surfaceNormal
-			.overwriteWith(surfacePos)
-			.subtract(sphere.disp.pos)
-			.normalize();
+		var surfacePos = collision.pos;
+		var sphereMaterial = sphere.material(scene);
+		var surfaceMaterial =
+			collision.surfaceMaterial.overwriteWith(sphereMaterial);
+		var surfaceColor = collision.surfaceColor;
+
+		var surfaceNormal =
+			collision.surfaceNormal
+				.overwriteWith(surfacePos)
+				.subtract(sphere.disp.pos)
+				.normalize();
 
 		var surfaceNormalInLocalCoords =
-			TransformOrient
-				.fromOrientation(this.disp.ori)
+			this._transformOrient
+				.orientationSet(this.disp.ori)
 				.transformCoords(surfaceNormal.clone());
 
 		var surfaceNormalInLocalCoordsAsPolar =
-			Polar
-				.create()
+			this._polar
 				.fromCoords(surfaceNormalInLocalCoords);
 
 		var texelUv = this.texelUv();

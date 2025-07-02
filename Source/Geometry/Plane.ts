@@ -53,10 +53,7 @@ class Plane implements Shape
 	surfaceMaterialColorAndNormalForCollision
 	(
 		scene: Scene, 
-		collisionClosest: Collision,
-		surfaceMaterial: Material,
-		surfaceColor: Color,
-		surfaceNormal: Coords
+		collision: Collision,
 	): Color
 	{
 		throw new Error("To be implemented!");

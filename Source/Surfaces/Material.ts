@@ -20,6 +20,11 @@ class Material implements Serializable<Material>
 		this.textures = textures;
 	}
 
+	static fromName(name: string): Material
+	{
+		return new Material(name, Color.create(), Material_Optics.zeroes(), []);
+	}
+
 	static fromNameAndColor(name: string, color: Color): Material
 	{
 		return new Material(name, color, Material_Optics.zeroes(), []);

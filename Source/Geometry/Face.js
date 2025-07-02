@@ -231,7 +231,7 @@ class Face {
     toObjectSerializable() {
         return this;
     }
-    surfaceMaterialColorAndNormalForCollision(scene, collisionClosest, surfaceMaterial, surfaceColor, surfaceNormal) {
+    surfaceMaterialColorAndNormalForCollision(scene, collision) {
         throw new Error("To be implemented!");
     }
     transformApply(transform) {

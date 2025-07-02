@@ -1,10 +1,7 @@
 
 class Pane
 {
-	boundsMin: Coords;
-	boundsMax: Coords;
-
-	sizeInPixels: Coords;
+	bounds: Bounds;
 
 	pixelRows: Color[][];
 
@@ -12,13 +9,9 @@ class Pane
 	_pixelPosAbsolute: Coords;
 	_pixelPosRelative: Coords;
 
-	constructor(boundsMin: Coords, boundsMax: Coords)
+	constructor(bounds: Bounds)
 	{
-		this.boundsMin = boundsMin;
-		this.boundsMax = boundsMax;
-
-		this.sizeInPixels =
-			this.boundsMax.clone().subtract(this.boundsMin);
+		this.bounds = bounds;
 
 		this._pixelColor = Color.create();
 		this._pixelPosAbsolute = Coords.create();
@@ -26,7 +19,7 @@ class Pane
 
 		this.pixelRows = [];
 
-		var size = this.sizeInPixels;
+		var size = this.sizeInPixels();
 
 		for (var y = 0; y < size.y; y++)
 		{
@@ -41,11 +34,16 @@ class Pane
 		}
 	}
 
+	static fromBounds(bounds: Bounds): Pane
+	{
+		return new Pane(bounds);
+	}
+
 	drawToDisplay(display: Display): void
 	{
 		var pixelPosRelative = this._pixelPosRelative;
 		var pixelPosAbsolute = this._pixelPosAbsolute;
-		var sizeInPixels = this.sizeInPixels;
+		var sizeInPixels = this.sizeInPixels();
 
 		for (var y = 0; y < sizeInPixels.y; y++)
 		{
@@ -58,7 +56,7 @@ class Pane
 
 				pixelPosAbsolute
 					.overwriteWith(pixelPosRelative)
-					.add(this.boundsMin);
+					.add(this.bounds.min);
 
 				var pixelColor = pixelRow[x];
 
@@ -80,7 +78,7 @@ class Pane
 		sceneRenderer: SceneRenderer
 	): void
 	{
-		var paneSize = this.sizeInPixels;
+		var paneSize = this.sizeInPixels();
 
 		var pixelPosRelative = this._pixelPosRelative;
 
@@ -100,5 +98,10 @@ class Pane
 				);
 			}
 		}
+	}
+
+	sizeInPixels(): Coords
+	{
+		return this.bounds.size();
 	}
 }

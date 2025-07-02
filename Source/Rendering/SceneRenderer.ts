@@ -2,8 +2,9 @@
 class SceneRenderer
 {
 	lightingIsEnabled: boolean;
-	shadowsAreEnabled: boolean; // todo
+	shadowsAreEnabled: boolean;
 	texturesAreEnabled: boolean;
+	transparencyIsEnabled: boolean;
 	renderToBufferFirst: boolean;
 
 	constructor
@@ -11,23 +12,25 @@ class SceneRenderer
 		lightingIsEnabled: boolean,
 		shadowsAreEnabled: boolean,
 		texturesAreEnabled: boolean,
+		transparencyIsEnabled: boolean,
 		renderToBufferFirst: boolean
 	)
 	{
 		this.lightingIsEnabled = lightingIsEnabled;
 		this.shadowsAreEnabled = shadowsAreEnabled;
 		this.texturesAreEnabled = texturesAreEnabled;
+		this.transparencyIsEnabled = transparencyIsEnabled;
 		this.renderToBufferFirst = renderToBufferFirst;
 	}
 
 	static minimal(): SceneRenderer
 	{
-		return new SceneRenderer(false, false, false, false);
+		return new SceneRenderer(false, false, false, false, false);
 	}
 
 	static maximal(): SceneRenderer
 	{
-		return new SceneRenderer(true, true, true, false); // todo - Enable renderToBufferFirst.
+		return new SceneRenderer(true, true, true, true, false); // todo - Enable renderToBufferFirst.
 	}
 
 	// Drawing.
@@ -35,10 +38,8 @@ class SceneRenderer
 	_collisions: Collision[];
 	_directionFromEyeToPixel: Coords;
 	_displacementFromEyeToPixel: Coords;
-	_material: Material;
 	_pixelColor: Color;
 	_pixelPosAbsolute: Coords;
-	_surfaceNormal: Coords;
 	_texelColor: Color;
 	_texelUV: Coords;
 	_vertexWeightsAtSurfacePos: any[];
@@ -78,7 +79,7 @@ class SceneRenderer
 		timeBeforeRender: Date
 	): void
 	{
-		sceneRenderer.drawSceneToDisplay
+		sceneRenderer.sceneDrawToDisplay
 		(
 			sceneLoaded,
 			displayToRenderToFirst
@@ -99,11 +100,11 @@ class SceneRenderer
 		console.log("Scene rendered in " + renderTimeInMilliseconds + " ms.");
 	}
 
-	drawSceneToDisplay(scene: Scene, display: Display): void
+	sceneDrawToDisplay(scene: Scene, display: Display): void
 	{
-		this.drawSceneToDisplay_InitializeTemporaryVariables();
+		this.sceneDrawToDisplay_InitializeTemporaryVariables();
 
-		this.drawSceneToDisplay_Background(scene, display);
+		this.sceneDrawToDisplay_Background(scene, display);
 
 		var sizeInTiles = Coords.fromXY(1, 1);
 		var tileSizeInPixels =
@@ -122,7 +123,7 @@ class SceneRenderer
 			{
 				tilePosInTiles.x = x;
 
-				this.drawSceneToDisplay_ForTilePosAndBounds
+				this.sceneDrawToDisplay_ForTilePosAndBounds
 				(
 					scene,
 					display,
@@ -134,7 +135,7 @@ class SceneRenderer
 		}
 	}
 
-	drawSceneToDisplay_ForTilePosAndBounds
+	sceneDrawToDisplay_ForTilePosAndBounds
 	(
 		scene: Scene,
 		display: Display,
@@ -151,45 +152,35 @@ class SceneRenderer
 			.overwriteWith(tileBounds.min)
 			.add(tileSizeInPixels);
 
-		this.drawSceneToDisplay_PixelsGetAndDrawForBounds
+		this.sceneDrawToDisplay_PixelsGetAndDrawForBounds
 		(
 			scene, display, tileBounds
 		);
 	}
 
-	drawSceneToDisplay_InitializeTemporaryVariables(): void
+	sceneDrawToDisplay_InitializeTemporaryVariables(): void
 	{
 		this._collisions = [];
 		this._directionFromEyeToPixel = Coords.create();
 		this._displacementFromEyeToPixel = Coords.create();
-		this._material = Material.fromNameAndColor
-		(
-			"DisplayMaterial",
-			Color.blank("MaterialColor")
-		);
 		this._pixelColor = Color.blank("PixelColor");
 		this._pixelPosAbsolute = Coords.create();
-		this._surfaceNormal = Coords.create();
 		this._texelColor = Color.blank("TexelColor");
 		this._texelUV = Coords.create();
 		this._vertexWeightsAtSurfacePos = [];
-
 	}
 
-	drawSceneToDisplay_Background(scene: Scene, display: Display): void
+	sceneDrawToDisplay_Background(scene: Scene, display: Display): void
 	{
 		display.fillWithColor(scene.backgroundColor);
 	}
 
-	drawSceneToDisplay_PixelsGetAndDrawForBounds
+	sceneDrawToDisplay_PixelsGetAndDrawForBounds
 	(
 		scene: Scene, display: Display, bounds: Bounds
 	): void
 	{
-		var boundsMin = bounds.min;
-		var boundsMax = bounds.max;
-
-		var pane = new Pane(boundsMin, boundsMax);
+		var pane = Pane.fromBounds(bounds);
 
 		pane.sceneDrawForRenderer(scene, this);
 
@@ -206,10 +197,10 @@ class SceneRenderer
 		var pixelPosAbsolute =
 			this._pixelPosAbsolute
 				.overwriteWith(pixelPosRelativeToPane)
-				.add(pane.boundsMin);
+				.add(pane.bounds.min);
 
 		var collisions =
-			this.drawSceneToDisplay_Pixel_FindCollisions
+			this.collisionsFindOfSceneWithRayFromCameraToPixelPos
 			(
 				scene,
 				pixelPosAbsolute
@@ -222,40 +213,36 @@ class SceneRenderer
 			var shape =
 				collision.shapeCollidingFinal();
 
-			var surfaceNormal = this._surfaceNormal;
-			var surfaceColor = this._pixelColor;
-			var surfaceMaterial = this._material;
-
 			shape.surfaceMaterialColorAndNormalForCollision
 			(
 				scene,
-				collision,
-				surfaceMaterial,
-				surfaceColor,
-				surfaceNormal
+				collision
 			);
 
 			var intensityFromLightsAll =
 				this.intensityFromLightsAll
 				(
 					collision,
-					surfaceMaterial,
-					surfaceNormal,
 					scene
 				);
 
-			surfaceColor.multiply(intensityFromLightsAll);
+			var pixelColor =
+				this._pixelColor
+					.overwriteWith(collision.surfaceColor)
+					.multiply(intensityFromLightsAll);
 
 			pane.pixelAtPosRelativeSetToColor
 			(
-				pixelPosRelativeToPane, surfaceColor
+				pixelPosRelativeToPane,
+				pixelColor
 			);
 		}
 	}
 
-	drawSceneToDisplay_Pixel_FindCollisions
+	collisionsFindOfSceneWithRayFromCameraToPixelPos
 	(
-		scene: Scene, pixelPos: Coords
+		scene: Scene,
+		pixelPos: Coords
 	): Collision[]
 	{
 		var camera = scene.camera;
@@ -278,9 +265,7 @@ class SceneRenderer
 
 	intensityFromLightsAll
 	(
-		collisionClosest: Collision,
-		surfaceMaterial: Material,
-		surfaceNormal: Coords,
+		collision: Collision,
 		scene: Scene
 	): number
 	{
@@ -299,11 +284,9 @@ class SceneRenderer
 				var light = lights[i];
 
 				var intensity =
-					light.intensityForCollisionMaterialNormalAndCamera
+					light.intensityForCollisionAndCamera
 					(
-						collisionClosest,
-						surfaceMaterial,
-						surfaceNormal,
+						collision,
 						scene.camera,
 						this,
 						scene

@@ -6,6 +6,9 @@ class Material {
         this.optics = optics;
         this.textures = textures;
     }
+    static fromName(name) {
+        return new Material(name, Color.create(), Material_Optics.zeroes(), []);
+    }
     static fromNameAndColor(name, color) {
         return new Material(name, color, Material_Optics.zeroes(), []);
     }
