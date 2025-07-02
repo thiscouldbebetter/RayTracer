@@ -9,6 +9,8 @@ class Collision
 	surfaceNormal: Coords;
 	surfaceColor: Color;
 
+	deactivated: boolean;
+
 	_shapesCollidingByName: Map<string, Shape>;
 
 	constructor()
@@ -20,34 +22,84 @@ class Collision
 		this.surfaceMaterial = Material.fromName(Collision.name);
 		this.surfaceNormal = Coords.create();
 		this.surfaceColor = Color.create();
+
+		this.deactivated = false;
 	}
 
-	// instance methods
-
-	static closestOf(collisions: Collision[]): Collision
+	static closestOfActivated(collisions: Collision[]): Collision
 	{
 		var collisionClosest = null;
 
 		if (collisions.length > 0)
 		{
-			collisionClosest = collisions[0];
+			var collision0 = collisions[0];
 
-			for (var c = 1; c < collisions.length; c++)
+			if (collision0.deactivated == false)
 			{
-				var collision = collisions[c];
+				collisionClosest = collision0;
 
-				var collisionIsClosestSoFar =
-					collision.distanceToCollision
-					< collisionClosest.distanceToCollision;
-
-				if (collisionIsClosestSoFar)
+				for (var c = 1; c < collisions.length; c++)
 				{
-					collisionClosest = collision;
+					var collision = collisions[c];
+
+					if (collision.deactivated)
+					{
+						break;
+					}
+					else
+					{
+						var collisionIsClosestSoFar =
+							collision.distanceToCollision
+							< collisionClosest.distanceToCollision;
+
+						if (collisionIsClosestSoFar)
+						{
+							collisionClosest = collision;
+						}
+					}
 				}
 			}
 		}
 
 		return collisionClosest;
+	}
+
+	activate(): Collision
+	{
+		this.deactivated = false;
+		return this;
+	}
+
+	deactivate(): Collision
+	{
+		this.deactivated = true;
+		return this;
+	}
+
+	// Clonable.
+
+	clone(): Collision
+	{
+		var collisionCloned = new Collision().overwriteWith(this);
+		return collisionCloned;
+	}
+
+	overwriteWith(other: Collision): Collision
+	{
+		this.pos.overwriteWith(other.pos);
+		this.distanceToCollision = other.distanceToCollision;
+		this.shapesColliding.length = other.shapesColliding.length;
+		for (var s = 0; s < other.shapesColliding.length; s++)
+		{
+			this.shapesColliding[s] = other.shapesColliding[s];
+		}
+		this.surfaceMaterial.overwriteWith(other.surfaceMaterial);
+		this.surfaceNormal.overwriteWith(other.surfaceNormal);
+		this.surfaceColor.overwriteWith(other.surfaceColor);
+
+		this._shapesCollidingByName = null;
+
+		return this;
 	}
 
 	shapeCollidingAdd(shape: Shape): Collision
@@ -77,7 +129,12 @@ class Collision
 	{
 		if (this._shapesCollidingByName == null)
 		{
-			this._shapesCollidingByName = new Map<string, Shape>();
+			this._shapesCollidingByName =
+				new Map<string, Shape>
+				(
+					this.shapesColliding
+						.map(x => [x.constructor.name, x])
+				);
 		}
 		return this._shapesCollidingByName;
 	}

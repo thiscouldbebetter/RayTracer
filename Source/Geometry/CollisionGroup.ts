@@ -15,7 +15,18 @@ class CollisionGroup
 
 	clear(): CollisionGroup
 	{
-		this._collisions.length = 0;
+		for (var i = 0; i < this._collisions.length; i++)
+		{
+			var collision = this._collisions[i];
+			if (collision.deactivated)
+			{
+				break;
+			}
+			else
+			{
+				collision.deactivate();
+			}
+		}
 		return this;
 	}
 
@@ -25,25 +36,28 @@ class CollisionGroup
 		for (i = 0; i < this._collisions.length; i++)
 		{
 			var collisionInPlace = this._collisions[i];
-			var shouldBreak =
-			(
-				collisionToAdd.distanceToCollision
-				<= collisionInPlace.distanceToCollision
-			);
-			if (shouldBreak)
+			if (collisionInPlace.deactivated)
 			{
+				collisionInPlace
+					.overwriteWith(collisionToAdd)
+					.activate();
 				break;
 			}
 		}
 
-		this._collisions.splice(i, 0, collisionToAdd);
+		if (i >= this._collisions.length)
+		{
+			this._collisions.push(collisionToAdd.clone() );
+		}
 
 		return this;
 	}
 
 	collisionClosest(): Collision
 	{
-		return this._collisions[0]; // Collision.closestOf(this.collisions);
+		var collision0 =
+			Collision.closestOfActivated(this._collisions);
+		return collision0;
 	}
 
 	collisions(): Collision[]
@@ -53,6 +67,10 @@ class CollisionGroup
 
 	hasCollisions(): boolean
 	{
-		return (this._collisions.length > 0);
+		var returnValue =
+			this._collisions.length > 0
+			&& this._collisions[0].deactivated == false
+
+		return returnValue;
 	}
 }

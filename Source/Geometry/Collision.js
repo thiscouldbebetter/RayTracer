@@ -7,22 +7,56 @@ class Collision {
         this.surfaceMaterial = Material.fromName(Collision.name);
         this.surfaceNormal = Coords.create();
         this.surfaceColor = Color.create();
+        this.deactivated = false;
     }
-    // instance methods
-    static closestOf(collisions) {
+    static closestOfActivated(collisions) {
         var collisionClosest = null;
         if (collisions.length > 0) {
-            collisionClosest = collisions[0];
-            for (var c = 1; c < collisions.length; c++) {
-                var collision = collisions[c];
-                var collisionIsClosestSoFar = collision.distanceToCollision
-                    < collisionClosest.distanceToCollision;
-                if (collisionIsClosestSoFar) {
-                    collisionClosest = collision;
+            var collision0 = collisions[0];
+            if (collision0.deactivated == false) {
+                collisionClosest = collision0;
+                for (var c = 1; c < collisions.length; c++) {
+                    var collision = collisions[c];
+                    if (collision.deactivated) {
+                        break;
+                    }
+                    else {
+                        var collisionIsClosestSoFar = collision.distanceToCollision
+                            < collisionClosest.distanceToCollision;
+                        if (collisionIsClosestSoFar) {
+                            collisionClosest = collision;
+                        }
+                    }
                 }
             }
         }
         return collisionClosest;
+    }
+    activate() {
+        this.deactivated = false;
+        return this;
+    }
+    deactivate() {
+        this.deactivated = true;
+        return this;
+    }
+    // Clonable.
+    clone() {
+        var collisionCloned = new Collision().overwriteWith(this);
+        return collisionCloned;
+    }
+    overwriteWith(other) {
+        this.pos.overwriteWith(other.pos);
+        this.distanceToCollision = other.distanceToCollision;
+        this.shapesColliding.length = other.shapesColliding.length;
+        for (var s = 0; s < other.shapesColliding.length; s++) {
+            this.shapesColliding[s] = other.shapesColliding[s];
+        }
+        this.surfaceMaterial.overwriteWith(other.surfaceMaterial);
+        this.surfaceNormal.overwriteWith(other.surfaceNormal);
+        this.surfaceColor.overwriteWith(other.surfaceColor);
+        this._shapesCollidingByName = null;
+        return this;
     }
     shapeCollidingAdd(shape) {
         this.shapesColliding.push(shape);
@@ -41,7 +75,9 @@ class Collision {
     }
     shapesCollidingByName() {
         if (this._shapesCollidingByName == null) {
-            this._shapesCollidingByName = new Map();
+            this._shapesCollidingByName =
+                new Map(this.shapesColliding
+                    .map(x => [x.constructor.name, x]));
         }
         return this._shapesCollidingByName;
     }
