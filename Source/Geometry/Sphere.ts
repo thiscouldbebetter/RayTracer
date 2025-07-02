@@ -33,10 +33,10 @@ class Sphere implements Shape
 
 	// Shape.
 
-	addCollisionsWithRayToList
+	addCollisionsWithRayToGroup
 	(
-		ray: Ray, listToAddTo: Collision[]
-	): Collision[]
+		ray: Ray, groupToAddTo: CollisionGroup
+	): CollisionGroup
 	{
 		var collision = new Collision().rayAndSphere
 		(
@@ -47,10 +47,10 @@ class Sphere implements Shape
 		if (collision.shapeCollidingWithName(Sphere.name) != null)
 		{
 			collision.shapeCollidingAdd(this);
-			listToAddTo.push(collision);
+			groupToAddTo.collisionAdd(collision);
 		}
 
-		return listToAddTo;
+		return groupToAddTo;
 	}
 
 	material(scene: Scene): Material

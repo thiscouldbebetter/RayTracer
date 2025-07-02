@@ -35,7 +35,7 @@ class Mesh {
         }
     }
     // Shape.
-    addCollisionsWithRayToList(ray, listToAddTo) {
+    addCollisionsWithRayToGroup(ray, groupToAddTo) {
         for (var f = 0; f < this.faces.length; f++) {
             var face = this.faces[f];
             var facePlane = face.plane();
@@ -45,11 +45,11 @@ class Mesh {
                 var faceColliding = collision.shapeCollidingWithName(Face.name);
                 if (faceColliding != null) {
                     collision.shapeCollidingAdd(this);
-                    listToAddTo.push(collision);
+                    groupToAddTo.collisionAdd(collision);
                 }
             }
         }
-        return listToAddTo;
+        return groupToAddTo;
     }
     surfaceMaterialColorAndNormalForCollision(scene, collision) {
         var face = collision.shapeCollidingWithName(Face.name);

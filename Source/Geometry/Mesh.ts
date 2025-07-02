@@ -85,7 +85,11 @@ class Mesh implements Shape
 
 	// Shape.
 
-	addCollisionsWithRayToList(ray: Ray, listToAddTo: Collision[]): Collision[]
+	addCollisionsWithRayToGroup
+	(
+		ray: Ray,
+		groupToAddTo: CollisionGroup
+	): CollisionGroup
 	{
 		for (var f = 0; f < this.faces.length; f++)
 		{
@@ -106,12 +110,12 @@ class Mesh implements Shape
 				if (faceColliding != null)
 				{
 					collision.shapeCollidingAdd(this);
-					listToAddTo.push(collision);
+					groupToAddTo.collisionAdd(collision);
 				}
 			}
 		}
 
-		return listToAddTo;
+		return groupToAddTo;
 	}
 
 	surfaceMaterialColorAndNormalForCollision

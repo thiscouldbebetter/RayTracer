@@ -209,7 +209,7 @@ class Face {
         return returnValue;
     }
     // Shape.
-    addCollisionsWithRayToList(ray, listToAddTo) {
+    addCollisionsWithRayToGroup(ray, groupToAddTo) {
         throw new Error("To be implemented!");
     }
     fromJson(objectAsJson) {

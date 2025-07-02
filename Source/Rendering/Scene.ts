@@ -330,12 +330,12 @@ class Scene implements Serializable<Scene>
 		return this.demo(camera);
 	}
 
-	collisionsOfRayWithObjectsMinusExceptionAddToList
+	collisionsOfRayWithObjectsMinusExceptionAddToGroup
 	(
 		ray: Ray,
 		shapeToExcept: Shape,
-		collisionsSoFar: Collision[]
-	): Collision[]
+		collisionGroupSoFar: CollisionGroup
+	): CollisionGroup
 	{
 		var shapes = this.shapes();
 
@@ -345,15 +345,15 @@ class Scene implements Serializable<Scene>
 
 			if (shape != shapeToExcept)
 			{
-				shape.addCollisionsWithRayToList
+				shape.addCollisionsWithRayToGroup
 				(
 					ray,
-					collisionsSoFar
+					collisionGroupSoFar
 				);
 			}
 		}
 
-		return collisionsSoFar;
+		return collisionGroupSoFar;
 	}
 
 	loadForRendererAndSendToCallback

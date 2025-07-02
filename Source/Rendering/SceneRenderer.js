@@ -6,6 +6,7 @@ class SceneRenderer {
         this.texturesAreEnabled = texturesAreEnabled;
         this.transparencyIsEnabled = transparencyIsEnabled;
         this.renderToBufferFirst = renderToBufferFirst;
+        this._collisionGroup = CollisionGroup.create();
     }
     static minimal() {
         return new SceneRenderer(false, false, false, false, false);
@@ -83,9 +84,10 @@ class SceneRenderer {
         var pixelPosAbsolute = this._pixelPosAbsolute
             .overwriteWith(pixelPosRelativeToPane)
             .add(pane.bounds.min);
-        var collisions = this.collisionsFindOfSceneWithRayFromCameraToPixelPos(scene, pixelPosAbsolute);
-        var collision = Collision.closestOf(collisions);
-        if (collisions.length > 0) {
+        var collisionGroup = this.collisionsFindOfSceneWithRayFromCameraToPixelPos(scene, pixelPosAbsolute);
+        if (collisionGroup.hasCollisions()) // todo - Iterate.
+         {
+            var collision = collisionGroup.collisionClosest();
             var shape = collision.shapeCollidingFinal();
             shape.surfaceMaterialColorAndNormalForCollision(scene, collision);
             var intensityFromLightsAll = this.intensityFromLightsAll(collision, scene);
@@ -98,11 +100,11 @@ class SceneRenderer {
     collisionsFindOfSceneWithRayFromCameraToPixelPos(scene, pixelPos) {
         var camera = scene.camera;
         var rayFromCameraToPixel = camera.rayToPixelAtPos(pixelPos);
-        var collisions = this._collisions;
-        collisions.length = 0;
-        collisions = scene.collisionsOfRayWithObjectsMinusExceptionAddToList(rayFromCameraToPixel, null, // objectToExcept
-        collisions);
-        return collisions;
+        var collisionGroup = this._collisionGroup;
+        collisionGroup.clear();
+        collisionGroup = scene.collisionsOfRayWithObjectsMinusExceptionAddToGroup(rayFromCameraToPixel, null, // objectToExcept
+        collisionGroup);
+        return collisionGroup;
     }
     intensityFromLightsAll(collision, scene) {
         var intensityFromLightsAll = 0;

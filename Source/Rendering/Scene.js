@@ -144,15 +144,15 @@ class Scene {
         var camera = this.demo_Camera(false);
         return this.demo(camera);
     }
-    collisionsOfRayWithObjectsMinusExceptionAddToList(ray, shapeToExcept, collisionsSoFar) {
+    collisionsOfRayWithObjectsMinusExceptionAddToGroup(ray, shapeToExcept, collisionGroupSoFar) {
         var shapes = this.shapes();
         for (var i = 0; i < shapes.length; i++) {
             var shape = shapes[i];
             if (shape != shapeToExcept) {
-                shape.addCollisionsWithRayToList(ray, collisionsSoFar);
+                shape.addCollisionsWithRayToGroup(ray, collisionGroupSoFar);
             }
         }
-        return collisionsSoFar;
+        return collisionGroupSoFar;
     }
     loadForRendererAndSendToCallback(sceneRenderer, callback) {
         if (sceneRenderer.texturesAreEnabled) {

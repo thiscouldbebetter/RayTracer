@@ -32,17 +32,16 @@ class Lighting {
     toObjectSerializable() {
         return this;
     }
-    // Helpers.
     static intensityForCollisionAndCamera(collision, camera, sceneRenderer, scene, directionFromObjectToLight, directionFromObjectToLightDotSurfaceNormal, intensityAdjusted) {
         var returnValue = 0;
         if (directionFromObjectToLightDotSurfaceNormal > 0) {
             var objectIsLitByThisLight = false;
             if (sceneRenderer.shadowsAreEnabled) {
                 var rayFromObjectToBeLitToLight = Ray.fromStartPosAndDirection(collision.pos, directionFromObjectToLight);
-                var collisionsBlockingLight = scene.collisionsOfRayWithObjectsMinusExceptionAddToList(rayFromObjectToBeLitToLight, collision.shapeCollidingFirst(), // objectToExcept
-                []);
+                var collisionsBlockingLight = scene.collisionsOfRayWithObjectsMinusExceptionAddToGroup(rayFromObjectToBeLitToLight, collision.shapeCollidingFirst(), // objectToExcept
+                this._collisionGroup.clear());
                 objectIsLitByThisLight =
-                    (collisionsBlockingLight.length == 0);
+                    (collisionsBlockingLight.hasCollisions() == false);
             }
             returnValue = Lighting.intensityForCollisionAndCamera_2(objectIsLitByThisLight, camera, collision, directionFromObjectToLight, directionFromObjectToLightDotSurfaceNormal, intensityAdjusted);
         }
@@ -73,5 +72,7 @@ class Lighting {
         return returnValue;
     }
 }
+// Helpers.
+Lighting._collisionGroup = CollisionGroup.create();
 Lighting._directionFromObjectToViewer = Coords.create();
 Lighting._directionOfReflection = Coords.create();

@@ -58,6 +58,8 @@ class Lighting implements Serializable<Lighting>
 
 	// Helpers.
 
+	static _collisionGroup = CollisionGroup.create();
+
 	static intensityForCollisionAndCamera
 	(
 		collision: Collision,
@@ -85,15 +87,15 @@ class Lighting implements Serializable<Lighting>
 					);
 
 				var collisionsBlockingLight = 
-					scene.collisionsOfRayWithObjectsMinusExceptionAddToList
+					scene.collisionsOfRayWithObjectsMinusExceptionAddToGroup
 					(
 						rayFromObjectToBeLitToLight,
 						collision.shapeCollidingFirst(), // objectToExcept
-						[]
+						this._collisionGroup.clear()
 					);
 
 				objectIsLitByThisLight =
-					(collisionsBlockingLight.length == 0);
+					(collisionsBlockingLight.hasCollisions() == false);
 			}
 
 			returnValue = Lighting.intensityForCollisionAndCamera_2

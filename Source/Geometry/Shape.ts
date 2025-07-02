@@ -1,7 +1,10 @@
 
 interface Shape extends Serializable<Shape>
 {
-	addCollisionsWithRayToList(ray: Ray, listToAddTo: Collision[]): Collision[]
+	addCollisionsWithRayToGroup
+	(
+		ray: Ray, listToAddTo: CollisionGroup
+	): CollisionGroup;
 	clone(): Shape;
 	name: string;
 	surfaceMaterialColorAndNormalForCollision

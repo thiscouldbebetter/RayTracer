@@ -15,7 +15,7 @@ class Plane {
         this.distanceFromOrigin = this.normal.dotProduct(pos0);
     }
     // Shape.
-    addCollisionsWithRayToList(ray, listToAddTo) {
+    addCollisionsWithRayToGroup(ray, groupToAddTo) {
         throw new Error("To be implemented!");
     }
     clone() {

@@ -11,13 +11,13 @@ class Sphere {
             TransformOrient.create();
     }
     // Shape.
-    addCollisionsWithRayToList(ray, listToAddTo) {
+    addCollisionsWithRayToGroup(ray, groupToAddTo) {
         var collision = new Collision().rayAndSphere(ray, this);
         if (collision.shapeCollidingWithName(Sphere.name) != null) {
             collision.shapeCollidingAdd(this);
-            listToAddTo.push(collision);
+            groupToAddTo.collisionAdd(collision);
         }
-        return listToAddTo;
+        return groupToAddTo;
     }
     material(scene) {
         return scene.materialByName(this.materialName);

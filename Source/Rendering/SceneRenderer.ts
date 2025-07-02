@@ -21,6 +21,8 @@ class SceneRenderer
 		this.texturesAreEnabled = texturesAreEnabled;
 		this.transparencyIsEnabled = transparencyIsEnabled;
 		this.renderToBufferFirst = renderToBufferFirst;
+
+		this._collisionGroup = CollisionGroup.create();
 	}
 
 	static minimal(): SceneRenderer
@@ -199,17 +201,17 @@ class SceneRenderer
 				.overwriteWith(pixelPosRelativeToPane)
 				.add(pane.bounds.min);
 
-		var collisions =
+		var collisionGroup =
 			this.collisionsFindOfSceneWithRayFromCameraToPixelPos
 			(
 				scene,
 				pixelPosAbsolute
 			);
 
-		var collision = Collision.closestOf(collisions);
-
-		if (collisions.length > 0)
+		if (collisionGroup.hasCollisions() ) // todo - Iterate.
 		{
+			var collision = collisionGroup.collisionClosest();
+
 			var shape =
 				collision.shapeCollidingFinal();
 
@@ -239,28 +241,30 @@ class SceneRenderer
 		}
 	}
 
+	_collisionGroup: CollisionGroup;
+
 	collisionsFindOfSceneWithRayFromCameraToPixelPos
 	(
 		scene: Scene,
 		pixelPos: Coords
-	): Collision[]
+	): CollisionGroup
 	{
 		var camera = scene.camera;
 
 		var rayFromCameraToPixel =
 			camera.rayToPixelAtPos(pixelPos);
 
-		var collisions = this._collisions;
-		collisions.length = 0;
+		var collisionGroup = this._collisionGroup;
+		collisionGroup.clear();
 
-		collisions = scene.collisionsOfRayWithObjectsMinusExceptionAddToList
+		collisionGroup = scene.collisionsOfRayWithObjectsMinusExceptionAddToGroup
 		(
 			rayFromCameraToPixel,
 			null, // objectToExcept
-			collisions
+			collisionGroup
 		);
 
-		return collisions;
+		return collisionGroup;
 	}
 
 	intensityFromLightsAll
